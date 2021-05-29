@@ -5,13 +5,27 @@ It only uses Python Standard Library modules - not even numpy - to program it.
 This is a very community driven project, so please report any bugs that we can iron out;
 we want to make this the best we can.
 
-
+--------
 --------
 
 ## Exceptions
 easyNeuron uses the basic built-in exceptions that are in the Standard Library.
 
+--------
+
 ## Classes
+
+
+### Layers
+*Layer_Dense()*
+
+
+
+--------
 ## Classmethods
+
+-------
 ## Functions
+
+-------
 ## Examples
