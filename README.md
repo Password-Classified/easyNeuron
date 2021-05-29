@@ -9,7 +9,7 @@ we want to make this the best we can.
 --------
 
 ## Exceptions
-easyNeuron uses the basic builtin exceptions that are in the standard lab
+easyNeuron uses the basic built-in exceptions that are in the Standard Library.
 
 ## Classes
 ## Classmethods
