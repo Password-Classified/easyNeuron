@@ -6,26 +6,27 @@ This is a very community driven project, so please report any bugs that we can i
 we want to make this the best we can.
 
 --------
---------
 
-## Exceptions
+<br/>
+
+## **Exceptions**
 easyNeuron uses the basic built-in exceptions that are in the Standard Library.
 
 --------
+<br/>
 
-## Classes
+## **Classes**
 
-
-### Layers
+### **Layers**
 *Layer_Dense()*
 
 
 
 --------
-## Classmethods
+## **Classmethods**
 
 -------
-## Functions
+## **Functions**
 
 -------
-## Examples
+## **Examples**
