@@ -129,6 +129,61 @@ class Data(classmethod):
         return data
 
 
+class Activation(classmethod):
+    def sigmoid(inputs: list or tuple or float):
+        '''
+        Run the Sigmoid activation forwards.
+        (for forwardpropagation)
+        '''
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append(Decimal(1/(1+math.e**float(i))))
+            return output
+
+        else:
+            return Decimal(1/(1+math.e**float(inputs)))
+
+    def sigmoid_prime(inputs: list or tuple or float):
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append((1/(1+math.e**float(-i))) *
+                              (1-(1/(1+math.e**float(-i)))))
+            return output
+
+        else:
+            return (1/(1+math.e**float(-inputs))) * (1-(1/(1+math.e**float(-inputs))))
+
+    def relu(inputs: list or tuple or float):
+        '''
+        Run the ReLU activation forwards.
+        (for forwardpropagation)
+        '''
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append(Decimal(max(0, i)))
+            return output
+        else:
+            Decimal(max(0, inputs))
+
+    def relu_prime(inputs: list or tuple):
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                if i < 0:
+                    output.append(0)
+                else:
+                    output.append(1)
+            return output
+        else:
+            if inputs < 0:
+                return 0
+            else:
+                return 1
+
+
 # Parent Classes
 class Layer(object):
     '''
@@ -164,56 +219,6 @@ class Layer(object):
         except:
             raise TypeError(
                 f'Layer_{self.type} object is not comparable to given {type(o)} object.')
-
-    def __hash__(self):
-        return hash((self.output))
-
-    def __bytes__(self):
-        return bytes(tuple(self.output))
-
-    def __enter__(self):
-        return self.output
-
-    def __exit__(self, type, value, traceback):
-        pass
-
-    @property
-    def type(self):
-        return self._type
-
-
-class Activation(object):
-    '''
-    Parent class to all activations, containing
-    the `__dunder__` methods needed.
-    '''
-
-    def __init__(self):
-        self.output = []
-        self._type = 'Undefined'
-
-    def __repr__(self):
-        return f'Activation_{self.type}(output={self.output})'
-
-    def __str__(self):
-        return f'Activation_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
-
-    def __len__(self):
-        return len(self.output)
-
-    def __eq__(self, o: object):
-        try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
-            else:
-                return NotImplemented
-        except:
-            raise TypeError(
-                f'Activation_{self.type} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
         return hash((self.output))
@@ -393,44 +398,5 @@ class Layer_Dense(Layer):
         return self.output
 
 
-# Subclasses: Activations
-class Activation_Sigmoid(Activation):
-    '''
-    This any-layer activation was the
-    most popular activation until ReLU 
-    and Softmax was brought in.
-
-    Pro
-    =============
-    Average time - 1 millisecond
-    Can be used on any layer
-    Always between 0 and 1
-    Varied, analogue output
-
-    Cons
-    =============
-    Slow learner
-    Has cutoff point of learning
-    (Will not learn any more after a
-    point).
-    '''
-
-    def __init__(self):
-        self.output = []
-        self._type = 'Sigmoid'
-
-    def forward(self, inputs: list or tuple):
-        '''
-        Run the Sigmoid activation forwards.
-        (for forwardpropagation)
-        '''
-        self.output = []
-        for i in inputs:
-            self.output.append(Decimal(1+math.e**float(i)))
-        return self.output
-
-    def prime(self, inputs: list or tuple):
-        self.output = []
-        for i in inputs:
-            self.output.append(self.forward(i) * (1-self.forward(i)))
-        return self.output
+if __name__ == '__main__':
+    pass
