@@ -70,3 +70,37 @@ class Timing(classmethod):
         if disp:
             print(f'Time Elapsed: {current_time}')
         return current_time
+    
+class Data(classmethod):
+    '''
+    A classmethod for data manipulation,
+    acquirement, loading and saving.
+    '''
+    def load_object(file_to_open):
+        '''
+        Load a list or any other object from a
+        text file that will be created/opened.
+        '''
+        try:
+            file_to_open_data = open(file_to_open, 'r')
+            data = pickle.load(bytes(file_to_open_data))
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f'An error has occured loading file_to_open {str(file_to_open_data)}.')
+        finally:
+            file_to_open_data.close()
+
+        return data
+
+    def save_object(data, file_to_open):
+        try:
+            file_to_open_data = open(file_to_open, 'w')
+            data = pickle.dump(bytes(file_to_open))
+            file_to_open_data.write(data)
+        except FileExistsError:
+            raise FileExistsError(
+                f'An error has occured saving file_to_open {str(file_to_open_data)}')
+        finally:
+            file_to_open_data.close()
+
+        return data
