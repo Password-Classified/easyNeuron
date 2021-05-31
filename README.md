@@ -55,7 +55,7 @@ Runs the *Layer_Dense* object forwards (forwardpropagating the dense layer).
 
 > ***Matrix***
 
-Classmethod for matrix functions such as dot products and transposing.
+Classmethod for matrix operations such as dot products and transposing.
 
 >>*dot(list_1, list_2)*
  - `list_1` and `list_2` = 2 lists to find the dot product between.
