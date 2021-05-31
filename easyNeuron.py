@@ -400,7 +400,7 @@ class Activation_Sigmoid(Activation):
     most popular activation until ReLU 
     and Softmax was brought in.
 
-    Pros
+    Pro
     =============
     Average time - 1 millisecond
     Can be used on any layer
