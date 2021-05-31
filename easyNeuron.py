@@ -3,6 +3,8 @@
 `easyNeuron` is a lightweight neural network framework written in Python for Python as one file.
 It only uses Python Standard Library modules - not even numpy - to program it.
 
+
+
 **Docstrings**
 This module has extensive docstrings that are being constantly updated through time. They use
 MarkDown formatting, so I am not sure if they show up properly on IDLE, but should on IDEs like
@@ -22,21 +24,22 @@ from timeit import default_timer as timer
 
 time_start = timer()
 
+
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
     since numpy isn't used here, I had
     to write my own matrix operations.
     '''
-    
+
     def dot(list_1, list_2):
         '''
         Return the dot product between 2
         matrices (which are both 2 dimensional).
         '''
-        
+
         return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
-        
+
     # def dot_prime(x, y):
     #     pass
 
@@ -44,7 +47,7 @@ class Matrix(classmethod):
         '''
         Returns a **transposed** matrix from the
         matrix you inputed to start with.
-        
+
         If you set the `disp` parameter to `True`
         '''
         mat_len = len(matrix)
@@ -63,19 +66,22 @@ class Matrix(classmethod):
         if disp:
             pprint(new)
         return new
-    
+
+
 class Timing(classmethod):
     def get_time(disp=False):
         current_time = timer()-time_start
         if disp:
             print(f'Time Elapsed: {current_time}')
         return current_time
-    
+
+
 class Data(classmethod):
     '''
     A classmethod for data manipulation,
     acquirement, loading and saving.
     '''
+
     def load_object(file_to_open):
         '''
         Load a list or any other object from a
