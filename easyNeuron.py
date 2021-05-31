@@ -230,7 +230,6 @@ class Cost(object):
     def type(self):
         return self._type
 
-
 class Optimizer(object):
     '''
     Parent class to all optimizers  , containing
