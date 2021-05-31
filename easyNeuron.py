@@ -128,12 +128,15 @@ class Data(classmethod):
         return data
 
     def scale(data:list, feature_range: tuple = (0, 1)):
+        
         if len(feature_range) != 2:
             raise ValueError(
                 f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
 
         # Get depth of list
-
+        # Find largest and smallest iterating for depth
+        # Set each item to between feature range using percentages, iterating from depth
+        
     def load_mnist():
         raw = []
         train_samples = []
