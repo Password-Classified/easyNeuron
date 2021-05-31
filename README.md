@@ -17,6 +17,7 @@ please provide feedback for any issues you come accross
 As well as them, `easyNeuron` has its own exceptions for comprehensive error messages to make your workflow faster.
 
 --------
+
 <br/>
 
 ## **Classes**
