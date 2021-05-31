@@ -24,7 +24,7 @@ from timeit import default_timer as timer
 
 time_start = timer()
 
-
+# Classmethods
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
@@ -110,3 +110,184 @@ class Data(classmethod):
             file_to_open_data.close()
 
         return data
+
+
+# Parent Classes
+# Parent Classes
+class Layer(object):
+    def __init__(self):
+        self.biases = []
+        self.weights = []
+        self.output = []
+        self._type = 'Undefined'
+
+    def __repr__(self):
+        return f'Layer_{self.type}(output={self.output})'
+
+    def __str__(self):
+        return f'Layer_{self.type}(output={self.output})'
+
+    def __bool__(self):
+        if self.output != []:
+            return True
+
+    def __len__(self):
+        return len(self.output)
+
+    def __eq__(self, o: object):
+        try:
+            if self.__class__ == o.__class__:
+                return (self.output, self.type) == (o.output, o.type)
+            else:
+                return NotImplemented
+        except:
+            raise TypeError(
+                f'Layer_{self.type} object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        return hash((self.output))
+
+    def __bytes__(self):
+        return bytes(tuple(self.output))
+
+    def __enter__(self):
+        return self.output
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    @property
+    def type(self):
+        return self._type
+
+class Activation(object):
+    def __init__(self):
+        self.output = []
+        self._type = 'Undefined'
+
+    def __repr__(self):
+        return f'Activation_{self.type}(output={self.output})'
+
+    def __str__(self):
+        return f'Activation_{self.type}(output={self.output})'
+
+    def __bool__(self):
+        if self.output != []:
+            return True
+
+    def __len__(self):
+        return len(self.output)
+
+    def __eq__(self, o: object):
+        try:
+            if self.__class__ == o.__class__:
+                return (self.output, self.type) == (o.output, o.type)
+            else:
+                return NotImplemented
+        except:
+            raise TypeError(
+                f'Activation_{self.type} object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        return hash((self.output))
+
+    def __bytes__(self):
+        return bytes(tuple(self.output))
+
+    def __enter__(self):
+        return self.output
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    @property
+    def type(self):
+        return self._type
+
+class Cost(object):
+    def __init__(self):
+        self.output = []
+        self._type = 'Undefined'
+
+    def __repr__(self):
+        return f'Cost_{self.type}(output={self.output})'
+
+    def __str__(self):
+        return f'Cost_{self.type}(output={self.output})'
+
+    def __bool__(self):
+        if self.output != []:
+            return True
+
+    def __len__(self):
+        return len(self.output)
+
+    def __eq__(self, o: object):
+        try:
+            if self.__class__ == o.__class__:
+                return (self.output, self.type) == (o.output, o.type)
+            else:
+                return NotImplemented
+        except:
+            raise TypeError(
+                f'Cost_{self.type} object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        return hash((self.output))
+
+    def __bytes__(self):
+        return bytes(self.output)
+
+    def __enter__(self):
+        return self.output
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    @property
+    def type(self):
+        return self._type
+
+class Optimizer(object):
+    def __init__(self):
+        self.output = []
+        self._type = 'Undefined'
+
+    def __repr__(self):
+        return f'Optimizer_{self.type}(output={self.output})'
+
+    def __str__(self):
+        return f'Optimizer_{self.type}(output={self.output})'
+
+    def __bool__(self):
+        if self.output != []:
+            return True
+
+    def __len__(self):
+        return len(self.output)
+
+    def __eq__(self, o: object):
+        try:
+            if self.__class__ == o.__class__:
+                return (self.output, self.type) == (o.output, o.type)
+            else:
+                return NotImplemented
+        except:
+            raise TypeError(
+                f'Optimizer_{self.type} object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        return hash((self.output))
+
+    def __bytes__(self):
+        return bytes(self.output)
+
+    def __enter__(self):
+        return self.output
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    @property
+    def type(self):
+        return self._type
