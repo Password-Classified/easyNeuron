@@ -9,6 +9,7 @@ a full version that uses `numba` (non-standard library) to speed up code by runn
 ## Dependencies
 This module uses only Python `Standard Library` modules for it - and here they are.
 
+ - csv
  - math
  - os
  - pickle
@@ -27,6 +28,7 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 
 __version__ = 1.1
 
+import csv
 import math
 import os
 import pickle
@@ -37,7 +39,6 @@ from pprint import pprint
 from timeit import default_timer as timer
 
 time_start = timer()
-
 
 
 # Classmethods
@@ -57,9 +58,6 @@ class Matrix(classmethod):
         '''
 
         return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
-
-    # def dot_prime(x, y):
-    #     pass
 
     def transpose(matrix: list, disp=False):
         '''
@@ -129,6 +127,25 @@ class Data(classmethod):
 
         return data
 
+    def scale(data:list, feature_range: tuple = (0, 1)):
+        if len(feature_range) != 2:
+            raise ValueError(
+                f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
+
+        # Get depth of list
+
+    def load_mnist():
+        raw = []
+        train_samples = []
+        train_labels = []
+        scaled_train_samples = []
+        try:
+            with open('Data/MNIST.csv') as file:
+                pass
+            
+        except:
+            raise FileNotFoundError('You must have the folders of data installed to load MNIST data using easyNeuron.')
+
 
 class Activation(classmethod):
     def sigmoid(inputs: list or tuple or float):
@@ -185,7 +202,6 @@ class Activation(classmethod):
                 return 1
 
 
-
 # Parent Classes
 
 class Layer(object):
@@ -239,6 +255,7 @@ class Layer(object):
     def type(self):
         return self._type
 
+
 class Cost(object):
     '''
     Parent class to all costs, containing
@@ -260,7 +277,7 @@ class Cost(object):
             return True
 
     def __len__(self):
-        return len(self.output)
+        return len(self.biases)
 
     def __eq__(self, o: object):
         try:
@@ -287,6 +304,7 @@ class Cost(object):
     @property
     def type(self):
         return self._type
+
 
 class Optimizer(object):
     '''
@@ -336,7 +354,6 @@ class Optimizer(object):
     @property
     def type(self):
         return self._type
-
 
 
 # Subclasses: Layers
