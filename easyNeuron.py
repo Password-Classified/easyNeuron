@@ -129,6 +129,61 @@ class Data(classmethod):
         return data
 
 
+class Activation(classmethod):
+    def sigmoid(inputs: list or tuple or float):
+        '''
+        Run the Sigmoid activation forwards.
+        (for forwardpropagation)
+        '''
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append(Decimal(1/(1+math.e**float(i))))
+            return output
+
+        else:
+            return Decimal(1/(1+math.e**float(inputs)))
+
+    def sigmoid_prime(inputs: list or tuple or float):
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append((1/(1+math.e**float(-i))) *
+                              (1-(1/(1+math.e**float(-i)))))
+            return output
+
+        else:
+            return (1/(1+math.e**float(-inputs))) * (1-(1/(1+math.e**float(-inputs))))
+
+    def relu(inputs: list or tuple or float):
+        '''
+        Run the ReLU activation forwards.
+        (for forwardpropagation)
+        '''
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                output.append(Decimal(max(0, i)))
+            return output
+        else:
+            Decimal(max(0, inputs))
+
+    def relu_prime(inputs: list or tuple):
+        if type(inputs) == list or type(inputs) == tuple:
+            output = []
+            for i in inputs:
+                if i < 0:
+                    output.append(0)
+                else:
+                    output.append(1)
+            return output
+        else:
+            if inputs < 0:
+                return 0
+            else:
+                return 1
+
+
 # Parent Classes
 class Layer(object):
     '''
@@ -338,4 +393,9 @@ class Layer_Dense(Layer):
         for neuron in range(len(self.biases)):  # iterate for the num of neurons
             dotted = Matrix.dot(self.weights[neuron], inputs)
             self.output.append(Decimal(dotted + self.biases[neuron]))
+
         return self.output
+
+
+if __name__ == '__main__':
+    pass
