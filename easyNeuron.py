@@ -51,7 +51,8 @@ class Matrix(classmethod):
     def dot(list_1, list_2):
         '''
         Return the dot product between 2
-        matrices (which are both 2 dimensional).
+        matrices (which are both 2 or 1
+        dimensional).
         '''
 
         return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
@@ -329,3 +330,64 @@ class Optimizer(object):
     @property
     def type(self):
         return self._type
+
+
+# Subclasses: Layers
+class Layer_Dense(Layer):
+    '''
+    Create a layer with all neurons
+    attached to next layer. Used a
+    lot in classifiers. The best/
+    default turn-to for developers.
+    '''
+
+    def __init__(self, n_inputs: int, n_neurons: int, bias_init: float = 0):
+        if n_inputs <= 0:
+            raise ValueError('"n_inputs" parameter should be > 0.')
+        elif n_neurons <= 0:
+            raise ValueError('"n_neurons" parameter should be > 0.')
+
+        self.biases = []
+        for x in range(n_neurons):
+            self.biases.append(bias_init)
+
+        self.weights = []
+        for i in range(n_neurons):
+            self.weights.append([])
+            for n in range(n_inputs):
+                self.weights[i].append(random.randrange(-4, 4))
+
+        self._type = 'Dense'
+        self.output = []
+
+    def randomize(self, bias: int = 0):
+        '''
+        Randomize the weights and biases.
+        Weights are randomized at the
+        start, but biases are initialized
+        to a default of 0.
+        '''
+        self.biases = []
+        for x in range(len(self.biases)):
+            self.biases.append(bias)
+
+        self.weights = []
+        for i in range(len(self.biases)):
+            self.weights.append([])
+            for n in range(len(self.weights)):
+                self.weights[i].append(random.randint(-4, 4))
+
+    def forward(self, inputs):
+        '''
+        Run the Dense Layer forwards.
+        (forward propagate). It takes the
+        dot product (matrices multiplied
+        together) plus the bias of each
+        neuron to give an output to be
+        run through the activation.
+        '''
+        self.output = []
+        for neuron in range(len(self.biases)):  # iterate for the num of neurons
+            dotted = Matrix.dot(self.weights[neuron], inputs)
+            self.output.append(Decimal(dotted + self.biases[neuron]))
+        return self.output

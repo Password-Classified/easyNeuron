@@ -276,12 +276,13 @@ class Layer_Dense(Layer):
     default turn-to for developers.
     '''
 
-    def __init__(self, n_inputs:int, n_neurons:int):
-        if n_inputs == 0: raise ValueError('"n_inputs" parameter should be > 0.')
-        elif n_neurons == 0: raise ValueError('"n_neurons" parameter should be > 0.')
+    def __init__(self, n_inputs:int, n_neurons:int, bias_init:float=0):
+        if n_inputs <= 0: raise ValueError('"n_inputs" parameter should be > 0.')
+        elif n_neurons <= 0: raise ValueError('"n_neurons" parameter should be > 0.')
+        
         self.biases = []
         for x in range(n_neurons):
-            self.biases.append(0)
+            self.biases.append(bias_init)
 
         self.weights = []
         for i in range(n_neurons):
