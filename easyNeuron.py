@@ -1,17 +1,31 @@
 '''
 # easyNeuron
 `easyNeuron` is a lightweight neural network framework written in Python for Python as one file.
-It only uses Python Standard Library modules - not even numpy - to program it.
+It only uses Python Standard Library modules - not even numpy - to program it. I may also release
+a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
+----------
 
+## Dependencies
+This module uses only Python `Standard Library` modules for it - and here they are.
 
-**Docstrings**
+ - math
+ - os
+ - pickle
+ - random
+ - sys
+ - decimal
+ - pprint
+ - timeit
+
+### Docstrings
+
 This module has extensive docstrings that are being constantly updated through time. They use
 MarkDown formatting, so I am not sure if they show up properly on IDLE, but should on IDEs like
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
 '''
 
-__version__ = 0.0
+__version__ = 1.1
 
 import math
 import os
@@ -25,6 +39,8 @@ from timeit import default_timer as timer
 time_start = timer()
 
 # Classmethods
+
+
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
@@ -113,8 +129,12 @@ class Data(classmethod):
 
 
 # Parent Classes
-# Parent Classes
 class Layer(object):
+    '''
+    Parent class to all layers, containing
+    the `__dunder__` methods needed.
+    '''
+
     def __init__(self):
         self.biases = []
         self.weights = []
@@ -160,7 +180,13 @@ class Layer(object):
     def type(self):
         return self._type
 
+
 class Activation(object):
+    '''
+    Parent class to all activations, containing
+    the `__dunder__` methods needed.
+    '''
+
     def __init__(self):
         self.output = []
         self._type = 'Undefined'
@@ -204,7 +230,13 @@ class Activation(object):
     def type(self):
         return self._type
 
+
 class Cost(object):
+    '''
+    Parent class to all costs, containing
+    the `__dunder__` methods needed.
+    '''
+
     def __init__(self):
         self.output = []
         self._type = 'Undefined'
@@ -248,7 +280,13 @@ class Cost(object):
     def type(self):
         return self._type
 
+
 class Optimizer(object):
+    '''
+    Parent class to all optimizers  , containing
+    the `__dunder__` methods needed.
+    '''
+
     def __init__(self):
         self.output = []
         self._type = 'Undefined'

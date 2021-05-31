@@ -2,7 +2,7 @@
 `easyNeuron` is a lightweight neural network framework written in Python for Python as one file.
 It only uses Python Standard Library modules - not even numpy - to program it. I was inspired by **Sentdex's** nnfs project, but I came
 to the end of the series so far (I got to episode 7) and was too impatient to wait for the next episode, so I created this
-to learn and to share. I understand that he has released more since then, but I'll continue to develop this.
+to learn and to share. I understand that he has released more since then, but I'll continue to develop this by myself.
 
 This is a very community driven project, so please report any bugs that we can iron out;
 we want to make this the best we can. It is also under constant heavy development, so

@@ -1,11 +1,12 @@
 __version__ = 1.1
 
-from decimal import Decimal
+
 import math
+import os
 import pickle
 import random
 import sys
-import os
+from decimal import Decimal
 from pprint import pprint
 from timeit import default_timer as timer
 
