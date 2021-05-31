@@ -393,7 +393,6 @@ class Layer_Dense(Layer):
         for neuron in range(len(self.biases)):  # iterate for the num of neurons
             dotted = Matrix.dot(self.weights[neuron], inputs)
             self.output.append(Decimal(dotted + self.biases[neuron]))
-
         return self.output
 
 
