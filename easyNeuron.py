@@ -38,8 +38,9 @@ from timeit import default_timer as timer
 
 time_start = timer()
 
-# Classmethods
 
+
+# Classmethods
 
 class Matrix(classmethod):
     '''
@@ -184,7 +185,9 @@ class Activation(classmethod):
                 return 1
 
 
+
 # Parent Classes
+
 class Layer(object):
     '''
     Parent class to all layers, containing
@@ -333,6 +336,7 @@ class Optimizer(object):
     @property
     def type(self):
         return self._type
+
 
 
 # Subclasses: Layers
