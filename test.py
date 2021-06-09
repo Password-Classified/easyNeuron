@@ -1,9 +1,13 @@
 from easyNeuron import *
 
-assert Activation.sigmoid(0) == 1/2
-assert Activation.sigmoid_prime(0) == 1/4
+def check(x, y):
+    if x != y:
+        raise AssertionError(f'{x} is not equal to {y}')
 
-assert Activation.relu(1) == 1
-assert Activation.relu_prime(1) == 1
-assert Activation.relu(-1) == 0
-assert Activation.relu_prime(-1) == 0
+check(Activation.sigmoid(0), 1/2)
+check(Activation.sigmoid_prime(0), 1/4)
+
+check(Activation.relu(1), 1)
+check(Activation.relu_prime(1), 1)
+check(Activation.relu(-1), 0)
+check(Activation.relu_prime(-1), 0)

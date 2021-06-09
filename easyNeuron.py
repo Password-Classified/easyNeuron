@@ -26,7 +26,7 @@ MarkDown formatting, so I am not sure if they show up properly on IDLE, but shou
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
 '''
 
-__version__ = 1.1
+__version__ = 1.2
 
 import csv
 import math
@@ -134,6 +134,9 @@ class Data(classmethod):
                 f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
 
         # Get depth of list
+        depth = 
+        for i in data:
+            if type
         # Find largest and smallest iterating for depth
         # Set each item to between feature range using percentages, iterating from depth
         
