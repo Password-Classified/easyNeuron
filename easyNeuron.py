@@ -433,6 +433,22 @@ class Layer_Dense(Layer):
             self.output.append(Decimal(dotted + self.biases[neuron]))
         return self.output
 
+# Subclasses: Costs
+class MSE(Cost):
+    def __init__(self):
+        self.output = 0
+        self._type = 'MSE'
+    
+    def forward(self, inputs: list or tuple, targets: list or tuple):
+        length = len(inputs)
+        if length != len(targets): raise IndexError(f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+        
+        self.output = 0
+        for i in range(length):
+            self.output += (inputs[i] - targets[i])**2
+        self.output /= length
+        
+        return self.output
 
 if __name__ == '__main__':
     pass
