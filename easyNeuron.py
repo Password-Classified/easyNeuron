@@ -127,17 +127,28 @@ class Data(classmethod):
 
         return data
 
+    def depth(inputs):
+        count=0
+        for item in inputs:
+            if isinstance(item, inputs):
+                count+= Matrix.depth(item)
+        return count+1
+
     def scale(data:list, feature_range: tuple = (0, 1)):
-        
+
         if len(feature_range) != 2:
             raise ValueError(
                 f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
 
-        # Get depth of list
-        depth = 
-        for i in data:
-            if type
-        # Find largest and smallest iterating for depth
+        depth = Matrix.depth(data)
+        largest = 0
+        smallest = 0
+        curr_data = data
+        
+        for deep in range(depth):
+            for i in range(len(curr_data)):
+                pass
+            
         # Set each item to between feature range using percentages, iterating from depth
         
     def load_mnist():
