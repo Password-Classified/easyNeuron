@@ -1,1 +1,4 @@
-__pycache__
+*.manifest
+*.spec
+
+/__pycache__/
