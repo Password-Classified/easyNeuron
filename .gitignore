@@ -1,4 +1,2 @@
 *.manifest
 *.spec
-
-/__pycache__/
