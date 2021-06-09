@@ -128,13 +128,13 @@ class Data(classmethod):
         return data
 
     def depth(inputs):
-        count=0
+        count = 0
         for item in inputs:
             if isinstance(item, inputs):
-                count+= Matrix.depth(item)
+                count += Matrix.depth(item)
         return count+1
 
-    def scale(data:list, feature_range: tuple = (0, 1)):
+    def scale(data: list, feature_range: tuple = (0, 1)):
 
         if len(feature_range) != 2:
             raise ValueError(
@@ -144,13 +144,13 @@ class Data(classmethod):
         largest = 0
         smallest = 0
         curr_data = data
-        
+
         for deep in range(depth):
             for i in range(len(curr_data)):
                 pass
-            
+
         # Set each item to between feature range using percentages, iterating from depth
-        
+
     def load_mnist():
         raw = []
         train_samples = []
@@ -159,9 +159,10 @@ class Data(classmethod):
         try:
             with open('Data/MNIST.csv') as file:
                 pass
-            
+
         except:
-            raise FileNotFoundError('You must have the folders of data installed to load MNIST data using easyNeuron.')
+            raise FileNotFoundError(
+                'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
 
 class Activation(classmethod):
@@ -434,21 +435,39 @@ class Layer_Dense(Layer):
         return self.output
 
 # Subclasses: Costs
+
+
 class MSE(Cost):
     def __init__(self):
         self.output = 0
         self._type = 'MSE'
-    
+
     def forward(self, inputs: list or tuple, targets: list or tuple):
         length = len(inputs)
-        if length != len(targets): raise IndexError(f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
-        
+        if length != len(targets):
+            raise IndexError(
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+
         self.output = 0
         for i in range(length):
             self.output += (inputs[i] - targets[i])**2
         self.output /= length
-        
+
         return self.output
+
+    def backward(self, inputs: list or tuple, targets: list or tuple):
+        length = len(inputs)
+        if length != len(targets):
+            raise IndexError(
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+
+        self.output = 0
+        for i in range(length):
+            self.output += 2(inputs[i] - targets[i])
+        self.output /= length
+
+        return self.output
+
 
 if __name__ == '__main__':
     pass
