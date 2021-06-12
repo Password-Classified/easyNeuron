@@ -166,7 +166,7 @@ class Data(classmethod):
 
 
 class Activation(classmethod):
-    def sigmoid(inputs: list or tuple or float):
+    def sigmoid(inputs: list or tuple or float or int):
         '''
         Run the Sigmoid activation forwards.
         (for forwardpropagation)
@@ -180,7 +180,7 @@ class Activation(classmethod):
         else:
             return Decimal(1/(1+math.e**float(inputs)))
 
-    def sigmoid_prime(inputs: list or tuple or float):
+    def sigmoid_prime(inputs: list or tuple or float or int):
         if type(inputs) == list or type(inputs) == tuple:
             output = []
             for i in inputs:
@@ -191,7 +191,7 @@ class Activation(classmethod):
         else:
             return (1/(1+math.e**float(-inputs))) * (1-(1/(1+math.e**float(-inputs))))
 
-    def relu(inputs: list or tuple or float):
+    def relu(inputs: list or tuple or float or int):
         '''
         Run the ReLU activation forwards.
         (for forwardpropagation)
@@ -204,7 +204,7 @@ class Activation(classmethod):
         else:
             Decimal(max(0, inputs))
 
-    def relu_prime(inputs: list or tuple):
+    def relu_prime(inputs: list or tuple or int):
         if type(inputs) == list or type(inputs) == tuple:
             output = []
             for i in inputs:
@@ -219,6 +219,23 @@ class Activation(classmethod):
             else:
                 return 1
 
+class Costs(classmethod):
+    def MSE(inputs, targets):
+        if type(inputs) == list or type(inputs) == tuple:
+            length = len(inputs)
+            if length != len(targets):
+                raise IndexError(
+                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+
+            output = 0
+            for i in range(length):
+                output += (inputs[i] - targets[i])**2
+            output /= length
+
+            return output
+
+        else:
+            return Decimal((targets-inputs)**2)
 
 # Parent Classes
 
@@ -232,10 +249,11 @@ class Layer(object):
         self.biases = []
         self.weights = []
         self.output = []
+        self._act = 'Undefined'
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Layer_{self.type}(output={self.output})'
+        return f'Layer_{self.type}(activation={self._act})'
 
     def __str__(self):
         return f'Layer_{self.type}(output={self.output})'
@@ -272,6 +290,10 @@ class Layer(object):
     @property
     def type(self):
         return self._type
+    
+    @property
+    def activation(self):
+        return self._act
 
 
 class Cost(object):
@@ -454,6 +476,7 @@ class MSE(Cost):
         self.output /= length
 
         return self.output
+    
 
     def backward(self, inputs: list or tuple, targets: list or tuple):
         length = len(inputs)
