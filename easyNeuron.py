@@ -45,6 +45,7 @@ time_start = timer()
 
 # Classmethods
 
+
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
@@ -52,7 +53,7 @@ class Matrix(classmethod):
     to write my own matrix operations.
     '''
 
-    def dot(list_1, list_2):
+    def dot(list_1: list or tuple, list_2: list or tuple):
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
@@ -91,6 +92,7 @@ class Matrix(classmethod):
             if isinstance(item, inputs):
                 count += Matrix.depth(item)
         return count+1
+
 
 class Timing(classmethod):
     def get_time(disp=False):
@@ -169,7 +171,7 @@ class Data(classmethod):
 class Activation(classmethod):
     valid_activations = ['sigmoid', 'sigmoid_prime',
                          'relu', 'relu_prime']
-    
+
     def sigmoid(inputs: list or tuple or float or int):
         '''
         Run the Sigmoid activation forwards.
@@ -223,18 +225,25 @@ class Activation(classmethod):
             else:
                 return 1
 
+
 class Costs(classmethod):
     def MSE(inputs, targets):
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
             if tp != list:
-                if tp == tuple: inpt = list(inpt)
-                elif tp == int or tp == float: inpt = [inpt]
+                if tp == tuple:
+                    inpt = list(inpt)
+                elif tp == int or tp == float:
+                    inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets): raise TypeError(f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else: raise TypeError(f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
-        
+                    if type(inputs) == type(targets):
+                        raise TypeError(
+                            f'Both parameters should be list, tuple, int or float, not {tp}.')
+                    else:
+                        raise TypeError(
+                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+
         if type(inputs) == list or type(inputs) == tuple:
             length = len(inputs)
             if length != len(targets):
@@ -250,18 +259,24 @@ class Costs(classmethod):
 
         else:
             return Decimal((targets-inputs)**2)
-        
+
     def MSE_prime(inputs, targets):
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
             if tp != list:
-                if tp == tuple: inpt = list(inpt)
-                elif tp == int or tp == float: inpt = [inpt]
+                if tp == tuple:
+                    inpt = list(inpt)
+                elif tp == int or tp == float:
+                    inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets): raise TypeError(f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else: raise TypeError(f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
-        
+                    if type(inputs) == type(targets):
+                        raise TypeError(
+                            f'Both parameters should be list, tuple, int or float, not {tp}.')
+                    else:
+                        raise TypeError(
+                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+
         length = len(inputs)
         if length != len(targets):
             raise IndexError(
@@ -273,7 +288,6 @@ class Costs(classmethod):
         output /= length
 
         return output
-
 
 
 # Parent Classes
@@ -329,7 +343,7 @@ class Layer(object):
     @property
     def type(self):
         return self._type
-    
+
     @property
     def activation(self):
         return self._act
@@ -444,13 +458,14 @@ class Layer_Dense(Layer):
     default turn-to for developers.
     '''
 
-    def __init__(self, n_inputs: int, n_neurons: int, activation:str, bias_init: float = 0):
+    def __init__(self, n_inputs: int, n_neurons: int, activation: str, bias_init: float = 0):
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
             raise ValueError('"n_neurons" parameter should be > 0.')
         if not activation in Activation.valid_activations:
-            raise ValueError(f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n    {Activation.valid_activations}')
+            raise ValueError(
+                f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n    {Activation.valid_activations}')
 
         self.biases = []
         for x in range(n_neurons):
@@ -493,23 +508,20 @@ class Layer_Dense(Layer):
         run through the activation.
         '''
         self.output = []
-        
+
         # Dot product
         for neuron in range(len(self.biases)):  # iterate for the num of neurons
             dotted = Matrix.dot(self.weights[neuron], inputs)
             self.output.append(Decimal(dotted + self.biases[neuron]))
-            
+
         # Activation
         for i in range(len(self.output)):
             self.output[i] = getattr(Activation, '')
-        
+
         return self.output
 
 
-
 # Subclasses: Costs
-
-        
 
 
 if __name__ == '__main__':
