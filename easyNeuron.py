@@ -208,7 +208,7 @@ class Activation(classmethod):
                 output.append(Decimal(max(0, i)))
             return output
         else:
-            Decimal(max(0, inputs))
+            return Decimal(max(0, inputs))
 
     def relu_prime(inputs: list or tuple or int):
         if type(inputs) == list or type(inputs) == tuple:
@@ -244,6 +244,7 @@ class Costs(classmethod):
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
         if type(inputs) == list or type(inputs) == tuple:
+            
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
@@ -520,4 +521,4 @@ class Layer_Dense(Layer):
 
 
 if __name__ == '__main__':
-    Timing.get_time(True)
+    print('Import ', end=''); Timing.get_time(True)
