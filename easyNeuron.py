@@ -24,6 +24,9 @@ This module uses only Python `Standard Library` modules for it - and here they a
 This module has extensive docstrings that are being constantly updated through time. They use
 MarkDown formatting, so I am not sure if they show up properly on IDLE, but should on IDEs like
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
+
+
+#### Github Repository: https://github.com/Password-Classified/easyNeuron
 '''
 
 __version__ = 1.2
@@ -525,4 +528,4 @@ class Layer_Dense(Layer):
 
 
 if __name__ == '__main__':
-    print(Timing.get_time())
+    Timing.get_time(True)
