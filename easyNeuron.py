@@ -34,12 +34,14 @@ import os
 import pickle
 import random
 import sys
+import warnings
 from decimal import Decimal
 from pprint import pprint
 from timeit import default_timer as timer
 
-time_start = timer()
+warnings.filterwarnings('ignore', category=SyntaxWarning)
 
+time_start = timer()
 
 # Classmethods
 
@@ -83,6 +85,12 @@ class Matrix(classmethod):
             pprint(new)
         return new
 
+    def depth(inputs):
+        count = 0
+        for item in inputs:
+            if isinstance(item, inputs):
+                count += Matrix.depth(item)
+        return count+1
 
 class Timing(classmethod):
     def get_time(disp=False):
@@ -127,13 +135,6 @@ class Data(classmethod):
 
         return data
 
-    def depth(inputs):
-        count = 0
-        for item in inputs:
-            if isinstance(item, inputs):
-                count += Matrix.depth(item)
-        return count+1
-
     def scale(data: list, feature_range: tuple = (0, 1)):
 
         if len(feature_range) != 2:
@@ -166,6 +167,9 @@ class Data(classmethod):
 
 
 class Activation(classmethod):
+    valid_activations = ['sigmoid', 'sigmoid_prime',
+                         'relu', 'relu_prime']
+    
     def sigmoid(inputs: list or tuple or float or int):
         '''
         Run the Sigmoid activation forwards.
@@ -221,6 +225,16 @@ class Activation(classmethod):
 
 class Costs(classmethod):
     def MSE(inputs, targets):
+        inp = [inputs, targets]
+        for inpt in inp:
+            tp = type(inpt)
+            if tp != list:
+                if tp == tuple: inpt = list(inpt)
+                elif tp == int or tp == float: inpt = [inpt]
+                else:
+                    if type(inputs) == type(targets): raise TypeError(f'Both parameters should be list, tuple, int or float, not {tp}.')
+                    else: raise TypeError(f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+        
         if type(inputs) == list or type(inputs) == tuple:
             length = len(inputs)
             if length != len(targets):
@@ -229,13 +243,38 @@ class Costs(classmethod):
 
             output = 0
             for i in range(length):
-                output += (inputs[i] - targets[i])**2
+                output += ((inputs[i] - targets[i])**2)/2
             output /= length
 
             return output
 
         else:
             return Decimal((targets-inputs)**2)
+        
+    def MSE_prime(inputs, targets):
+        inp = [inputs, targets]
+        for inpt in inp:
+            tp = type(inpt)
+            if tp != list:
+                if tp == tuple: inpt = list(inpt)
+                elif tp == int or tp == float: inpt = [inpt]
+                else:
+                    if type(inputs) == type(targets): raise TypeError(f'Both parameters should be list, tuple, int or float, not {tp}.')
+                    else: raise TypeError(f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+        
+        length = len(inputs)
+        if length != len(targets):
+            raise IndexError(
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+
+        output = 0
+        for i in range(length):
+            output += (inputs[i] - targets[i])
+        output /= length
+
+        return output
+
+
 
 # Parent Classes
 
@@ -405,11 +444,13 @@ class Layer_Dense(Layer):
     default turn-to for developers.
     '''
 
-    def __init__(self, n_inputs: int, n_neurons: int, bias_init: float = 0):
+    def __init__(self, n_inputs: int, n_neurons: int, activation:str, bias_init: float = 0):
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
             raise ValueError('"n_neurons" parameter should be > 0.')
+        if not activation in Activation.valid_activations:
+            raise ValueError(f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n    {Activation.valid_activations}')
 
         self.biases = []
         for x in range(n_neurons):
@@ -422,6 +463,7 @@ class Layer_Dense(Layer):
                 self.weights[i].append(random.randrange(-4, 4))
 
         self._type = 'Dense'
+        self._act = activation
         self.output = []
 
     def randomize(self, bias: int = 0):
@@ -451,46 +493,24 @@ class Layer_Dense(Layer):
         run through the activation.
         '''
         self.output = []
+        
+        # Dot product
         for neuron in range(len(self.biases)):  # iterate for the num of neurons
             dotted = Matrix.dot(self.weights[neuron], inputs)
             self.output.append(Decimal(dotted + self.biases[neuron]))
+            
+        # Activation
+        for i in range(len(self.output)):
+            self.output[i] = getattr(Activation, '')
+        
         return self.output
+
+
 
 # Subclasses: Costs
 
-
-class MSE(Cost):
-    def __init__(self):
-        self.output = 0
-        self._type = 'MSE'
-
-    def forward(self, inputs: list or tuple, targets: list or tuple):
-        length = len(inputs)
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
-
-        self.output = 0
-        for i in range(length):
-            self.output += (inputs[i] - targets[i])**2
-        self.output /= length
-
-        return self.output
-    
-
-    def backward(self, inputs: list or tuple, targets: list or tuple):
-        length = len(inputs)
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
-
-        self.output = 0
-        for i in range(length):
-            self.output += 2(inputs[i] - targets[i])
-        self.output /= length
-
-        return self.output
+        
 
 
 if __name__ == '__main__':
-    pass
+    print(Timing.get_time())
