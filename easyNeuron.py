@@ -46,9 +46,7 @@ warnings.filterwarnings('ignore', category=SyntaxWarning)
 
 time_start = timer()
 
-# Classmethods
-
-
+# General Classmethods
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
@@ -96,14 +94,12 @@ class Matrix(classmethod):
                 count += Matrix.depth(item)
         return count+1
 
-
 class Timing(classmethod):
     def get_time(disp=False):
         current_time = timer()-time_start
         if disp:
             print(f'Time Elapsed: {current_time}')
         return current_time
-
 
 class Data(classmethod):
     '''
@@ -171,6 +167,7 @@ class Data(classmethod):
                 'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
 
+# Network Classmethods
 class Activation(classmethod):
     valid_activations = ['sigmoid', 'sigmoid_prime',
                          'relu', 'relu_prime']
@@ -227,7 +224,6 @@ class Activation(classmethod):
                 return 0
             else:
                 return 1
-
 
 class Costs(classmethod):
     def MSE(inputs, targets):
@@ -294,7 +290,6 @@ class Costs(classmethod):
 
 
 # Parent Classes
-
 class Layer(object):
     '''
     Parent class to all layers, containing
@@ -351,7 +346,6 @@ class Layer(object):
     def activation(self):
         return self._act
 
-
 class Cost(object):
     '''
     Parent class to all costs, containing
@@ -400,7 +394,6 @@ class Cost(object):
     @property
     def type(self):
         return self._type
-
 
 class Optimizer(object):
     '''
@@ -522,7 +515,6 @@ class Layer_Dense(Layer):
             self.output[i] = getattr(Activation, '')
 
         return self.output
-
 
 # Subclasses: Costs
 
