@@ -37,12 +37,10 @@ import os
 import pickle
 import random
 import sys
-import warnings
 from decimal import Decimal
 from pprint import pprint
 from timeit import default_timer as timer
 
-warnings.filterwarnings('ignore', category=SyntaxWarning)
 
 time_start = timer()
 
