@@ -511,12 +511,11 @@ class Layer_Dense(Layer):
 
         # Activation
         for i in range(len(self.output)):
-            self.output[i] = getattr(Activation, '')
+            self.output[i] = getattr(Activation, f'{self.activation}')(i) # run activation on it
 
         return self.output
 
-# Subclasses: Costs
 
 
 if __name__ == '__main__':
-    print('Import ', end=''); Timing.get_time(True)
+    print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile version (this file)
