@@ -26,7 +26,7 @@ MarkDown formatting, so I am not sure if they show up properly on IDLE, but shou
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
 
 
-#### Github Repository: https://github.com/Password-Classified/easyNeuron
+#### Github Repository: https://github.com/Password-Classified/easyNeuron - this is not published yet.
 '''
 
 __version__ = 1.2
@@ -42,9 +42,7 @@ from pprint import pprint
 from timeit import default_timer as timer
 
 
-time_start = timer()
-
-# General Classmethods
+# Classmethod for matrices.
 class Matrix(classmethod):
     '''
     A classmethod for matrix operations,
@@ -91,81 +89,8 @@ class Matrix(classmethod):
             if isinstance(item, inputs):
                 count += Matrix.depth(item)
         return count+1
-
-class Timing(classmethod):
-    def get_time(disp=False):
-        current_time = timer()-time_start
-        if disp:
-            print(f'Time Elapsed: {current_time}')
-        return current_time
-
-class Data(classmethod):
-    '''
-    A classmethod for data manipulation,
-    acquirement, loading and saving.
-    '''
-
-    def load_object(file_to_open):
-        '''
-        Load a list or any other object from a
-        text file that will be created/opened.
-        '''
-        try:
-            file_to_open_data = open(file_to_open, 'r')
-            data = pickle.load(bytes(file_to_open_data))
-        except FileNotFoundError:
-            raise FileNotFoundError(
-                f'An error has occured loading file_to_open {str(file_to_open_data)}.')
-        finally:
-            file_to_open_data.close()
-
-        return data
-
-    def save_object(data, file_to_open):
-        try:
-            file_to_open_data = open(file_to_open, 'w')
-            data = pickle.dump(bytes(file_to_open))
-            file_to_open_data.write(data)
-        except FileExistsError:
-            raise FileExistsError(
-                f'An error has occured saving file_to_open {str(file_to_open_data)}')
-        finally:
-            file_to_open_data.close()
-
-        return data
-
-    def scale(data: list, feature_range: tuple = (0, 1)):
-
-        if len(feature_range) != 2:
-            raise ValueError(
-                f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
-
-        depth = Matrix.depth(data)
-        largest = 0
-        smallest = 0
-        curr_data = data
-
-        for deep in range(depth):
-            for i in range(len(curr_data)):
-                pass
-
-        # Set each item to between feature range using percentages, iterating from depth
-
-    def load_mnist():
-        raw = []
-        train_samples = []
-        train_labels = []
-        scaled_train_samples = []
-        try:
-            with open('Data/MNIST.csv') as file:
-                pass
-
-        except:
-            raise FileNotFoundError(
-                'You must have the folders of data installed to load MNIST data using easyNeuron.')
-
-
-# Network Classmethods
+  
+# Classmethods so I don't need to create objects for each of these.
 class Activation(classmethod):
     valid_activations = ['sigmoid', 'sigmoid_prime',
                          'relu', 'relu_prime']
@@ -222,7 +147,7 @@ class Activation(classmethod):
                 return 0
             else:
                 return 1
-
+            
 class Costs(classmethod):
     def MSE(inputs, targets):
         inp = [inputs, targets]
@@ -256,7 +181,7 @@ class Costs(classmethod):
             return output
 
         else:
-            return Decimal((targets-inputs)**2)
+            return Decimal(((targets-inputs)**2)/2)
 
     def MSE_prime(inputs, targets):
         inp = [inputs, targets]
@@ -288,7 +213,7 @@ class Costs(classmethod):
         return output
 
 
-# Parent Classes
+# Parent Classes  
 class Layer(object):
     '''
     Parent class to all layers, containing
@@ -344,56 +269,7 @@ class Layer(object):
     @property
     def activation(self):
         return self._act
-
-class Cost(object):
-    '''
-    Parent class to all costs, containing
-    the `__dunder__` methods needed.
-    '''
-
-    def __init__(self):
-        self.output = []
-        self._type = 'Undefined'
-
-    def __repr__(self):
-        return f'Cost_{self.type}(output={self.output})'
-
-    def __str__(self):
-        return f'Cost_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
-
-    def __len__(self):
-        return len(self.biases)
-
-    def __eq__(self, o: object):
-        try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
-            else:
-                return NotImplemented
-        except:
-            raise TypeError(
-                f'Cost_{self.type} object is not comparable to given {type(o)} object.')
-
-    def __hash__(self):
-        return hash((self.output))
-
-    def __bytes__(self):
-        return bytes(self.output)
-
-    def __enter__(self):
-        return self.output
-
-    def __exit__(self, type, value, traceback):
-        pass
-
-    @property
-    def type(self):
-        return self._type
-
+        
 class Optimizer(object):
     '''
     Parent class to all optimizers  , containing
@@ -444,7 +320,7 @@ class Optimizer(object):
         return self._type
 
 
-# Subclasses: Layers
+# Object subclasses
 class Layer_Dense(Layer):
     '''
     Create a layer with all neurons
@@ -515,7 +391,27 @@ class Layer_Dense(Layer):
 
         return self.output
 
-
-
+# Demo
 if __name__ == '__main__':
-    print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile 
+    '''
+    The simple dataset below has numbers
+    between 1 and 35, and if the number is
+    greater or equal to 20, the output is 1.
+    If it is less, it is 0. This is a simple dataset
+    I'll train the first network on.
+    '''
+    inputs = [[29], [35], [17], [2], [16], [1], [11], [4], [35], [31], [21], [17], [4], [7], [24], [12], [28], [16], [5], [11], [32], [18], [27], [18], [18], [23], [10], [16], [28], [12], [34], [35], [17], [22], [24], [7], [7], [28], [26], [21], [9], [18], [25], [3], [16], [25], [25], [16], [15], [6], [21], [9], [31], [28], [3], [35], [27], [31], [23], [9], [3], [25], [32], [33], [6], [35], [27], [27], [28], [24], [27], [15], [16], [34], [13], [16], [15], [14], [28], [15], [13], [18], [13], [22], [20], [18], [2], [31], [26], [11], [12], [25], [35], [20], [31], [23], [27], [21], [32], [18]]
+    labels = [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+
+    
+    l1 = Layer_Dense(1, 3, activation='sigmoid') # Input layer
+    l2 = Layer_Dense(3, 2, activation='sigmoid') # Hidden layer
+    l3 = Layer_Dense(2, 1, activation='sigmoid') # Output layer
+    
+    # Forward propagate
+    for i in inputs: # Iterate through inputs
+        l1.forward(i)
+        l2.forward(l1.output)
+        l3.forward(l2.output)
+
+        print(f'Cost: {Costs.MSE(l3.output, i)}')
