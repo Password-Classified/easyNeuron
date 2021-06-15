@@ -9,6 +9,7 @@ a full version that uses `numba` (non-standard library) to speed up code by runn
 ## Dependencies
 This module uses only Python `Standard Library` modules for it - and here they are.
 
+ - copy
  - csv
  - math
  - os
@@ -31,6 +32,7 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 
 __version__ = 1.2
 
+import copy
 import csv
 import math
 import os
@@ -143,13 +145,14 @@ class Data(classmethod):
         depth = Matrix.depth(data)
         largest = 0
         smallest = 0
-        curr_data = data
+        curr_data = copy.deepcopy(data)
 
         for deep in range(depth):
             for i in range(len(curr_data)):
                 pass
-
-        # Set each item to between feature range using percentages, iterating from depth
+            
+    def shuffle(data):
+        return random.shuffle(data)
 
     def load_mnist():
         raw = []
@@ -470,4 +473,11 @@ class Layer_Dense(Layer):
 
 
 if __name__ == '__main__':
-    print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile 
+    print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
+    
+    X = [[1, 20],[2, 19],[23, 2],[30, 5],[4, 24],[16, 2]]
+    y = [1, 0]
+    
+    l1 = Layer_Dense(2, 1, activation='sigmoid')
+    
+    
