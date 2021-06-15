@@ -13,6 +13,15 @@ please provide feedback for any issues you come accross
 
 <br/>
 
+## **Installation**
+To install `easyNeuron`, you can simply use pip, with the command:
+```
+py -m pip install easyneuron
+```
+
+<br/>
+<br/>
+
 ## **Exceptions**
 `easyNeuron` uses the basic built-in exceptions that are in the Standard Library.
 As well as them, `easyNeuron` has its own exceptions for comprehensive error messages to make your workflow faster.

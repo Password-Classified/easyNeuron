@@ -1,5 +1,5 @@
-[easyNeuron]
-name = "easyNeuron"
+[easyneuron]
+name = "easyneuron"
 version = "1.2.0"
 description = "easyNeuron is a lightweight neural network framework written in raw Python."
 authors = [
