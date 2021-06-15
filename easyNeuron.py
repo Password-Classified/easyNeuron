@@ -1,6 +1,6 @@
 '''
 # easyNeuron
-`easyNeuron` is a lightweight neural network framework written in Python for Python as one file.
+`easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
@@ -256,7 +256,7 @@ class Costs(classmethod):
             return output
 
         else:
-            return Decimal((targets-inputs)**2)
+            return Decimal(((targets-inputs)**2)/2)
 
     def MSE_prime(inputs, targets):
         inp = [inputs, targets]
@@ -345,54 +345,6 @@ class Layer(object):
     def activation(self):
         return self._act
 
-class Cost(object):
-    '''
-    Parent class to all costs, containing
-    the `__dunder__` methods needed.
-    '''
-
-    def __init__(self):
-        self.output = []
-        self._type = 'Undefined'
-
-    def __repr__(self):
-        return f'Cost_{self.type}(output={self.output})'
-
-    def __str__(self):
-        return f'Cost_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
-
-    def __len__(self):
-        return len(self.biases)
-
-    def __eq__(self, o: object):
-        try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
-            else:
-                return NotImplemented
-        except:
-            raise TypeError(
-                f'Cost_{self.type} object is not comparable to given {type(o)} object.')
-
-    def __hash__(self):
-        return hash((self.output))
-
-    def __bytes__(self):
-        return bytes(self.output)
-
-    def __enter__(self):
-        return self.output
-
-    def __exit__(self, type, value, traceback):
-        pass
-
-    @property
-    def type(self):
-        return self._type
 
 class Optimizer(object):
     '''
