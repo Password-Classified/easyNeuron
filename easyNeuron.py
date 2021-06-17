@@ -167,6 +167,14 @@ class Data(classmethod):
             raise FileNotFoundError(
                 'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
+    def load_dna():
+        pass
+    
+    def load_words():
+        pass
+
+    def load_cities():
+        pass
 
 # Network Classmethods
 class Activation(classmethod):
