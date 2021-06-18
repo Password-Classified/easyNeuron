@@ -173,8 +173,14 @@ class Data(classmethod):
     def load_words():
         pass
 
-    def load_cities():
-        pass
+    def load_cities():        
+        with open('Data/Cities.txt') as file:
+            output = file.readlines()
+        
+        for i in range(len(output)):
+            output[i] = output[i].strip('\n')
+        
+        return output
 
 # Network Classmethods
 class Activation(classmethod):
