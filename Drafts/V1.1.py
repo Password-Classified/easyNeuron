@@ -495,7 +495,7 @@ if __name__ == '__main__':  # Will not run if imported as a module
     l = Layer_Dense(2, 1)
     grad = Optimizer_GradDesc([[l, sig]], ce, h=0.1)
 
-    grad.optimize(training_data, training_targets, reps=100, epoch=50000)
+    grad.optimize(training_data, training_targets, reps=30, epoch=50000)
 
     pred = sig.forward(l.forward(mystery_flower_red))
     
