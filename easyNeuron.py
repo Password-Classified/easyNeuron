@@ -422,7 +422,7 @@ class Layer_Dense(Layer):
     default turn-to for developers.
     '''
 
-    def __init__(self, n_inputs: int, n_neurons: int, activation: str, bias_init: float = 0):
+    def __init__(self, n_inputs: int, n_neurons: int, activation: str, weight_init:str='xavier', bias_init: float = 0):
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
@@ -436,10 +436,19 @@ class Layer_Dense(Layer):
             self.biases.append(bias_init)
 
         self.weights = []
+        if weight_init == 'xavier':
+            xav1_sqrt = math.sqrt(1/n_inputs)
+            xav2_sqrt = math.sqrt(2/n_inputs)
+        
         for i in range(n_neurons):
             self.weights.append([])
             for n in range(n_inputs):
-                self.weights[i].append(random.randrange(-4, 4))
+                if (weight_init == 'xavier' or weight_init == 'glorot') and activation != 'relu':
+                    self.weights[i].append(random.normalvariate(0, 1)*xav1_sqrt)
+                elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
+                    self.weights[i].append(random.normalvariate(0, 1)*xav2_sqrt)
+                else:
+                    self.weights[i].append(random.normalvariate(0, 1))
 
         self._type = 'Dense'
         self._act = activation
@@ -460,7 +469,7 @@ class Layer_Dense(Layer):
         for i in range(len(self.biases)):
             self.weights.append([])
             for n in range(len(self.weights)):
-                self.weights[i].append(random.randint(-4, 4))
+                self.weights[i].append(random.normalvariate(0, 1))
 
     def forward(self, inputs):
         '''
@@ -494,4 +503,5 @@ if __name__ == '__main__':
     
     l1 = Layer_Dense(2, 1, activation='sigmoid')
     
+    print(l1.weights)   
     

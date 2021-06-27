@@ -288,7 +288,7 @@ class Layer_Dense(Layer):
         for i in range(n_neurons):
             self.weights.append([])
             for n in range(n_inputs):
-                self.weights[i].append(random.randrange(-4, 4))
+                self.weights[i].append(random.normalvariate(0, 1))
 
         self._type = 'Dense'
         self.output = []
