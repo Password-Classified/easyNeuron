@@ -362,7 +362,6 @@ class Layer(object):
     def activation(self):
         return self._act
 
-
 class Optimizer(object):
     '''
     Parent class to all optimizers  , containing
@@ -412,6 +411,61 @@ class Optimizer(object):
     def type(self):
         return self._type
 
+class Model(object):
+    '''
+    Parent class to all layers, containing
+    the `__dunder__` methods needed.
+    '''
+
+    def __init__(self, network: list):
+        self.biases = []
+        self.weights = []
+        self.output = []
+        self._net = 'Undefined'
+        self._type = 'Undefined'
+
+    def __repr__(self):
+        return f'Layer_{self.type}(activation={self._net})'
+
+    def __str__(self):
+        return f'Layer_{self.type}(output={self.output})'
+
+    def __bool__(self):
+        if self.output != []:
+            return True
+
+    def __len__(self):
+        return len(self.output)
+
+    def __eq__(self, o: object):
+        try:
+            if self.__class__ == o.__class__:
+                return (self.output, self.type) == (o.output, o.type)
+            else:
+                return NotImplemented
+        except:
+            raise TypeError(
+                f'Layer_{self.type} object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        return hash((self.output))
+
+    def __bytes__(self):
+        return bytes(tuple(self.output))
+
+    def __enter__(self):
+        return self.output
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def network(self):
+        return self._net
 
 # Subclasses: Layers
 class Layer_Dense(Layer):
@@ -422,7 +476,9 @@ class Layer_Dense(Layer):
     default turn-to for developers.
     '''
 
-    def __init__(self, n_inputs: int, n_neurons: int, activation: str, weight_init:str='xavier', bias_init: float = 0):
+    def __init__(self, n_inputs: int, n_neurons: int,
+                 activation: str, weight_accuracy: float = 2,
+                 weight_init:str='xavier', bias_init: float = 0):
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
@@ -444,9 +500,9 @@ class Layer_Dense(Layer):
             self.weights.append([])
             for n in range(n_inputs):
                 if (weight_init == 'xavier' or weight_init == 'glorot') and activation != 'relu':
-                    self.weights[i].append(random.normalvariate(0, 1)*xav1_sqrt)
+                    self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
                 elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
-                    self.weights[i].append(random.normalvariate(0, 1)*xav2_sqrt)
+                    self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
                 else:
                     self.weights[i].append(random.normalvariate(0, 1))
 
@@ -493,13 +549,36 @@ class Layer_Dense(Layer):
 
         return self.output
 
+# Subclasses: Models
+class FeedForward(Model):
+    def __init__(self, network: list):
+        self.output = []
+        self._net = network
+        self._type = 'FeedForward'
+
+# Subclasses: Optimizers
 
 
+# Demo
 if __name__ == '__main__':
     print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
     
-    X = [[1, 20],[2, 19],[23, 2],[30, 5],[4, 24],[16, 2]]
-    y = [1, 0]
+    raw = []
+    
+    for i in range(200):
+        raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/200, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/200])
+        raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/200, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/200])
+    
+    X = [ x[0] for x in raw ]
+    y = [ x[1] for x in raw ]
+    
+    import matplotlib.pyplot as plt
+    plt.title('Example Data: Flower Petals')
+    plt.xlabel('Length')
+    plt.ylabel('Width')
+    plt.scatter(X, y)
+    plt.grid()
+    plt.show()
     
     l1 = Layer_Dense(2, 1, activation='sigmoid')
     
