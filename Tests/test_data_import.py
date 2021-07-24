@@ -12,8 +12,9 @@ from easyNeuron import *
 
 class DataTester(unittest.TestCase):
 
-    def test_relu(self):
-        pass
+    def test_cities(self):
+        self.assertTrue(
+            Data.load_cities()[:5] == ['South Elmira', 'South Trey', 'West Hobarttown', 'Mohrstad', 'Funkmouth'])
     
 
 if __name__ == '__main__':
