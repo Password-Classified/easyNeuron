@@ -529,8 +529,8 @@ class Layer_Dense(Layer):
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
                 elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
-                else:
-                    self.weights[i].append(random.normalvariate(0, 1))
+                elif (weight_init == 'integer' or weight_init == 'range'):
+                    self.weights[i].append(random.randrange(-4, 4))
 
         self._type = 'Dense'
         self._act = activation
@@ -631,11 +631,11 @@ if __name__ == '__main__':
     '''
     
     model = FeedForward([
-        Layer_Dense(1, 2, activation='sigmoid')
+        Layer_Dense(1, 2, activation='sigmoid', weight_init='integer')
     ])
     
     print(X[0])
     print(y[0])
     model.forward(X[0])
-    
+    print(model.network[0].forward([6]))
     print(model.output)
