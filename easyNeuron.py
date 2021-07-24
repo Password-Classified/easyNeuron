@@ -100,6 +100,7 @@ class Matrix(classmethod):
         return count+1
 
 class Timing(classmethod):
+    
     def get_time(disp=False) -> float:
         current_time = timer()-time_start
         if disp:
@@ -208,22 +209,21 @@ class Activation(classmethod):
         if type(inputs) == list or type(inputs) == tuple:
             output = []
             for i in inputs:
-                output.append(Decimal(1/(1+math.e**float(i))))
+                output.append(Decimal(1/(1+math.e**-float(i))))
             return output
 
         else:
-            return Decimal(1/(1+math.e**float(inputs)))
+            return Decimal(1/(1+math.e**-float(inputs)))
 
     def sigmoid_prime(inputs: list or tuple or float or int):
         if type(inputs) == list or type(inputs) == tuple:
             output = []
             for i in inputs:
-                output.append((1/(1+math.e**float(-i))) *
-                              (1-(1/(1+math.e**float(-i)))))
+                output.append( (1/(1+math.e**-float(i))) * (1-(1/(1+math.e**-float(i)))) )
             return output
 
         else:
-            return (1/(1+math.e**float(-inputs))) * (1-(1/(1+math.e**float(-inputs))))
+            return (1/(1+math.e**-float(inputs))) * (1-(1/(1+math.e**-float(inputs))))
 
     def relu(inputs: list or tuple or float or int):
         '''
@@ -634,8 +634,8 @@ if __name__ == '__main__':
         Layer_Dense(1, 2, activation='sigmoid', weight_init='integer')
     ])
     
-    print(X[0])
-    print(y[0])
+    print(X[1])
+    print(y[1])
     model.forward(X[0])
     print(model.network[0].forward([6]))
     print(model.output)
