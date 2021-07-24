@@ -43,8 +43,13 @@ from decimal import Decimal
 from pprint import pprint
 from timeit import default_timer as timer
 
-
 time_start = timer()
+
+# Control Variables
+valid_optimizers = ['Grad_Desc']
+valid_layers = ['Layer_Dense']
+valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
+valid_costs = ['MSE', 'MSE_prime']
 
 # General Classmethods
 class Matrix(classmethod):
@@ -54,16 +59,16 @@ class Matrix(classmethod):
     to write my own matrix operations.
     '''
 
-    def dot(list_1: list or tuple, list_2: list or tuple):
+    def dot(list_1: list or tuple, list_2: list or tuple) -> list:
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
         dimensional).
         '''
-
+        # if len(list_1) != len(list_2): raise ArithmeticError(f'List_1 length ({len(list_1)}), is not equal to list_2 length ({len(list_2)})')
         return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
 
-    def transpose(matrix: list, disp=False):
+    def transpose(matrix: list, disp=False) -> list:
         '''
         Returns a **transposed** matrix from the
         matrix you inputed to start with.
@@ -87,7 +92,7 @@ class Matrix(classmethod):
             pprint(new)
         return new
 
-    def depth(inputs):
+    def depth(inputs) -> list:
         count = 0
         for item in inputs:
             if isinstance(item, inputs):
@@ -95,7 +100,7 @@ class Matrix(classmethod):
         return count+1
 
 class Timing(classmethod):
-    def get_time(disp=False):
+    def get_time(disp=False) -> float:
         current_time = timer()-time_start
         if disp:
             print(f'Time Elapsed: {current_time}')
@@ -107,7 +112,7 @@ class Data(classmethod):
     acquirement, loading and saving.
     '''
 
-    def load_object(file_to_open):
+    def load_object(file_to_open) -> list:
         '''
         Load a list or any other object from a
         text file that will be created/opened.
@@ -123,7 +128,7 @@ class Data(classmethod):
 
         return data
 
-    def save_object(data, file_to_open):
+    def save_object(data, file_to_open) -> str:
         try:
             file_to_open_data = open(file_to_open, 'w')
             data = pickle.dump(bytes(file_to_open))
@@ -145,11 +150,21 @@ class Data(classmethod):
         depth = Matrix.depth(data)
         largest = 0
         smallest = 0
-        curr_data = copy.deepcopy(data)
+        curr_data = data
 
-        for deep in range(depth):
-            for i in range(len(curr_data)):
-                pass
+
+        for item in curr_data:
+            if depth >1:
+                for deep in depth:
+                    if item[deep] > largest:
+                        largest = item[deep]
+                    elif item[deep] < smallest:
+                        smallest = item[deep]
+            else:
+                if item > largest:
+                    largest = item
+                elif item < smallest:
+                    smallest = item
             
     def shuffle(data):
         return random.shuffle(data)
@@ -184,8 +199,6 @@ class Data(classmethod):
 
 # Network Classmethods
 class Activation(classmethod):
-    valid_activations = ['sigmoid', 'sigmoid_prime',
-                         'relu', 'relu_prime']
 
     def sigmoid(inputs: list or tuple or float or int):
         '''
@@ -329,6 +342,9 @@ class Layer(object):
         if self.output != []:
             return True
 
+    def __call__(self, inputs):
+        return self.forward(inputs)
+
     def __len__(self):
         return len(self.output)
 
@@ -353,6 +369,10 @@ class Layer(object):
 
     def __exit__(self, type, value, traceback):
         pass
+
+    def forward(self, inputs):
+        self.inputs = inputs
+        return inputs
 
     @property
     def type(self):
@@ -417,11 +437,13 @@ class Model(object):
     the `__dunder__` methods needed.
     '''
 
-    def __init__(self, network: list):
+    def __init__(self, network: list, optimizer: str = 'grad_desc'):
         self.biases = []
         self.weights = []
         self.output = []
-        self._net = 'Undefined'
+        self.inputs = []
+        self.optimizer = optimizer
+        self._net = network
         self._type = 'Undefined'
 
     def __repr__(self):
@@ -459,6 +481,10 @@ class Model(object):
     def __exit__(self, type, value, traceback):
         pass
 
+    def forward(self, inputs) -> list:
+        self.inputs = inputs
+        return inputs
+
     @property
     def type(self):
         return self._type
@@ -478,17 +504,17 @@ class Layer_Dense(Layer):
 
     def __init__(self, n_inputs: int, n_neurons: int,
                  activation: str, weight_accuracy: float = 2,
-                 weight_init:str='xavier', bias_init: float = 0):
+                 weight_init:str='xavier', bias_init: float = 0) -> None:
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
             raise ValueError('"n_neurons" parameter should be > 0.')
-        if not activation in Activation.valid_activations:
+        if not activation in valid_activations:
             raise ValueError(
-                f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n    {Activation.valid_activations}')
+                f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n{valid_activations}')
 
         self.biases = []
-        for x in range(n_neurons):
+        for _ in range(n_neurons):
             self.biases.append(bias_init)
 
         self.weights = []
@@ -509,8 +535,9 @@ class Layer_Dense(Layer):
         self._type = 'Dense'
         self._act = activation
         self.output = []
+        self.inputs = []
 
-    def randomize(self, bias: int = 0):
+    def randomize(self, bias: int = 0) -> None:
         '''
         Randomize the weights and biases.
         Weights are randomized at the
@@ -527,7 +554,7 @@ class Layer_Dense(Layer):
             for n in range(len(self.weights)):
                 self.weights[i].append(random.normalvariate(0, 1))
 
-    def forward(self, inputs):
+    def forward(self, inputs: list or tuple) -> list:
         '''
         Run the Dense Layer forwards.
         (forward propagate). It takes the
@@ -537,6 +564,7 @@ class Layer_Dense(Layer):
         run through the activation.
         '''
         self.output = []
+        self.inputs = []
 
         # Dot product
         for neuron in range(len(self.biases)):  # iterate for the num of neurons
@@ -545,42 +573,69 @@ class Layer_Dense(Layer):
 
         # Activation
         for i in range(len(self.output)):
-            self.output[i] = getattr(Activation, f'{self.activation}')(i) # run activation on it
+            self.output[i] = getattr(Activation, str(self.activation))(i) # run activation on it
 
         return self.output
 
 # Subclasses: Models
 class FeedForward(Model):
-    def __init__(self, network: list):
+    def __init__(self, network: list, optimizer: str = 'Grad_Desc') -> None:
+        if not optimizer.replace(' ', '_') in valid_optimizers:
+            raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizers are {valid_optimizers}.')
+        
+        for i in network:
+            if not 'Layer' in str(i.__class__): raise ValueError(f'{i.__class__} is not a valid layer class.\nThe valid layer classes are {valid_layers}.')
+        
         self.output = []
+        self.inputs = []
         self._net = network
         self._type = 'FeedForward'
+        self.optimizer = optimizer.replace(' ', '_')
+
+    def forward(self, inputs: list or tuple) -> list:
+        if len(inputs) != len(self.network[0].weights): raise ValueError(f'Inputs argument is not valid.\nLayer expected size was {len(self.network[0].weights)}, but got {len(inputs)} inputs.')
+        for layer in self.network:
+            layer.forward(inputs)
+            inputs = layer.output
+        self.output = inputs
+        return self.output
 
 # Subclasses: Optimizers
-
 
 # Demo
 if __name__ == '__main__':
     print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
     
+    ### Generated Clustered Data ###    
     raw = []
-    
+
+
+    raw = []
+    difficulty = 200  # Lower value produces harder, less clustered data
     for i in range(200):
-        raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/200, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/200])
-        raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/200, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/200])
+        raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
+        raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
+
+    X = [[i[0], i[1]] for i in raw]
+    y = [i[2] for i in raw]
     
-    X = [ x[0] for x in raw ]
-    y = [ x[1] for x in raw ]
-    
+    '''
     import matplotlib.pyplot as plt
+    plt.figure('Data Visualisation')
     plt.title('Example Data: Flower Petals')
     plt.xlabel('Length')
     plt.ylabel('Width')
     plt.scatter(X, y)
     plt.grid()
     plt.show()
+    '''
     
-    l1 = Layer_Dense(2, 1, activation='sigmoid')
+    model = FeedForward([
+        Layer_Dense(1, 2, activation='sigmoid')
+    ])
     
-    print(l1.weights)   
+    print(X[0])
+    print(y[0])
+    model.forward(X[0])
     
+    print(model.output)
