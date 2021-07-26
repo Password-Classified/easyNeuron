@@ -171,13 +171,12 @@ class Data(classmethod):
         return random.shuffle(data)
 
     def load_mnist():
-        raw = []
         train_samples = []
         train_labels = []
         scaled_train_samples = []
         try:
             with open('Data/MNIST.csv') as file:
-                pass
+                raw = csv.reader(file.readlines())
 
         except:
             raise FileNotFoundError(
