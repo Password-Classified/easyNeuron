@@ -387,7 +387,7 @@ class Optimizer(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Optimizer_{self.type}(output={self.output})'
+        return f'Optimizer - {self.type}(output={self.output})'
 
     def __str__(self):
         return f'Optimizer_{self.type}(output={self.output})'
@@ -488,7 +488,7 @@ class Model(object):
         return self._net
 
 # Subclasses: Layers
-class Layer_Dense(Layer):
+class Dense(Layer):
     '''
     Create a layer with all neurons
     attached to next layer. Used a
@@ -595,11 +595,15 @@ class FeedForward(Model):
         return self.output
 
 # Subclasses: Optimizers
+class GradDesc(Optimizer):
+    def __init__(self):
+        self.output = []
+        self._type = 'GradDesc'
 
 # Demo
 if __name__ == '__main__':
     print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
-    
+
     ### Generated Clustered Data ###    
     raw = []
 
@@ -625,7 +629,7 @@ if __name__ == '__main__':
     '''
     
     model = FeedForward([
-        Layer_Dense(1, 2, activation='sigmoid', weight_init='integer')
+        Dense(1, 2, activation='sigmoid', weight_init='integer')
     ])
     
     print(X[1])

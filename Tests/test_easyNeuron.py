@@ -94,10 +94,13 @@ class LayerTester(unittest.TestCase):
     
     def test_dense(self):
         for i in [
-            ['relu', ],
-            ['sigmoid', ]
-        ]:
-            self.assertGreaterEqual()
+            ['relu', [45, 678, 38], [24, 16]],
+            ['sigmoid', [1, 2, 3], [1.5, 2.5]]
+        ]: self.assertNotEqual(
+            float(Loss.MSE([float(x) for x in Dense(3, 2, i[0]).forward(i[1])], i[2])),
+            float(Loss.MSE([float(x) for x in Dense(3, 2, i[0]).forward(i[1])], i[2])),
+            msg='\nThe output of the first dense layer\nis equivalent to that of the second.'
+        )
 
 
 if __name__ == '__main__':
