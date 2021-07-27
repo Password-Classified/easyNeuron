@@ -40,7 +40,6 @@ import pickle
 import random
 import sys
 from decimal import Decimal
-from pprint import pprint
 from timeit import default_timer as timer
 
 time_start = timer()
@@ -68,36 +67,23 @@ class Matrix(classmethod):
         # if len(list_1) != len(list_2): raise ArithmeticError(f'List_1 length ({len(list_1)}), is not equal to list_2 length ({len(list_2)})')
         return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
 
-    def transpose(matrix: list, disp=False) -> list:
+    def transpose(matrix: list) -> list:
         '''
         Returns a **transposed** matrix from the
         matrix you inputed to start with.
-
-        If you set the `disp` parameter to `True`
         '''
-        mat_len = len(matrix)
-        mat_wid = len(matrix[0])
-        new = []
-
-        for i in range(mat_wid):
-            new.append([])
-            for x in range(mat_len):
-                new[i].append(0)
-
-        for x in range(mat_len):
-            for y in range(mat_wid):
-                new[y][x] = matrix[x][y]
-
-        if disp:
-            pprint(new)
+        new = list(zip(*matrix))
+        
+        for i in range(len(new)):
+            new[i] = list(new[i])
+        
         return new
-
+            
     def depth(inputs) -> list:
-        count = 0
-        for item in inputs:
-            if isinstance(item, inputs):
-                count += Matrix.depth(item)
-        return count+1
+        if isinstance(inputs, list):
+            return 1 + max(Matrix.depth(item) for item in inputs)
+        else:
+            return 0
 
 class Timing(classmethod):
     
@@ -169,6 +155,15 @@ class Data(classmethod):
             
     def shuffle(data):
         return random.shuffle(data)
+
+    def load_tutorial_data():
+        raw = []
+        difficulty = 200  # Lower value produces harder, less clustered data
+        for i in range(200):
+            raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
+            raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
+
+        return [[i[0], i[1]] for i in raw], [i[2] for i in raw] # X and y datasets
 
     def load_mnist():
         train_samples = []
@@ -252,7 +247,7 @@ class Activation(classmethod):
             else:
                 return 1
 
-class Costs(classmethod):
+class Loss(classmethod):
     def MSE(inputs, targets):
         inp = [inputs, targets]
         for inpt in inp:

@@ -19,8 +19,7 @@ class ActivationTester(unittest.TestCase):
             [0, 0],
             [1, 1],
             [2, 2]
-        ]:
-            self.assertEquals(Activation.relu(i[0]), i[1])
+        ]: self.assertEquals(Activation.relu(i[0]), i[1])
 
     def test_sigmoid(self):
         for i in [
@@ -29,8 +28,7 @@ class ActivationTester(unittest.TestCase):
             [0, 0.5],
             [1, 0.7310],
             [2, 0.8807]
-        ]:
-            self.assertAlmostEqual(float(Activation.sigmoid(i[0])), i[1], 3)
+        ]: self.assertAlmostEqual(float(Activation.sigmoid(i[0])), i[1], 3)
             
     def test_sigmoidPrime(self):
         for i in [
@@ -39,8 +37,7 @@ class ActivationTester(unittest.TestCase):
             [0, 0.25],
             [1, 0.1966],
             [2, 0.1049]
-        ]:
-            self.assertAlmostEqual(float(Activation.sigmoid_prime(i[0])), i[1], 3)
+        ]: self.assertAlmostEqual(float(Activation.sigmoid_prime(i[0])), i[1], 3)
     
     def test_reluPrime(self):
         for i in [
@@ -49,8 +46,7 @@ class ActivationTester(unittest.TestCase):
             [0, 1],
             [1, 1],
             [2, 1]
-        ]:
-            self.assertEqual(float(Activation.relu_prime(i[0])), i[1], 3)
+        ]: self.assertEqual(float(Activation.relu_prime(i[0])), i[1], 3)
 
 
 class DataTester(unittest.TestCase):
@@ -67,12 +63,22 @@ class LossTester(unittest.TestCase):
         ]:
             self.assertEqual(float(Costs.MSE(i[0], i[1])), i[2])
             
-class MethodTester(unittest.TestCase):
+class MatrixTester(unittest.TestCase):
     
     def test_dot(self):
         for i in [
-            [[2, 3], [3, 4]]
-        ]: pass
+            [[2, 3], [3, 4], 18],
+            [[2, 3, 9], [9, 55, 6], 237]
+        ]: self.assertEqual(Matrix.dot(i[0], i[1]), i[2])
+        
+    def test_depth(self):
+        for i in [
+            [ [[[34]]], 3],
+            [ [[78]], 2],
+            [ [16], 1],
+            [ [[[234, 234]]], 3]
+        ]: self.assertEqual(Matrix.depth(i[0]), i[1])
+
 
 if __name__ == '__main__':
     unittest.main()
