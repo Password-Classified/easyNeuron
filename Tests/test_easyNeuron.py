@@ -9,7 +9,6 @@ sys.path.insert(0, parent_dir)
 
 from easyNeuron import *
 
-
 class ActivationTester(unittest.TestCase):
 
     def test_relu(self):
@@ -48,7 +47,6 @@ class ActivationTester(unittest.TestCase):
             [2, 1]
         ]: self.assertEqual(float(Activation.relu_prime(i[0])), i[1], 3)
 
-
 class DataTester(unittest.TestCase):
 
     def test_cities(self):
@@ -61,8 +59,13 @@ class LossTester(unittest.TestCase):
         for i in [
             [[1, 2, 3], [1.5, 2.5, 3.5], 0.5**2/2],   
         ]:
-            self.assertEqual(float(Costs.MSE(i[0], i[1])), i[2])
+            self.assertEqual(float(Loss.MSE(i[0], i[1])), i[2])
             
+    def test_MSEPrime(self):
+        for i in [
+            [ [5, 3, 4], [5.1, 3.1, 4.1], -0.1 ]
+        ]: self.assertAlmostEqual(Loss.MSE_prime(i[0], i[1]), i[2])
+
 class MatrixTester(unittest.TestCase):
     
     def test_dot(self):
@@ -71,13 +74,30 @@ class MatrixTester(unittest.TestCase):
             [[2, 3, 9], [9, 55, 6], 237]
         ]: self.assertEqual(Matrix.dot(i[0], i[1]), i[2])
         
+    def test_transpose(self):
+        for i in [
+            [[[2, 3], [4, 5], [78, 36]], [[2, 4, 78], [3, 5, 36]]],
+            [[[2], [3], [4]], [[2, 3, 4]]]
+        ]: self.assertEqual(Matrix.transpose(i[0]), i[1])
+
     def test_depth(self):
         for i in [
             [ [[[34]]], 3],
             [ [[78]], 2],
             [ [16], 1],
-            [ [[[234, 234]]], 3]
-        ]: self.assertEqual(Matrix.depth(i[0]), i[1])
+            [ [[[234, 234]]], 3],
+            [ [[[[345, 345]]]], 4 ],
+            [ [[[[[345], [345]]]]], 5]
+        ]:  self.assertEqual(Matrix.depth(i[0]), i[1])
+
+class LayerTester(unittest.TestCase):
+    
+    def test_dense(self):
+        for i in [
+            ['relu', ],
+            ['sigmoid', ]
+        ]:
+            self.assertGreaterEqual()
 
 
 if __name__ == '__main__':
