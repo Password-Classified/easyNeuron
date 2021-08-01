@@ -4,12 +4,11 @@
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
-----------
+-------------------------------------------------------------------------------------------------
 
 ## Dependencies
 This module uses only Python `Standard Library` modules for it - and here they are.
 
- - copy
  - csv
  - math
  - os
@@ -32,13 +31,10 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 
 __version__ = 1.2
 
-import copy
 import csv
 import math
-import os
 import pickle
 import random
-import sys
 from decimal import Decimal
 from timeit import default_timer as timer
 
@@ -46,8 +42,9 @@ time_start = timer()
 
 # Control Variables
 valid_optimizers = ['Grad_Desc']
-valid_layers = ['Layer_Dense']
+valid_layers = ['Dense']
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
+valid_models = ['FeedForward']
 valid_costs = ['MSE', 'MSE_prime']
 
 # General Classmethods
@@ -561,13 +558,12 @@ class Dense(Layer):
         self.inputs = []
 
         # Dot product
-        for neuron in range(len(self.biases)):  # iterate for the num of neurons
-            dotted = Matrix.dot(self.weights[neuron], inputs)
-            self.output.append(Decimal(dotted + self.biases[neuron]))
+        for neuron in range(len(self.biases)):
+            self.output.append(Decimal(Matrix.dot(self.weights[neuron], inputs) + self.biases[neuron]))
 
         # Activation
         for i in range(len(self.output)):
-            self.output[i] = getattr(Activation, str(self.activation))(i) # run activation on it
+            self.output[i] = getattr(Activation, str(self.activation))(self.output[i]) # run activation on it
 
         return self.output
 
@@ -577,8 +573,10 @@ class FeedForward(Model):
         if not optimizer.replace(' ', '_') in valid_optimizers:
             raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizers are {valid_optimizers}.')
         
-        for i in network:
-            if not 'Layer' in str(i.__class__): raise ValueError(f'{i.__class__} is not a valid layer class.\nThe valid layer classes are {valid_layers}.')
+        for layer in network:
+            for form in valid_layers:
+                if (not (form in str(layer.__class__))) and (network.index(layer) == len(network) - 1):
+                    raise ValueError(f'{layer.__class__} is not a valid layer class. The valid layer classes are {valid_layers}')
         
         self.output = []
         self.inputs = []
@@ -589,8 +587,7 @@ class FeedForward(Model):
     def forward(self, inputs: list or tuple) -> list:
         if len(inputs) != len(self.network[0].weights): raise ValueError(f'Inputs argument is not valid.\nLayer expected size was {len(self.network[0].weights)}, but got {len(inputs)} inputs.')
         for layer in self.network:
-            layer.forward(inputs)
-            inputs = layer.output
+            inputs = layer.forward(inputs)
         self.output = inputs
         return self.output
 
@@ -599,41 +596,46 @@ class GradDesc(Optimizer):
     def __init__(self):
         self.output = []
         self._type = 'GradDesc'
-
-# Demo
-if __name__ == '__main__':
-    print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
-
-    ### Generated Clustered Data ###    
-    raw = []
+        
+    def computeGradients(self, model: Model):
+        for layer in model.network:
+            pass
 
 
-    raw = []
-    difficulty = 200  # Lower value produces harder, less clustered data
-    for i in range(200):
-        raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
-        raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
 
-    X = [[i[0], i[1]] for i in raw]
-    y = [i[2] for i in raw]
-    
-    '''
-    import matplotlib.pyplot as plt
-    plt.figure('Data Visualisation')
-    plt.title('Example Data: Flower Petals')
-    plt.xlabel('Length')
-    plt.ylabel('Width')
-    plt.scatter(X, y)
-    plt.grid()
-    plt.show()
-    '''
-    
-    model = FeedForward([
-        Dense(1, 2, activation='sigmoid', weight_init='integer')
-    ])
-    
-    print(X[1])
-    print(y[1])
-    model.forward(X[0])
-    print(model.network[0].forward([6]))
-    print(model.output)
+
+# Collapser for demo
+    # # Demo
+    # if __name__ == '__main__':
+    #     print('Import ', end=''); Timing.get_time(True) # Check how long it takes to import onefile
+
+    #     ### Generated Clustered Data ###    
+    #     raw = []
+    #     difficulty = 200  # Lower value produces harder, less clustered data
+    #     for i in range(200):
+    #         raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
+    #         raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
+
+    #     X = [[i[0], i[1]] for i in raw]
+    #     y = [i[2] for i in raw]
+        
+    #     '''
+    #     import matplotlib.pyplot as plt
+    #     plt.figure('Data Visualisation')
+    #     plt.title('Example Data: Flower Petals')
+    #     plt.xlabel('Length')
+    #     plt.ylabel('Width')
+    #     plt.scatter(X, y)
+    #     plt.grid()
+    #     plt.show()
+    #     '''
+        
+    #     model = FeedForward([
+    #         Dense(1, 2, activation='sigmoid', weight_init='integer')
+    #     ])
+        
+    #     print(X[1])
+    #     print(y[1])
+    #     model.forward(X[0])
+    #     print(model.network[0].forward([6]))
+    #     print(model.output)
