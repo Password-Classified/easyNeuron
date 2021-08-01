@@ -11,10 +11,8 @@ This module uses only Python `Standard Library` modules for it - and here they a
 
  - csv
  - math
- - os
  - pickle
  - random
- - sys
  - decimal
  - pprint
  - timeit
@@ -29,8 +27,6 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 #### Github Repository: https://github.com/Password-Classified/easyNeuron
 '''
 
-__version__ = 1.2
-
 import csv
 import math
 import pickle
@@ -41,11 +37,8 @@ from timeit import default_timer as timer
 time_start = timer()
 
 # Control Variables
-valid_optimizers = ['Grad_Desc']
-valid_layers = ['Dense']
-valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
-valid_models = ['FeedForward']
-valid_costs = ['MSE', 'MSE_prime']
+
+
 
 # General Classmethods
 class Matrix(classmethod):
@@ -569,10 +562,12 @@ class Dense(Layer):
 
 # Subclasses: Models
 class FeedForward(Model):
-    def __init__(self, network: list, optimizer: str = 'Grad_Desc') -> None:
-        if not optimizer.replace(' ', '_') in valid_optimizers:
-            raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizers are {valid_optimizers}.')
-        
+    def __init__(self, network: list, optimizer: str = 'GradDesc',
+                 loss: str = 'MSE') -> None:
+        if type(optimizer) == str:
+            if not optimizer.replace(' ', '_') in valid_optimizers:
+                raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
+            
         for layer in network:
             for form in valid_layers:
                 if (not (form in str(layer.__class__))) and (network.index(layer) == len(network) - 1):
@@ -580,27 +575,65 @@ class FeedForward(Model):
         
         self.output = []
         self.inputs = []
+        self.loss = loss
+        self.optimizer = optimizer
         self._net = network
         self._type = 'FeedForward'
-        self.optimizer = optimizer.replace(' ', '_')
 
     def forward(self, inputs: list or tuple) -> list:
+        self.inputs = inputs
         if len(inputs) != len(self.network[0].weights): raise ValueError(f'Inputs argument is not valid.\nLayer expected size was {len(self.network[0].weights)}, but got {len(inputs)} inputs.')
         for layer in self.network:
             inputs = layer.forward(inputs)
         self.output = inputs
         return self.output
 
+    def fit(self, epochs: int, disp_level: int = 1):
+        pass
+
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
-    def __init__(self):
+    def __init__(self, learning_rate: float = 0.0001):
         self.output = []
+        self.gradientVector = []
+        self.learningRate = learning_rate
         self._type = 'GradDesc'
         
-    def computeGradients(self, model: Model):
-        for layer in model.network:
-            pass
+    def disp(self, layer: int, epoch: int, loss: float):
+        if self._disp_level == -1:
+            print(f'Epoch {epoch}: Layer {layer} LOSS: {loss}')
+        elif self._disp_level == 1:
+            if epoch != self.epoch:
+                print(f'Epoch {epoch}: LOSS: {loss}')
+        elif self.disp_level != 0:
+            raise ValueError(f'GradDesc.disp_level attribute should be between the range of -1 and 1, not {self._disp_level}. Specify this in the GradDesc.computeGradients() or Model.fit() command.')
+        
+        self._epoch = epoch
+        
+    def train(self, model: Model, epochs: int, disp_level:int = 1):
+        self._disp_level = disp_level
+        
+        for epoch in range(len(epochs)):
+            for layer in model.network:
+                for weight in range(len(layer.weights)):
+                    # TODO: Calculate value in gradient vector
+                    gradient = 0
+                    
+                    self.gradientVector.append(gradient*self.learningRate)
+                    
+                    self.disp(model.network.index(layer), epoch, None)
 
+        return self.gradientVector
+
+valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
+valid_costs = ['MSE', 'MSE_prime']
+valid_layers = ['Dense']
+valid_models = ['FeedForward']
+valid_optimizers = ['GradDesc']
+
+optimizer_strings = {
+    'Grad_Desc': GradDesc()
+}
 
 
 

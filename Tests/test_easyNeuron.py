@@ -113,7 +113,7 @@ class LayerTester(unittest.TestCase):
         ]: self.assertNotEqual(
             float(Loss.MSE([float(x) for x in Dense(3, 2, i[0]).forward(i[1])], i[2])),
             float(Loss.MSE([float(x) for x in Dense(3, 2, i[0]).forward(i[1])], i[2])),
-            msg='\nThe output of the first dense layer is equivalent to that of the second.'
+            msg='\nThe output of the first dense layer is equivalent to that of the second.\nRUN AGAIN to check it is not just by chance.'
         )
 
 class ModelTester(unittest.TestCase):
@@ -134,6 +134,13 @@ class OptimizeTester(unittest.TestCase):
     
     def test_gradDesc(self):
         pass
+
+class FullTester(unittest.TestCase):
+    
+    def test_full(self):
+        network = FeedForward([
+            Dense(2, 1, activation='sigmoid')
+        ])
 
 if __name__ == '__main__':
     unittest.main()
