@@ -32,6 +32,7 @@ import math
 import pickle
 import random
 from decimal import Decimal
+import warnings
 from timeit import default_timer as timer
 
 time_start = timer()
@@ -306,7 +307,7 @@ class Loss(classmethod):
 class Layer(object):
     '''
     Parent class to all layers, containing
-    the `__dunder__` methods needed.
+    the `__special__` methods needed.
     '''
 
     def __init__(self):
@@ -369,7 +370,7 @@ class Layer(object):
 class Optimizer(object):
     '''
     Parent class to all optimizers  , containing
-    the `__dunder__` methods needed.
+    the `__special__` methods needed.
     '''
 
     def __init__(self):
@@ -418,15 +419,17 @@ class Optimizer(object):
 class Model(object):
     '''
     Parent class to all layers, containing
-    the `__dunder__` methods needed.
+    the `__special__` methods needed.
     '''
 
-    def __init__(self, network: list, optimizer: str = 'grad_desc'):
+    def __init__(self, network: list, optimizer: str = 'GradDesc',
+                 loss: str = 'MSE'):
         self.biases = []
         self.weights = []
         self.output = []
         self.inputs = []
         self.optimizer = optimizer
+        self.loss = loss
         self._net = network
         self._type = 'Undefined'
 
@@ -556,7 +559,7 @@ class Dense(Layer):
 
         # Activation
         for i in range(len(self.output)):
-            self.output[i] = getattr(Activation, str(self.activation))(self.output[i]) # run activation on it
+            self.output[i] = getattr(Activation, self.activation)(self.output[i]) # run activation on it
 
         return self.output
 
@@ -593,7 +596,7 @@ class FeedForward(Model):
 
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.0001):
+    def __init__(self, learning_rate: float = 0.001):
         self.output = []
         self.gradientVector = []
         self.learningRate = learning_rate
@@ -610,18 +613,39 @@ class GradDesc(Optimizer):
         
         self._epoch = epoch
         
-    def train(self, model: Model, epochs: int, disp_level:int = 1):
+    def train(self, model: Model, data_in: list or tuple, epochs: int, disp_level:int = 1):
+        '''
+        Calculate the gradients and adjust the weights and
+        biases for the specified model.
+        
+        Params
+        ======
+        
+         - model: a Model object with at least one layer
+         - epochs: the number of epochs to train for
+         - disp_level: how much to output in console
+            +   -1 = display all data
+            +    0 = display nothing
+            +    1 = display epoch and loss
+        '''
         self._disp_level = disp_level
         
+        loss_prime = f'{model.loss}_prime'
+        
         for epoch in range(len(epochs)):
-            for layer in model.network:
-                for weight in range(len(layer.weights)):
-                    # TODO: Calculate value in gradient vector
-                    gradient = 0
+            for layer in range(len(model.network)):
+                act_prime = f'{model.network[layer].activation}'
+                
+                for neuron in range(len(model.network[layer].weights)):
                     
-                    self.gradientVector.append(gradient*self.learningRate)
-                    
-                    self.disp(model.network.index(layer), epoch, None)
+                    for weight in range(len(model.network[layer].weights[neuron])):
+                        # * REMEMBER: Multiply gradient of weight with gradients downstream to get gradient of a weight nested in a layer further behind
+                        
+                        gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight]))
+                        
+                        self.gradientVector.append(gradient*self.learningRate)
+                        
+                        self.disp(model.network.index(layer), epoch, None)
 
         return self.gradientVector
 
@@ -634,8 +658,6 @@ valid_optimizers = ['GradDesc']
 optimizer_strings = {
     'Grad_Desc': GradDesc()
 }
-
-
 
 # Collapser for demo
     # # Demo
