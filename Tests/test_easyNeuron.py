@@ -144,15 +144,15 @@ class OptimizeTester(unittest.TestCase):
         pass
 
 class FullTester(unittest.TestCase):
-    
+
     def test_full_rand(self):
         network = FeedForward([
             Dense(2, 1, activation='sigmoid'),
-        ])
+        ], optimizer='RandDesc')
         X, y = Data.gen_cluster(200, 10)
-        randOpt = RandomDesc(0.001)
-        randOpt.train(network, X, y, 100)
-
+        network.fit(X, y, 10)
+        # randOpt = RandomDesc(0.1)
+        # randOpt.train(network, X, y, 10)
 
 if __name__ == '__main__':
     unittest.main()

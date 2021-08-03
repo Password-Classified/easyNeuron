@@ -579,11 +579,14 @@ class Dense(Layer):
 
 # Subclasses: Models
 class FeedForward(Model):
-    def __init__(self, network: list, optimizer: str = 'GradDesc',
+    def __init__(self, network: list, optimizer: str or object = 'GradDesc',
                  loss: str = 'MSE') -> None:
         if type(optimizer) == str:
+            self.optimizer = globals()[optimizer]()
             if not optimizer.replace(' ', '_') in valid_optimizers:
                 raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
+        elif type(optimizer) == object:
+            self.optimizer = optimizer
             
         for layer in network:
             for form in valid_layers:
@@ -593,7 +596,7 @@ class FeedForward(Model):
         self.output = []
         self.inputs = []
         self.loss = loss
-        self.optimizer = optimizer
+        
         self._net = network
         self._type = 'FeedForward'
 
@@ -604,9 +607,9 @@ class FeedForward(Model):
         self.output = inputs
         return self.output
 
-    def fit(self, epochs: int, disp_level: int = 1):
-        pass
-
+    def fit(self, X, y, epochs: int, disp_level: int = 1):
+        self.optimizer.train(self, X, y, epochs, disp_level)
+        
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
     def __init__(self, learning_rate: float = 0.001):
@@ -626,7 +629,7 @@ class GradDesc(Optimizer):
         
         self._epoch = epoch
         
-    def train(self, model: Model, data_in: list or tuple, epochs: int, disp_level:int = 1):
+    def train(self, model: Model, X: list or tuple, y: list or tuple, epochs: int, disp_level:int = 1):
         '''
         Calculate the gradients and adjust the weights and
         biases for the specified model.
@@ -646,40 +649,42 @@ class GradDesc(Optimizer):
         loss_prime = f'{model.loss}_prime'
         
         for epoch in range(len(epochs)):
-            for layer in range(len(model.network)):
-                act_prime = f'{model.network[layer].activation}'
+            for sample in range(len(X)):
+                model.forward(sample)
                 
-                layVector = []
-                
-                for neuron in range(len(model.network[layer].weights)):
+                for layer in range(len(model.network)):
+                    act_prime = f'{model.network[layer].activation}'
                     
-                    newVector = []
-                    for weight in range(len(model.network[layer].weights[neuron])):
-                        # * REMEMBER: Multiply gradient of weight with gradients downstream to get gradient of a weight nested in a layer further behind
+                    layVector = []
+                    
+                    for neuron in range(len(model.network[layer].weights)):
                         
-                        # TODO: add stuff for running layer forward to get layer inputs for dot product derivative
-                        # TODO: bias optimization
-                        
-                        if layer > 0:
-                            gradMult = 0
-                            for vector_layer_col in range(layer):
-                                gradMult *= reduce((lambda x, y: x * y), self.gradientVector[vector_layer_col])
-                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * gradMult * self.learningRate
+                        newVector = []
+                        for weight in range(len(model.network[layer].weights[neuron])):
+                            # * REMEMBER: Multiply gradient of weight with gradients downstream to get gradient of a weight nested in a layer further behind
+                            
+                            # TODO: bias optimization
+                            
+                            if layer > 0:
+                                gradMult = 0
+                                for vector_layer_col in range(layer):
+                                    gradMult *= reduce((lambda x, y: x * y), self.gradientVector[vector_layer_col])
+                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * gradMult * self.learningRate
 
-                        else:
-                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * self.learningRate
+                            else:
+                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * self.learningRate
 
-                        newVector.append(gradient)
-                        
-                    layVector.append(newVector)
-                        
-                self.gradientVector.append(layVector)
-                
-                self.disp(model.network.index(layer), epoch, None)
+                            newVector.append(gradient)
+                            
+                        layVector.append(newVector)
+                            
+                    self.gradientVector.append(layVector)
+                    
+                    self.disp(model.network.index(layer), epoch, None)
 
         return self.gradientVector
 
-class RandomDesc(Optimizer):
+class RandDesc(Optimizer):
     def __init__(self, learning_rate: float = 0.001, rate_dev: float = 1):
         self.output = []
         self.learningRate = learning_rate
@@ -687,7 +692,7 @@ class RandomDesc(Optimizer):
         self._type = 'RandomDesc'
         
     def disp(self, iteration, loss):
-        print(f'Weight configuration found!\tIteration: {iteration + 1}\tLoss: {round(loss, 5)}')
+        print(f'Weight configuration found!\tIteration: {iteration + 1}\tLoss: {loss}')
         
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
         oldLoss = float('inf')
@@ -711,11 +716,12 @@ class RandomDesc(Optimizer):
                     model.network[count].weights = weightSet
                     count += 1
 
+
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
 valid_costs = ['MSE', 'MSE_prime']
 valid_layers = ['Dense']
 valid_models = ['FeedForward']
-valid_optimizers = ['GradDesc']
+valid_optimizers = ['GradDesc', 'RandDesc']
 
 optimizer_strings = {
     'Grad_Desc': GradDesc()
