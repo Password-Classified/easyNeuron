@@ -54,6 +54,14 @@ class DataTester(unittest.TestCase):
         self.assertTrue(
             Data.load_cities()[:5] == ['South Elmira', 'South Trey', 'West Hobarttown', 'Mohrstad', 'Funkmouth'])
 
+    def test_clusterGen(self):
+        is_failed = False
+        try:
+            Data.gen_cluster(200, 200)
+        except:
+            is_failed = True
+        self.assertFalse(is_failed, msg='Creation of clustered data failed.')
+
 class TimingTester(unittest.TestCase):
 
     def test_getTime(self):
@@ -137,10 +145,14 @@ class OptimizeTester(unittest.TestCase):
 
 class FullTester(unittest.TestCase):
     
-    def test_full(self):
+    def test_full_rand(self):
         network = FeedForward([
-            Dense(2, 1, activation='sigmoid')
+            Dense(2, 3, activation='sigmoid'),
+            Dense(3, 1, activation='sigmoid')
         ])
+        X, y = Data.gen_cluster(200, 500)
+        randOpt = RandomDesc(0.0001)
+        randOpt.train(network, X, y, 100)
 
 if __name__ == '__main__':
     unittest.main()

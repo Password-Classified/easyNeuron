@@ -27,12 +27,15 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 #### Github Repository: https://github.com/Password-Classified/easyNeuron
 '''
 
+import copy
 import csv
+from hashlib import new
 import math
 import pickle
 import random
-from decimal import Decimal
 import warnings
+from decimal import Decimal
+from functools import reduce
 from timeit import default_timer as timer
 
 time_start = timer()
@@ -147,6 +150,17 @@ class Data(classmethod):
     def shuffle(data):
         return random.shuffle(data)
 
+    def gen_cluster(size, difficulty):
+        raw = []
+        for _ in range(size):
+            raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
+            raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
+
+        X = [[round(i[0], 5), round(i[1], 5)] for i in raw]
+        y = [[round(i[2], 5)] for i in raw]
+        
+        return X, y
+
     def load_tutorial_data():
         raw = []
         difficulty = 200  # Lower value produces harder, less clustered data
@@ -239,7 +253,7 @@ class Activation(classmethod):
                 return 1
 
 class Loss(classmethod):
-    def MSE(inputs, targets):
+    def MSE(inputs: list or tuple or float or int, targets: list or tuple or float or int):
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -261,7 +275,7 @@ class Loss(classmethod):
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
-                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nItem 0 of inputs: {inputs[0]}\nItem 0 of targets: {inputs[0]}')
 
             output = 0
             for i in range(length):
@@ -585,7 +599,6 @@ class FeedForward(Model):
 
     def forward(self, inputs: list or tuple) -> list:
         self.inputs = inputs
-        if len(inputs) != len(self.network[0].weights): raise ValueError(f'Inputs argument is not valid.\nLayer expected size was {len(self.network[0].weights)}, but got {len(inputs)} inputs.')
         for layer in self.network:
             inputs = layer.forward(inputs)
         self.output = inputs
@@ -636,24 +649,65 @@ class GradDesc(Optimizer):
             for layer in range(len(model.network)):
                 act_prime = f'{model.network[layer].activation}'
                 
+                layVector = []
+                
                 for neuron in range(len(model.network[layer].weights)):
                     
+                    newVector = []
                     for weight in range(len(model.network[layer].weights[neuron])):
                         # * REMEMBER: Multiply gradient of weight with gradients downstream to get gradient of a weight nested in a layer further behind
                         
+                        # TODO: add stuff for running layer forward to get layer inputs for dot product derivative
+                        # TODO: bias optimization
+                        
                         if layer > 0:
                             gradMult = 0
-                            for vectorLayerColumn in range(layer):
-                                gradMult += self.gradientVector[layer][vectorLayerColumn]
-                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * gradMult
+                            for vector_layer_col in range(layer):
+                                gradMult *= reduce((lambda x, y: x * y), self.gradientVector[vector_layer_col])
+                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * gradMult * self.learningRate
+
                         else:
-                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight]))
+                            gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[layer].inputs[weight])) * self.learningRate
+
+                        newVector.append(gradient)
                         
-                        self.gradientVector.append(gradient*self.learningRate)
+                    layVector.append(newVector)
                         
-                        self.disp(model.network.index(layer), epoch, None)
+                self.gradientVector.append(layVector)
+                
+                self.disp(model.network.index(layer), epoch, None)
 
         return self.gradientVector
+
+class RandomDesc(Optimizer):
+    def __init__(self, learning_rate: float = 0.001, rate_dev: float = 1):
+        self.output = []
+        self.learningRate = learning_rate
+        self.rate_dev = rate_dev
+        self._type = 'RandomDesc'
+        
+    def disp(self, iteration, loss):
+        print(f'New weight configuration found! Iteration: {iteration + 1} Loss: {round(loss, 5)}')
+        
+    def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
+        oldLoss = float('inf')
+        # TODO: Bias optimization
+        for epoch in range(epochs):
+            for sample in range(len(X)):
+                oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
+                for layer in range(len(model.network)):
+                    for neuron in range(len(model.network[layer].weights)):
+                        for weight in range(len(model.network[layer].weights[neuron])):
+                            model.network[layer].weights[neuron][weight] += random.randrange(-2, 2) * self.learningRate
+
+                newLoss = getattr(Loss, model.loss)(model.forward(X[sample]), y[sample])
+            if newLoss < oldLoss:
+                self.disp(epoch, newLoss)
+            else:
+                count = 0
+                for layer, weightSet in zip(model.network, oldWeights):
+                    model.network[count].weights = weightSet
+                    count += 1
 
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
 valid_costs = ['MSE', 'MSE_prime']
