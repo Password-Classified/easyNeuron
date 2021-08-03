@@ -29,7 +29,7 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 
 import copy
 import csv
-from hashlib import new
+import statistics
 import math
 import pickle
 import random
@@ -59,7 +59,7 @@ class Matrix(classmethod):
         dimensional).
         '''
         # if len(list_1) != len(list_2): raise ArithmeticError(f'List_1 length ({len(list_1)}), is not equal to list_2 length ({len(list_2)})')
-        return Decimal(sum(x*y for x, y in zip(list_1, list_2)))
+        return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
     def transpose(matrix: list) -> list:
         '''
@@ -212,7 +212,7 @@ class Activation(classmethod):
             return output
 
         else:
-            return Decimal(1/(1+math.e**-float(inputs)))
+            return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
 
     def sigmoid_prime(inputs: list or tuple or float or int):
         if type(inputs) == list or type(inputs) == tuple:
@@ -687,20 +687,22 @@ class RandomDesc(Optimizer):
         self._type = 'RandomDesc'
         
     def disp(self, iteration, loss):
-        print(f'New weight configuration found! Iteration: {iteration + 1} Loss: {round(loss, 5)}')
+        print(f'Weight configuration found!\tIteration: {iteration + 1}\tLoss: {round(loss, 5)}')
         
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
         oldLoss = float('inf')
         # TODO: Bias optimization
         for epoch in range(epochs):
+            losses = []
             for sample in range(len(X)):
                 oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
                 for layer in range(len(model.network)):
                     for neuron in range(len(model.network[layer].weights)):
                         for weight in range(len(model.network[layer].weights[neuron])):
-                            model.network[layer].weights[neuron][weight] += random.randrange(-2, 2) * self.learningRate
+                            model.network[layer].weights[neuron][weight] += random.randrange(-4, 4) * self.learningRate
 
-                newLoss = getattr(Loss, model.loss)(model.forward(X[sample]), y[sample])
+                losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
+            newLoss = statistics.fmean(losses)
             if newLoss < oldLoss:
                 self.disp(epoch, newLoss)
             else:
