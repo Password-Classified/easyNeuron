@@ -10,7 +10,7 @@ we want to make this the best we can. It is also under constant heavy developmen
 please provide feedback for any issues you come accross
 
 -------
-
+#### [Github Repository](https://github.com/Password-Classified/easyNeuron)
 <br/>
 
 ## **Installation**

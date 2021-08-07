@@ -138,21 +138,46 @@ class ModelTester(unittest.TestCase):
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of FeedForward model object failed.')
 
-class OptimizeTester(unittest.TestCase):
+class OptimizerTester(unittest.TestCase):
     
     def test_gradDesc(self):
-        pass
+        is_failed = False
+        try:
+            GradDesc()
+        except:
+            is_failed = True
+        self.assertFalse(is_failed, msg='Creation of GradDesc optimizer object failed.')
+
+    def test_randDesc(self):
+        is_failed = False
+        try:
+            RandDesc()
+        except:
+            is_failed = True
+        self.assertFalse(is_failed, msg='Creation of RandDesc optimizer object failed.')
+            
 
 class FullTester(unittest.TestCase):
 
     def test_full_rand(self):
         network = FeedForward([
             Dense(2, 1, activation='sigmoid'),
-        ], optimizer='RandDesc')
-        X, y = Data.gen_cluster(200, 10)
-        network.fit(X, y, 10)
-        # randOpt = RandomDesc(0.1)
-        # randOpt.train(network, X, y, 10)
+        ], optimizer='RandDesc', loss='MAE')
+        X, y = Data.gen_cluster(200, 1000)
+        history = network.fit(X, y, 20)
+        import matplotlib.pyplot as plt
+        plt.plot(history)
+        plt.show()
+
+    def test_full_grad(self):
+        network = FeedForward([
+            Dense(2, 1, activation='sigmoid')
+        ])
+        X, y = Data.gen_cluster(200, 1000)
+        history = network.fit(X, y, 100)
+        import matplotlib.pyplot as plt
+        plt.plot(history)
+        plt.show()
 
 if __name__ == '__main__':
     unittest.main()
