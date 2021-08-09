@@ -164,7 +164,7 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 20)
+        history = network.fit(X, y, 100)
         import matplotlib.pyplot as plt
         plt.plot(history)
         plt.show()

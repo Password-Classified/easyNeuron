@@ -196,6 +196,10 @@ class Data(classmethod):
         
         return output
 
+class Random(classmethod):
+    def seed(seed: int):
+        random.seed(seed)
+
 # Network Classmethods
 class Activation(classmethod):
 
@@ -742,6 +746,10 @@ class GradDesc(Optimizer):
                     self.gradientVector.append(layVector)
                     
                     self.disp(model.network.index(layer), epoch, None)
+                    
+                
+                
+                
 
         return self.gradientVector
 
@@ -756,7 +764,8 @@ class RandDesc(Optimizer):
         if epoch != self._oldEpoch:
             print(f'Weight configuration found!\tEpoch: {epoch + 1}\tLoss: {loss}')
         self._oldEpoch = epoch
-        
+
+
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
         if disp_level != 0: print()
         
@@ -775,15 +784,17 @@ class RandDesc(Optimizer):
                         model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
                             
                 losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
-                newLoss = statistics.fmean(losses)
-                if newLoss <= oldLoss:
-                    self.disp(epoch, newLoss)
-                else:
-                    count = 0
-                    for layer, weightSet in zip(model.network, oldWeights):
-                        model.network[count].weights = weightSet
-                        count += 1
-            self.history.append(float(newLoss))
+            newLoss = statistics.fmean(losses)
+            if newLoss <= oldLoss:
+                self.disp(epoch, newLoss)
+                oldLoss = newLoss
+                self.history.append(float(newLoss))
+            else:
+                self.history.append(float(oldLoss))
+                count = 0
+                for layer, weightSet in zip(model.network, oldWeights):
+                    model.network[count].weights = weightSet
+                    count += 1
         
         if disp_level != 0: print()
         
