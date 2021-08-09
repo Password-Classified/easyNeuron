@@ -1,6 +1,16 @@
 ![alt text](Images/logo.svg)
+
+<p float="left">
+  <img src="Images/build%20badge.svg"/>
+  <img src="Images/dependency%20badge.svg"/> 
+  <img src="Images/pypi%20badge.svg" href="https://pypi.org/project/easyNeuron/"/> 
+  <img src="Images/repo%20badge.svg" href="https://github.com/Password-Classified/easyNeuron"/> 
+</p>
+
 # easyNeuron
-`easyNeuron` is a lightweight neural network framework written in Python for Python as one file, but other folders contain datasets
+<br/>
+
+`easyNeuron` is a lightweight neural network framework written in Python for Python as one file, other folders containing datasets
 and resources for learning and using machine learning. It only uses Python Standard Library modules - not even numpy - to program it.
 
 This is a very community driven project, so please report any bugs that we can iron out;
@@ -13,6 +23,9 @@ please provide feedback for any issues you come accross
 <br/>
 
 #### [Github Repository](https://github.com/Password-Classified/easyNeuron)
+<br/>
+<br/>
+<br/>
 <br/>
 <br/>
 <br/>
@@ -35,6 +48,9 @@ py -m pip install easyneuron
 
 <br/>
 <br/>
+<br/>
+<br/>
+<br/>
 
 ## **Exceptions**
 `easyNeuron` uses the basic built-in exceptions that are in the Standard Library.
@@ -43,6 +59,8 @@ As well as them, `easyNeuron` has its own exceptions for comprehensive error mes
 --------
 
 <br/>
+<br/>
+
 
 ## **Classes**
 
@@ -82,12 +100,12 @@ Runs the *Layer_Dense* object forwards (forwardpropagating the dense layer).
 
 Classmethods for matrix operations such as dot products and transposing.
 
->>*dot(list_1, list_2)*
+>> *dot(list_1, list_2)*
  - `list_1` and `list_2` = 2 lists to find the dot product between.
 
 Returns the dot product as a `list`/`matrix` between the 2 lists. I am not using `numpy` for this, so I must write my own.
 
->>*transpose(matrix)*
+>> *transpose(matrix)*
  - `matrix` = input a `matrix` (list of lists)
 
 Returns the matrix transposed - columns become rows and rows become columns. Another numpy method I am not using, so this is one I've written myself.
