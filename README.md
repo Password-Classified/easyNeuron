@@ -1,16 +1,30 @@
+![alt text](Images/logo.svg)
 # easyNeuron
 `easyNeuron` is a lightweight neural network framework written in Python for Python as one file, but other folders contain datasets
 and resources for learning and using machine learning. It only uses Python Standard Library modules - not even numpy - to program it.
-I was inspired by **Sentdex's** nnfs project, but I came to the end of the series so far (I got to episode 7) and was too impatient
-to wait for the next episode, so I created this to learn and to share. I understand that he has released more since then, but I'll
-continue to develop this by myself.
 
 This is a very community driven project, so please report any bugs that we can iron out;
 we want to make this the best we can. It is also under constant heavy development, so
 please provide feedback for any issues you come accross
 
+<br/>
+
 -------
+<br/>
+
 #### [Github Repository](https://github.com/Password-Classified/easyNeuron)
+<br/>
+<br/>
+<br/>
+
+# Thank you! 🎉
+I'd link to thank those who have helped make this happen...
+
+ + [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/).
+
+<br/>
+<br/>
+<br/>
 <br/>
 
 ## **Installation**
@@ -66,7 +80,7 @@ Runs the *Layer_Dense* object forwards (forwardpropagating the dense layer).
 
 > ***Matrix***
 
-Classmethod for matrix operations such as dot products and transposing.
+Classmethods for matrix operations such as dot products and transposing.
 
 >>*dot(list_1, list_2)*
  - `list_1` and `list_2` = 2 lists to find the dot product between.

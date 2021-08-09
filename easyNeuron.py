@@ -33,6 +33,7 @@ import math
 import pickle
 import random
 import statistics
+import warnings
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
@@ -754,19 +755,61 @@ class GradDesc(Optimizer):
         return self.gradientVector
 
 class RandDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.001):
+    def __init__(self, learning_rate: float = 0.001) -> None:
+        """
+        Random optimizer that uses random changes to
+        try to "brute force" it's way to an optimum.
+        
+        Parameters
+        ==========
+        learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
+        
+        Returns
+        =======
+        Nothing
+        
+        
+        Advantages
+        ==========
+         - Easy to understand and implement for beginners
+        
+        Disadvangtages
+        ==============
+         - Doesn't usually find global minimum loss
+         - Slow
+         - Inconsistent
+        """
         self.output = []
         self.learningRate = learning_rate
-        self._oldEpoch = -1
         self._type = 'RandomDesc'
         
-    def disp(self, epoch, loss):
-        if epoch != self._oldEpoch:
-            print(f'Weight configuration found!\tEpoch: {epoch + 1}\tLoss: {loss}')
-        self._oldEpoch = epoch
-
+    def _disp(self, epoch: int, loss: float, disp_level: int,  found: bool) -> None:
+        """
+        Display information of the epoch. Not to be used by user.
+        
+        Parameters
+        ==========
+        epoch = current epoch
+        loss = current cost function output
+        disp_level = amount to display
+        found = whether a new weight configuration has been found
+        """
+        if disp_level >= 1:
+            print(f'Epoch: {epoch + 1}\tLoss: {round(loss, 5)} \tNew Weights: {str(found)}')
 
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
+        """
+        Optimize the specified model object for the
+        specified number of epochs.
+        
+        Parameters
+        ==========
+        model = Model object which needs to be optimized.
+        X = Training samples (X data)
+        y = Training targets (labels)
+        epochs = epoch iterations to train for.
+        disp_level = level of information to be displayed (0 → 2)
+        """
         if disp_level != 0: print()
         
         self.history = []
@@ -777,19 +820,22 @@ class RandDesc(Optimizer):
             for sample in range(len(X)):
                 oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
                 for layer in range(len(model.network)):
-                    for neuron in range(len(model.network[layer].weights)):
-                        for weight in range(len(model.network[layer].weights[neuron])):
-                            model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
+                    if "Dense" in str(model.network[layer].__class__):
+                        for neuron in range(len(model.network[layer].weights)):
+                            for weight in range(len(model.network[layer].weights[neuron])):
+                                model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
 
-                        model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
-                            
+                            model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
+                    else: raise NotImplementedError(f"Only dense layers are implemented for, not{str(model.network[layer].__class__)}")
+                    
                 losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
             newLoss = statistics.fmean(losses)
             if newLoss <= oldLoss:
-                self.disp(epoch, newLoss)
+                self._disp(epoch, newLoss, disp_level, True)
                 oldLoss = newLoss
                 self.history.append(float(newLoss))
             else:
+                self._disp(epoch, oldLoss, disp_level, False)
                 self.history.append(float(oldLoss))
                 count = 0
                 for layer, weightSet in zip(model.network, oldWeights):
