@@ -164,20 +164,14 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 100)
-        import matplotlib.pyplot as plt
-        plt.plot(history)
-        plt.show()
+        history = network.fit(X, y, 100, disp_level=0)
 
     def test_full_grad(self):
         network = FeedForward([
             Dense(2, 1, activation='sigmoid'),
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 100)
-        import matplotlib.pyplot as plt
-        plt.plot(history)
-        plt.show()
+        history = network.fit(X, y, 10)
 
 if __name__ == '__main__':
     unittest.main()

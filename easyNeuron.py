@@ -373,17 +373,22 @@ class Loss(classmethod):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        length = len(inputs)
+        if type(inputs) == list or type(inputs) == tuple: length = len(inputs)
+        else: length = 1
         if length != len(targets):
             raise IndexError(
                 f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = 0
+        output = []
         for i in range(length):
-            if inputs[i] < targets[i]: output.append(-1)
-            else: output.append(1)
+            if type(inputs) == list or type(inputs) == tuple:
+                if inputs[i] < targets[i]: output.append(-1)
+                else: output.append(1)
+            else:
+                if inputs < targets[i]: output.append(-1)
+                else: output.append(1)
 
-        return output
+        return statistics.fmean(output)
 
 # Parent Classes
 class Layer(object):
@@ -686,15 +691,8 @@ class GradDesc(Optimizer):
         self.learningRate = learning_rate
         self._type = 'GradDesc'
         
-    def disp(self, layer: int, epoch: int, loss: float):
-        if self._disp_level == -1:
-            print(f'Epoch {epoch}: Layer {layer} LOSS: {loss}')
-        elif self._disp_level == 1:
-            if epoch != self.epoch:
-                print(f'Epoch {epoch}: LOSS: {loss}')
-        elif self.disp_level != 0:
-            raise ValueError(f'GradDesc.disp_level attribute should be between the range of -1 and 1, not {self._disp_level}. Specify this in the GradDesc.computeGradients() or Model.fit() command.')
-        
+    def disp(self, epoch: int, loss: float, disp_level: int = 0) -> None:
+        if disp_level >= 1: print(f"Epoch: {epoch}\tLOSS: {loss}")
         self._epoch = epoch
         
     def train(self, model: Model, X: list or tuple, y: list or tuple, epochs: int, disp_level:int = 1):
@@ -715,7 +713,7 @@ class GradDesc(Optimizer):
         self._disp_level = disp_level
         
         loss_prime = f'{model.loss}_prime'
-        
+        # easyDataset==0.0.1b0
         for epoch in range(epochs):
             for sample in range(len(X)):
                 model.forward(X[sample])
@@ -739,14 +737,10 @@ class GradDesc(Optimizer):
                                     Loss, loss_prime
                                     )(getattr(
                                         Activation, act_prime
-                                        )(model.network[-layer].inputs[weight]), y[sample]) * gradMult * self.learningRate
+                                        )(float(model.network[-layer].inputs[neuron][weight])), y[sample]) * gradMult * self.learningRate
 
                             else:
-                                gradient = getattr(
-                                    Loss, loss_prime
-                                )(getattr(
-                                    Activation, act_prime
-                                )(model.network[-layer].inputs[weight]), y[sample]) * self.learningRate
+                                gradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])) ), y[sample]) * self.learningRate
                                 
                             newVector.append(gradient)
                             
@@ -754,7 +748,7 @@ class GradDesc(Optimizer):
                             
                     self.gradientVector.append(layVector)
                     
-                    self.disp(model.network.index(layer), epoch, 0.5)
+                    self.disp(model.network, epoch, 0.5)
 
         return self.gradientVector
 
@@ -798,10 +792,10 @@ class RandDesc(Optimizer):
         disp_level = amount to display
         found = whether a new weight configuration has been found
         """
-        if disp_level >= 1:
-            print(f'Epoch: {epoch + 1}\tLoss: {round(loss, 5)} \tNew Weights: {str(found)}')
+        if disp_level != 0:
+            print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {str(found)}')
 
-    def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 1):
+    def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 0):
         """
         Optimize the specified model object for the
         specified number of epochs.
