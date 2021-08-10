@@ -171,8 +171,8 @@ class FullTester(unittest.TestCase):
 
     def test_full_grad(self):
         network = FeedForward([
-            Dense(2, 1, activation='sigmoid')
-        ])
+            Dense(2, 1, activation='sigmoid'),
+        ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
         history = network.fit(X, y, 100)
         import matplotlib.pyplot as plt

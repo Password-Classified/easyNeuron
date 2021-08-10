@@ -52,14 +52,16 @@ class Matrix(classmethod):
     to write my own matrix operations.
     '''
 
-    def dot(list_1: list or tuple, list_2: list or tuple) -> list:
+    def dot(list_1: list or tuple or int or float, list_2: list or tuple or int or float) -> list:
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
         dimensional).
         '''
-        # if len(list_1) != len(list_2): raise ArithmeticError(f'List_1 length ({len(list_1)}), is not equal to list_2 length ({len(list_2)})')
-        return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
+        if (type(list_1) == int or type(list_2) == float) and (type(list_1) == int or type(list_2) == float):
+            return Decimal(list_1 * list_2) 
+        else:
+            return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
     def transpose(matrix: list) -> list:
         '''
@@ -257,6 +259,7 @@ class Activation(classmethod):
                 return 1
 
 class Loss(classmethod):
+    # TODO: add printing of inputs and targets on exception.
     def MSE(inputs: list or tuple or float or int, targets: list or tuple or float or int):
         inp = [inputs, targets]
         for inpt in inp:
@@ -279,7 +282,7 @@ class Loss(classmethod):
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
-                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nItem 0 of inputs: {inputs[0]}\nItem 0 of targets: {inputs[0]}')
+                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
             output = 0
             for i in range(length):
@@ -290,7 +293,7 @@ class Loss(classmethod):
 
         else:
             return Decimal(((targets-inputs)**2)/2)
-
+        
     def MSE_prime(inputs, targets):
         inp = [inputs, targets]
         for inpt in inp:
@@ -311,7 +314,7 @@ class Loss(classmethod):
         length = len(inputs)
         if length != len(targets):
             raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
         output = 0
         for i in range(length):
@@ -342,7 +345,7 @@ class Loss(classmethod):
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
-                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nItem 0 of inputs: {inputs[0]}\nItem 0 of targets: {inputs[0]}')
+                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
             output = 0
             for i in range(length):
@@ -374,7 +377,7 @@ class Loss(classmethod):
         length = len(inputs)
         if length != len(targets):
             raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).')
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
         output = 0
         for i in range(length):
@@ -631,7 +634,7 @@ class Dense(Layer):
         run through the activation.
         '''
         self.output = []
-        self.inputs = []
+        self.inputs = [inputs]
 
         # Dot product
         for neuron in range(len(self.biases)):
@@ -716,7 +719,7 @@ class GradDesc(Optimizer):
         
         for epoch in range(epochs):
             for sample in range(len(X)):
-                model.forward(sample)
+                model.forward(X[sample])
                 
                 for layer in range(len(model.network)):
                     act_prime = f'{model.network[-layer].activation}'
@@ -726,36 +729,34 @@ class GradDesc(Optimizer):
                     for neuron in range(len(model.network[-layer].weights)):
                         
                         newVector = []
-                        for weight in range(len(model.network[-layer].weights[neuron])):
-                            # * REMEMBER: Multiply gradient of weight with gradients downstream to get gradient of a weight nested in a layer further behind
-                            
+                        for weight in range(len(model.network[-layer].weights[neuron])):                            
                             # TODO: bias optimization
                             
                             if layer > 0:
                                 gradMult = 0
                                 for vector_layer_col in range(layer):
-                                    gradMult *= reduce((lambda x, y: x * y), self.gradientVector[vector_layer_col])
-                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[-layer].inputs[weight])) * gradMult * self.learningRate
+                                    gradMult *= reduce((lambda f, j: f * j), self.gradientVector[vector_layer_col])
+                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[-layer].inputs[weight]), y[sample]) * gradMult * self.learningRate
 
                             else:
-                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[-layer].inputs[weight])) * self.learningRate
-
+                                gradient = getattr(
+                                    Loss, loss_prime
+                                )(getattr(
+                                    Activation, act_prime
+                                )(model.network[-layer].inputs[weight]), y[sample]) * self.learningRate
+                                
                             newVector.append(gradient)
                             
                         layVector.append(newVector)
                             
                     self.gradientVector.append(layVector)
                     
-                    self.disp(model.network.index(layer), epoch, None)
-                    
-                
-                
-                
+                    self.disp(model.network.index(layer), epoch, 0.5)
 
         return self.gradientVector
 
 class RandDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.001) -> None:
+    def __init__(self, learning_rate: float = 0.01) -> None:
         """
         Random optimizer that uses random changes to
         try to "brute force" it's way to an optimum.
