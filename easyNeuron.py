@@ -36,12 +36,14 @@ import statistics
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
+from typing import Any, Union
 
 time_start = timer()
 
-# Control Variables
-
-
+# Types
+_DataLike = Union[list, tuple, int, float]
+_OptimizerType = Union[str, object]
+_ListLike = Union[list, tuple]
 
 # General Classmethods
 class Matrix(classmethod):
@@ -51,7 +53,7 @@ class Matrix(classmethod):
     to write my own matrix operations.
     '''
 
-    def dot(list_1: list or tuple or int or float, list_2: list or tuple or int or float) -> list:
+    def dot(list_1: _DataLike, list_2: _DataLike) -> list:
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
@@ -62,7 +64,7 @@ class Matrix(classmethod):
         else:
             return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
-    def transpose(matrix: list) -> list:
+    def transpose(matrix: _ListLike) -> list:
         '''
         Returns a **transposed** matrix from the
         matrix you inputed to start with.
@@ -74,7 +76,7 @@ class Matrix(classmethod):
         
         return new
             
-    def depth(inputs) -> list:
+    def depth(inputs: _ListLike) -> int:
         if isinstance(inputs, list):
             return 1 + max(Matrix.depth(item) for item in inputs)
         else:
@@ -82,7 +84,7 @@ class Matrix(classmethod):
 
 class Timing(classmethod):
     
-    def get_time(disp=False) -> float:
+    def get_time(disp: bool=False) -> float:
         current_time = timer()-time_start
         if disp:
             print(f'Time Elapsed: {current_time}')
@@ -94,7 +96,7 @@ class Data(classmethod):
     acquirement, loading and saving.
     '''
 
-    def load_object(file_to_open) -> list:
+    def load_object(file_to_open: str) -> list:
         '''
         Load a list or any other object from a
         text file that will be created/opened.
@@ -110,7 +112,7 @@ class Data(classmethod):
 
         return data
 
-    def save_object(data, file_to_open) -> str:
+    def save_object(data: Any, file_to_open: str) -> str:
         try:
             file_to_open_data = open(file_to_open, 'w')
             data = pickle.dump(bytes(file_to_open))
@@ -123,8 +125,8 @@ class Data(classmethod):
 
         return data
 
-    def scale(data: list, feature_range: tuple = (0, 1)):
-
+    def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _DataLike:
+        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
         if len(feature_range) != 2:
             raise ValueError(
                 f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
@@ -148,10 +150,10 @@ class Data(classmethod):
                 elif item < smallest:
                     smallest = item
             
-    def shuffle(data):
+    def shuffle(data: _DataLike):
         return random.shuffle(data)
 
-    def gen_cluster(size, difficulty):
+    def gen_cluster(size: int, difficulty: float) -> _DataLike:
         raw = []
         for _ in range(size):
             raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
@@ -162,16 +164,8 @@ class Data(classmethod):
         
         return X, y
 
-    def load_tutorial_data():
-        raw = []
-        difficulty = 200  # Lower value produces harder, less clustered data
-        for i in range(200):
-            raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
-            raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
-
-        return [[i[0], i[1]] for i in raw], [i[2] for i in raw] # X and y datasets
-
-    def load_mnist():
+    def load_mnist() -> _DataLike:
+        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
         train_samples = []
         train_labels = []
         scaled_train_samples = []
@@ -183,23 +177,20 @@ class Data(classmethod):
             raise FileNotFoundError(
                 'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
-    def load_dna():
-        pass
+    def load_dna() -> _DataLike:
+        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
     
-    def load_words():
-        pass
+    def load_words() -> _DataLike:
+        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_cities():        
+    def load_cities() -> _DataLike:        
         with open('Data/Cities.txt') as file:
             output = file.readlines()
         
-        for i in range(len(output)):
-            output[i] = output[i].strip('\n')
-        
-        return output
+        return [i.strip('\n') for i in output]
 
 class Random(classmethod):
-    def seed(seed: int):
+    def seed(seed: int) -> None:
         random.seed(seed)
 
 # Network Classmethods
@@ -259,7 +250,7 @@ class Activation(classmethod):
 
 class Loss(classmethod):
     # TODO: add printing of inputs and targets on exception.
-    def MSE(inputs: list or tuple or float or int, targets: list or tuple or float or int):
+    def MSE(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -293,7 +284,7 @@ class Loss(classmethod):
         else:
             return Decimal(((targets-inputs)**2)/2)
         
-    def MSE_prime(inputs, targets):
+    def MSE_prime(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -322,7 +313,7 @@ class Loss(classmethod):
 
         return output
 
-    def MAE(inputs: list or tuple or float or int, targets: list or tuple or float or int):
+    def MAE(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -356,7 +347,7 @@ class Loss(classmethod):
         else:
             return Decimal(abs(targets-inputs))
 
-    def MAE_prime(inputs, targets):
+    def MAE_prime(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -611,7 +602,7 @@ class Dense(Layer):
         self.output = []
         self.inputs = []
 
-    def randomize(self, bias: int = 0) -> None:
+    def randomize(self, bias_init: int = 0) -> None:
         '''
         Randomize the weights and biases.
         Weights are randomized at the
@@ -619,16 +610,16 @@ class Dense(Layer):
         to a default of 0.
         '''
         self.biases = []
-        for x in range(len(self.biases)):
-            self.biases.append(bias)
+        for _ in range(len(self.biases)):
+            self.biases.append(bias_init)
 
         self.weights = []
         for i in range(len(self.biases)):
             self.weights.append([])
-            for n in range(len(self.weights)):
+            for _ in range(len(self.weights)):
                 self.weights[i].append(random.normalvariate(0, 1))
 
-    def forward(self, inputs: list or tuple) -> list:
+    def forward(self, inputs: _ListLike) -> list:
         '''
         Run the Dense Layer forwards.
         (forward propagate). It takes the
@@ -652,7 +643,7 @@ class Dense(Layer):
 
 # Subclasses: Models
 class FeedForward(Model):
-    def __init__(self, network: list, optimizer: str or object = 'GradDesc',
+    def __init__(self, network: list, optimizer: _OptimizerType = 'GradDesc',
                  loss: str = 'MSE') -> None:
         if type(optimizer) == str:
             self.optimizer = globals()[optimizer]()
@@ -673,7 +664,7 @@ class FeedForward(Model):
         self._net = network
         self._type = 'FeedForward'
 
-    def forward(self, inputs: list or tuple) -> list:
+    def forward(self, inputs: _ListLike) -> list:
         self.inputs = inputs
         for layer in self.network:
             inputs = layer.forward(inputs)
@@ -686,19 +677,25 @@ class FeedForward(Model):
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
     def __init__(self, learning_rate: float = 0.001):
+        """
+        Gradient descent optimizer for models, using
+        regular backpropagation and simple gradient descent
+        to train weights.
+        """
         self.output = []
-        self.gradientVector = []
         self.learningRate = learning_rate
+        self._weightGradientVector = []
         self._type = 'GradDesc'
         
     def disp(self, epoch: int, loss: float, disp_level: int = 0) -> None:
         if disp_level >= 1: print(f"Epoch: {epoch}\tLOSS: {loss}")
         self._epoch = epoch
         
-    def train(self, model: Model, X: list or tuple, y: list or tuple, epochs: int, disp_level:int = 1):
+    def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
         '''
         Calculate the gradients and adjust the weights and
-        biases for the specified model.
+        biases for the specified model for the specified
+        number of epochs.
         
         Params
         ======
@@ -709,11 +706,16 @@ class GradDesc(Optimizer):
             +   -1 = display all data
             +    0 = display nothing
             +    1 = display epoch and loss
+            
+        Returns
+        =======
+         - self._history: the loss history of the model
+                          so it can be plotted.
         '''
         self._disp_level = disp_level
+        self._history = []
         
         loss_prime = f'{model.loss}_prime'
-        # easyDataset==0.0.1b0
         for epoch in range(epochs):
             for sample in range(len(X)):
                 model.forward(X[sample])
@@ -732,7 +734,7 @@ class GradDesc(Optimizer):
                             if layer > 0:
                                 gradMult = 0
                                 for vector_layer_col in range(layer):
-                                    gradMult *= reduce((lambda f, j: f * j), self.gradientVector[vector_layer_col])
+                                    gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
                                 gradient = getattr(
                                     Loss, loss_prime
                                     )(getattr(
@@ -746,11 +748,11 @@ class GradDesc(Optimizer):
                             
                         layVector.append(newVector)
                             
-                    self.gradientVector.append(layVector)
+                    self._weightGradientVector.append(layVector)
                     
                     self.disp(model.network, epoch, 0.5)
 
-        return self.gradientVector
+        return self._history
 
 class RandDesc(Optimizer):
     def __init__(self, learning_rate: float = 0.01) -> None:

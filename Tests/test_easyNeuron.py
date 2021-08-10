@@ -19,7 +19,7 @@ class ActivationTester(unittest.TestCase):
             [0, 0],
             [1, 1],
             [2, 2]
-        ]: self.assertEquals(Activation.relu(i[0]), i[1])
+        ]: self.assertEqual(Activation.relu(i[0]), i[1])
 
     def test_sigmoid(self):
         for i in [
@@ -87,6 +87,18 @@ class LossTester(unittest.TestCase):
             [ [5, 3, 4], [5.1, 3.1, 4.1], -0.1 ],
             [ [3, 6, 9], [2.5, 5.5, 8.5], 0.5]
         ]: self.assertAlmostEqual(Loss.MSE_prime(i[0], i[1]), i[2])
+        
+    def test_MAE(self):
+        for i in [
+            [[1, 2, 3], [1.5, 2.5, 3.5], 0.5],
+        ]:
+            self.assertEqual(float(Loss.MAE(i[0], i[1])), i[2])
+
+    def test_MAEPrime(self):
+        for i in [
+            [ [5, 3, 4], [5.1, 3.1, 4.1], -1],
+            [ [3, 6, 9], [2.5, 5.5, 8.5], 1]
+        ]: self.assertAlmostEqual(Loss.MAE_prime(i[0], i[1]), i[2], msg=Loss.MAE_prime(i[0], i[1]))
 
 class MatrixTester(unittest.TestCase):
 
@@ -164,7 +176,8 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 100, disp_level=0)
+        history = network.fit(X, y, 10, disp_level=0)
+        self.assertGreaterEqual(history[0], history[-1],  "The loss has risen since starting optimization.")
 
     def test_full_grad(self):
         network = FeedForward([
@@ -172,6 +185,7 @@ class FullTester(unittest.TestCase):
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
         history = network.fit(X, y, 10)
+        # self.assertGreaterEqual(history[0], history[-1], "The loss has risen since starting optimization.") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
 
 if __name__ == '__main__':
     unittest.main()
