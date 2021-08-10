@@ -1,1 +1,1 @@
-pip install easyNeuron
+pip install -U easyNeuron

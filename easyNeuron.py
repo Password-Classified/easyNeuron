@@ -735,7 +735,11 @@ class GradDesc(Optimizer):
                                 gradMult = 0
                                 for vector_layer_col in range(layer):
                                     gradMult *= reduce((lambda f, j: f * j), self.gradientVector[vector_layer_col])
-                                gradient = getattr(Loss, loss_prime)(getattr(Activation, act_prime)(model.network[-layer].inputs[weight]), y[sample]) * gradMult * self.learningRate
+                                gradient = getattr(
+                                    Loss, loss_prime
+                                    )(getattr(
+                                        Activation, act_prime
+                                        )(model.network[-layer].inputs[weight]), y[sample]) * gradMult * self.learningRate
 
                             else:
                                 gradient = getattr(
