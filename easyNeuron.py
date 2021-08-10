@@ -33,7 +33,6 @@ import math
 import pickle
 import random
 import statistics
-import warnings
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
