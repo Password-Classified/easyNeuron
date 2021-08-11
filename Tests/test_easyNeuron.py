@@ -168,7 +168,6 @@ class OptimizerTester(unittest.TestCase):
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of RandDesc optimizer object failed.')
             
-
 class FullTester(unittest.TestCase):
 
     def test_full_rand(self):
@@ -176,7 +175,7 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 10, disp_level=0)
+        history = network.fit(X, y, 10, disp_level=1)
         self.assertGreaterEqual(history[0], history[-1],  "The loss has risen since starting optimization.")
 
     def test_full_grad(self):
@@ -184,8 +183,11 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 10)
-        # self.assertGreaterEqual(history[0], history[-1], "The loss has risen since starting optimization.") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
+        history = network.fit(X, y, 30, disp_level=1)
+        import matplotlib.pyplot as plt
+        plt.plot(history)
+        plt.show()
+        self.assertGreaterEqual(history[0], history[-1], f"The loss has risen since starting optimization by {abs(history[0] - history[-1])}") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
 
 if __name__ == '__main__':
     unittest.main()

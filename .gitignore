@@ -1,5 +1,5 @@
+./__pycache__/
 */__pycache__/
 */__pycache__/easyNeuron.cpython-39.pyc
-Tests/__pycache__/
 
-*.spec
+Tests/__pycache__/*

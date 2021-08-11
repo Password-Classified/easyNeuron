@@ -57,10 +57,20 @@ class Matrix(classmethod):
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
-        dimensional).
+        dimensional) or return both the
+        elements multiplie (for numbers).
+
+        Params
+        ======
+         - list_1 = a list, tuple, float or integer
+         - list_2 = a list, tuple. float or integer
+
+        Returns
+        =======
+
         '''
         if (type(list_1) == int or type(list_2) == float) and (type(list_1) == int or type(list_2) == float):
-            return Decimal(list_1 * list_2) 
+            return Decimal(list_1 * list_2)
         else:
             return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
@@ -70,12 +80,12 @@ class Matrix(classmethod):
         matrix you inputed to start with.
         '''
         new = list(zip(*matrix))
-        
+
         for i in range(len(new)):
             new[i] = list(new[i])
-        
+
         return new
-            
+
     def depth(inputs: _ListLike) -> int:
         if isinstance(inputs, list):
             return 1 + max(Matrix.depth(item) for item in inputs)
@@ -83,7 +93,7 @@ class Matrix(classmethod):
             return 0
 
 class Timing(classmethod):
-    
+
     def get_time(disp: bool=False) -> float:
         current_time = timer()-time_start
         if disp:
@@ -101,27 +111,14 @@ class Data(classmethod):
         Load a list or any other object from a
         text file that will be created/opened.
         '''
-        try:
-            file_to_open_data = open(file_to_open, 'r')
-            data = pickle.load(bytes(file_to_open_data))
-        except FileNotFoundError:
-            raise FileNotFoundError(
-                f'An error has occured loading file_to_open {str(file_to_open_data)}.')
-        finally:
-            file_to_open_data.close()
+        with open(file_to_open, "rb") as file:
+            data = pickle.load(file)
 
         return data
 
     def save_object(data: Any, file_to_open: str) -> str:
-        try:
-            file_to_open_data = open(file_to_open, 'w')
-            data = pickle.dump(bytes(file_to_open))
-            file_to_open_data.write(data)
-        except FileExistsError:
-            raise FileExistsError(
-                f'An error has occured saving file_to_open {str(file_to_open_data)}')
-        finally:
-            file_to_open_data.close()
+        with open(file_to_open, "wb") as file:
+            pickle.dump(data, file)
 
         return data
 
@@ -149,7 +146,7 @@ class Data(classmethod):
                     largest = item
                 elif item < smallest:
                     smallest = item
-            
+
     def shuffle(data: _DataLike):
         return random.shuffle(data)
 
@@ -161,7 +158,7 @@ class Data(classmethod):
 
         X = [[round(i[0], 5), round(i[1], 5)] for i in raw]
         y = [[round(i[2], 5)] for i in raw]
-        
+
         return X, y
 
     def load_mnist() -> _DataLike:
@@ -179,14 +176,14 @@ class Data(classmethod):
 
     def load_dna() -> _DataLike:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
-    
+
     def load_words() -> _DataLike:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_cities() -> _DataLike:        
+    def load_cities() -> _DataLike:
         with open('Data/Cities.txt') as file:
             output = file.readlines()
-        
+
         return [i.strip('\n') for i in output]
 
 class Random(classmethod):
@@ -249,7 +246,7 @@ class Activation(classmethod):
                 return 1
 
 class Loss(classmethod):
-    # TODO: add printing of inputs and targets on exception.
+
     def MSE(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
@@ -268,7 +265,7 @@ class Loss(classmethod):
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
         if type(inputs) == list or type(inputs) == tuple:
-            
+
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
@@ -283,7 +280,7 @@ class Loss(classmethod):
 
         else:
             return Decimal(((targets-inputs)**2)/2)
-        
+
     def MSE_prime(inputs: _DataLike, targets: _DataLike) -> float:
         inp = [inputs, targets]
         for inpt in inp:
@@ -331,7 +328,7 @@ class Loss(classmethod):
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
         if type(inputs) == list or type(inputs) == tuple:
-            
+
             length = len(inputs)
             if length != len(targets):
                 raise IndexError(
@@ -396,39 +393,35 @@ class Layer(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Layer_{self.type}(activation={self._act})'
+        return f'Layer_{self.category}(activation={self._act})'
 
     def __str__(self):
-        return f'Layer_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
+        return f'Layer_{self.category}(output={self.output})'
 
     def __call__(self, inputs):
         return self.forward(inputs)
 
     def __len__(self):
-        return len(self.output)
+        return len(self.biases)
 
     def __eq__(self, o: object):
         try:
             if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
+                return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
         except:
             raise TypeError(
-                f'Layer_{self.type} object is not comparable to given {type(o)} object.')
+                f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
-        return hash((self.output))
+        return hash(self)
 
     def __bytes__(self):
-        return bytes(tuple(self.output))
+        return bytes(self)
 
     def __enter__(self):
-        return self.output
+        return self
 
     def __exit__(self, type, value, traceback):
         pass
@@ -438,7 +431,7 @@ class Layer(object):
         return inputs
 
     @property
-    def type(self):
+    def category(self):
         return self._type
 
     @property
@@ -456,14 +449,10 @@ class Optimizer(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Optimizer - {self.type}(output={self.output})'
+        return f'Optimizer - {self.category}(output={self.output})'
 
     def __str__(self):
-        return f'Optimizer_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
+        return f'Optimizer_{self.category}(output={self.output})'
 
     def __len__(self):
         return len(self.output)
@@ -471,27 +460,27 @@ class Optimizer(object):
     def __eq__(self, o: object):
         try:
             if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
+                return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
         except:
             raise TypeError(
-                f'Optimizer_{self.type} object is not comparable to given {type(o)} object.')
+                f'Optimizer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
-        return hash((self.output))
+        return hash(self)
 
     def __bytes__(self):
-        return bytes(self.output)
+        return bytes(self)
 
     def __enter__(self):
-        return self.output
+        return self
 
     def __exit__(self, type, value, traceback):
         pass
 
     @property
-    def type(self):
+    def category(self):
         return self._type
 
 class Model(object):
@@ -512,36 +501,32 @@ class Model(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Layer_{self.type}(activation={self._net})'
+        return f'Layer_{self.category}(activation={self._net})'
 
     def __str__(self):
-        return f'Layer_{self.type}(output={self.output})'
-
-    def __bool__(self):
-        if self.output != []:
-            return True
+        return f'Layer_{self.category}(output={self.output})'
 
     def __len__(self):
-        return len(self.output)
+        return len(self.network)
 
     def __eq__(self, o: object):
         try:
             if self.__class__ == o.__class__:
-                return (self.output, self.type) == (o.output, o.type)
+                return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
         except:
             raise TypeError(
-                f'Layer_{self.type} object is not comparable to given {type(o)} object.')
+                f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
-        return hash((self.output))
+        return hash((self))
 
     def __bytes__(self):
-        return bytes(tuple(self.output))
+        return bytes(self)
 
     def __enter__(self):
-        return self.output
+        return self
 
     def __exit__(self, type, value, traceback):
         pass
@@ -550,8 +535,11 @@ class Model(object):
         self.inputs = inputs
         return inputs
 
+    def save(self) -> None:
+        Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
+
     @property
-    def type(self):
+    def category(self) -> str:
         return self._type
 
     @property
@@ -586,7 +574,7 @@ class Dense(Layer):
         if weight_init == 'xavier':
             xav1_sqrt = math.sqrt(1/n_inputs)
             xav2_sqrt = math.sqrt(2/n_inputs)
-        
+
         for i in range(n_neurons):
             self.weights.append([])
             for n in range(n_inputs):
@@ -645,22 +633,35 @@ class Dense(Layer):
 class FeedForward(Model):
     def __init__(self, network: list, optimizer: _OptimizerType = 'GradDesc',
                  loss: str = 'MSE') -> None:
+        """
+        Sequential model that can contain any
+        layer type.
+
+        Params
+        ======
+         - network = list of layer objects
+         - optimizer = an optimizer object or string name, defaulted to 'GradDesc'
+         - loss = string name for a loss
+
+        Returns
+        =======
+         - Nothing"""
         if type(optimizer) == str:
             self.optimizer = globals()[optimizer]()
             if not optimizer.replace(' ', '_') in valid_optimizers:
                 raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
         else:
             self.optimizer = optimizer
-            
+
         for layer in network:
             for form in valid_layers:
                 if (not (form in str(layer.__class__))) and (network.index(layer) == len(network) - 1):
                     raise ValueError(f'{layer.__class__} is not a valid layer class. The valid layer classes are {valid_layers}')
-        
+
         self.output = []
         self.inputs = []
         self.loss = loss
-        
+
         self._net = network
         self._type = 'FeedForward'
 
@@ -676,37 +677,46 @@ class FeedForward(Model):
 
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.001):
+    def __init__(self, learning_rate: float = 0.0001):
         """
         Gradient descent optimizer for models, using
         regular backpropagation and simple gradient descent
         to train weights.
+
+        Params
+        ======
+         - learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
+
+        Returns
+        =======
+         - Nothing
         """
         self.output = []
         self.learningRate = learning_rate
         self._weightGradientVector = []
+        self._biasGradientVector = []
         self._type = 'GradDesc'
-        
-    def disp(self, epoch: int, loss: float, disp_level: int = 0) -> None:
-        if disp_level >= 1: print(f"Epoch: {epoch}\tLOSS: {loss}")
+
+    def _disp(self, epoch: int, loss: float, disp_level: int = 0) -> None:
+        """Display information on the current training state. Not needed by the user."""
+        if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
         self._epoch = epoch
-        
+
     def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
         '''
         Calculate the gradients and adjust the weights and
         biases for the specified model for the specified
         number of epochs.
-        
+
         Params
         ======
-        
          - model: a Model object with at least one layer
          - epochs: the number of epochs to train for
          - disp_level: how much to output in console
             +   -1 = display all data
             +    0 = display nothing
             +    1 = display epoch and loss
-            
+
         Returns
         =======
          - self._history: the loss history of the model
@@ -714,43 +724,62 @@ class GradDesc(Optimizer):
         '''
         self._disp_level = disp_level
         self._history = []
-        
+
+        if disp_level != 0: print()
+
         loss_prime = f'{model.loss}_prime'
         for epoch in range(epochs):
             for sample in range(len(X)):
                 model.forward(X[sample])
-                
+
                 for layer in range(len(model.network)):
                     act_prime = f'{model.network[-layer].activation}'
-                    
-                    layVector = []
-                    
-                    for neuron in range(len(model.network[-layer].weights)):
-                        
-                        newVector = []
-                        for weight in range(len(model.network[-layer].weights[neuron])):                            
-                            # TODO: bias optimization
-                            
-                            if layer > 0:
-                                gradMult = 0
-                                for vector_layer_col in range(layer):
-                                    gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
-                                gradient = getattr(
-                                    Loss, loss_prime
-                                    )(getattr(
-                                        Activation, act_prime
-                                        )(float(model.network[-layer].inputs[neuron][weight])), y[sample]) * gradMult * self.learningRate
 
+                    weightLayVector = []
+                    biasLayVector = []
+                    gradMult = 0
+                    for vector_layer_col in range(layer):
+                        gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
+
+                    for neuron in range(len(model.network[-layer].weights)):
+
+                        newWeightVector = []
+                        for weight in range(len(model.network[-layer].weights[neuron])):
+
+                            if layer > 0:
+                                weightGradient = getattr(
+                                    Loss, loss_prime
+                                    )(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])), y[sample]) * gradMult * self.learningRate
                             else:
-                                gradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])) ), y[sample]) * self.learningRate
-                                
-                            newVector.append(gradient)
-                            
-                        layVector.append(newVector)
-                            
-                    self._weightGradientVector.append(layVector)
-                    
-                    self.disp(model.network, epoch, 0.5)
+                                weightGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])) ), y[sample]) * self.learningRate
+                            newWeightVector.append(weightGradient)
+
+                        if layer > 0:
+                                biasGradient = getattr(
+                                    Loss, loss_prime
+                                    )(getattr(Activation, act_prime)(1), y[sample]) * gradMult * self.learningRate
+                        else:
+                            biasGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)( 1) ), y[sample]) * self.learningRate
+
+
+                        weightLayVector.append(newWeightVector)
+                        biasLayVector.append(biasGradient)
+
+                    self._biasGradientVector.append(biasLayVector)
+                    self._weightGradientVector.append(weightLayVector)
+
+            for layer in range(len(model.network)):
+                for neuron in range(len(model.network[layer].weights)):
+                    for weight in range(len(model.network[layer].weights[neuron])):
+                        weight += self._weightGradientVector[layer][neuron][weight]
+
+                    model.network[layer].biases[neuron] += self._biasGradientVector[layer][neuron]
+
+            currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item in range(len(X))])
+            self._disp(epoch, currLoss, disp_level)
+            self._history.append(currLoss)
+
+        if disp_level != 0: print()
 
         return self._history
 
@@ -759,20 +788,20 @@ class RandDesc(Optimizer):
         """
         Random optimizer that uses random changes to
         try to "brute force" it's way to an optimum.
-        
+
         Parameters
         ==========
         learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
-        
+
         Returns
         =======
         Nothing
-        
-        
+
+
         Advantages
         ==========
          - Easy to understand and implement for beginners
-        
+
         Disadvangtages
         ==============
          - Doesn't usually find global minimum loss
@@ -782,11 +811,11 @@ class RandDesc(Optimizer):
         self.output = []
         self.learningRate = learning_rate
         self._type = 'RandomDesc'
-        
+
     def _disp(self, epoch: int, loss: float, disp_level: int,  found: bool) -> None:
         """
         Display information of the epoch. Not to be used by user.
-        
+
         Parameters
         ==========
         epoch = current epoch
@@ -801,7 +830,7 @@ class RandDesc(Optimizer):
         """
         Optimize the specified model object for the
         specified number of epochs.
-        
+
         Parameters
         ==========
         model = Model object which needs to be optimized.
@@ -811,10 +840,10 @@ class RandDesc(Optimizer):
         disp_level = level of information to be displayed (0 → 2)
         """
         if disp_level != 0: print()
-        
+
         self.history = []
         oldLoss = float('inf')
-                
+
         for epoch in range(epochs):
             losses = []
             for sample in range(len(X)):
@@ -827,7 +856,7 @@ class RandDesc(Optimizer):
 
                             model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
                     else: raise NotImplementedError(f"Only dense layers are implemented for, not{str(model.network[layer].__class__)}")
-                    
+
                 losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
             newLoss = statistics.fmean(losses)
             if newLoss <= oldLoss:
@@ -841,18 +870,19 @@ class RandDesc(Optimizer):
                 for layer, weightSet in zip(model.network, oldWeights):
                     model.network[count].weights = weightSet
                     count += 1
-        
+
         if disp_level != 0: print()
-        
+
         return self.history
 
 
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
-valid_costs = ['MSE', 'MSE_prime']
+valid_costs = ['MSE', 'MSE_prime', 'MAE', 'MAE_prime']
 valid_layers = ['Dense']
 valid_models = ['FeedForward']
 valid_optimizers = ['GradDesc', 'RandDesc']
 
 optimizer_strings = {
-    'Grad_Desc': GradDesc()
+    'GradDesc': GradDesc(),
+    'RandDesc': RandDesc()
 }
