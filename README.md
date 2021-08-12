@@ -34,7 +34,7 @@ maths so you don't have to and with infinite model configurations for you to use
 ## Thank you! 🎉
 I'd link to thank those who have helped make this happen...
 
- + [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
+ - [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
 
 <br/>
 <br/>
@@ -51,7 +51,7 @@ A GitHub.io website will come soon, with developer and user documentation.
 
 Still under heavy initial development, this has some unfinished issues.
 
- + `GradDesc` optimizer is encountering reliability issues.
+ - `GradDesc` optimizer is encountering reliability issues.
 
 <br/>
 
