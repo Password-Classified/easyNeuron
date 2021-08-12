@@ -41,7 +41,7 @@ from typing import Any, Union
 time_start = timer()
 
 # Types
-_DataLike = Union[list, tuple, int, float]
+_Data = Union[list, tuple, int, float]
 _OptimizerType = Union[str, object]
 _ListLike = Union[list, tuple]
 
@@ -53,7 +53,7 @@ class Matrix(classmethod):
     to write my own matrix operations.
     '''
 
-    def dot(list_1: _DataLike, list_2: _DataLike) -> list:
+    def dot(list_1: _Data, list_2: _Data) -> list:
         '''
         Return the dot product between 2
         matrices (which are both 2 or 1
@@ -122,7 +122,7 @@ class Data(classmethod):
 
         return data
 
-    def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _DataLike:
+    def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
         if len(feature_range) != 2:
             raise ValueError(
@@ -147,10 +147,10 @@ class Data(classmethod):
                 elif item < smallest:
                     smallest = item
 
-    def shuffle(data: _DataLike):
+    def shuffle(data: _Data):
         return random.shuffle(data)
 
-    def gen_cluster(size: int, difficulty: float) -> _DataLike:
+    def gen_cluster(size: int, difficulty: float) -> _Data:
         raw = []
         for _ in range(size):
             raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
@@ -161,7 +161,7 @@ class Data(classmethod):
 
         return X, y
 
-    def load_mnist() -> _DataLike:
+    def load_mnist() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
         train_samples = []
         train_labels = []
@@ -174,13 +174,13 @@ class Data(classmethod):
             raise FileNotFoundError(
                 'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
-    def load_dna() -> _DataLike:
+    def load_dna() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_words() -> _DataLike:
+    def load_words() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_cities() -> _DataLike:
+    def load_cities() -> _Data:
         with open('Data/Cities.txt') as file:
             output = file.readlines()
 
@@ -247,7 +247,7 @@ class Activation(classmethod):
 
 class Loss(classmethod):
 
-    def MSE(inputs: _DataLike, targets: _DataLike) -> float:
+    def MSE(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -281,7 +281,7 @@ class Loss(classmethod):
         else:
             return Decimal(((targets-inputs)**2)/2)
 
-    def MSE_prime(inputs: _DataLike, targets: _DataLike) -> float:
+    def MSE_prime(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -310,7 +310,7 @@ class Loss(classmethod):
 
         return output
 
-    def MAE(inputs: _DataLike, targets: _DataLike) -> float:
+    def MAE(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -344,7 +344,7 @@ class Loss(classmethod):
         else:
             return Decimal(abs(targets-inputs))
 
-    def MAE_prime(inputs: _DataLike, targets: _DataLike) -> float:
+    def MAE_prime(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
         for inpt in inp:
             tp = type(inpt)
@@ -771,9 +771,9 @@ class GradDesc(Optimizer):
             for layer in range(len(model.network)):
                 for neuron in range(len(model.network[layer].weights)):
                     for weight in range(len(model.network[layer].weights[neuron])):
-                        weight += self._weightGradientVector[layer][neuron][weight]
+                        weight -= self._weightGradientVector[layer][neuron][weight]
 
-                    model.network[layer].biases[neuron] += self._biasGradientVector[layer][neuron]
+                    model.network[layer].biases[neuron] -= self._biasGradientVector[layer][neuron]
 
             currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item in range(len(X))])
             self._disp(epoch, currLoss, disp_level)

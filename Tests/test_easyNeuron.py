@@ -172,7 +172,7 @@ class FullTester(unittest.TestCase):
 
     def test_full_rand(self):
         network = FeedForward([
-            Dense(2, 1, activation='sigmoid'),
+            Dense(2, 1, activation='sigmoid')
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
         history = network.fit(X, y, 10, disp_level=1)
