@@ -58,7 +58,7 @@ class DataTester(unittest.TestCase):
         is_failed = False
         try:
             Data.gen_cluster(200, 200)
-        except:
+        except Exception:
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of clustered data failed.')
 
@@ -68,7 +68,7 @@ class TimingTester(unittest.TestCase):
         errType, errValue, errTraceback = None, None, None
         is_failed = False
         try: Timing.get_time()
-        except:
+        except Exception:
             errType, errValue, errTraceback = sys.exc_info()
             is_failed = True
 
@@ -146,7 +146,7 @@ class ModelTester(unittest.TestCase):
                 Dense(4, 4, 'relu'),
                 Dense(4, 1, 'sigmoid')
             ])
-        except:
+        except Exception:
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of FeedForward model object failed.')
 
@@ -156,7 +156,7 @@ class OptimizerTester(unittest.TestCase):
         is_failed = False
         try:
             GradDesc()
-        except:
+        except Exception:
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of GradDesc optimizer object failed.')
 
@@ -164,7 +164,7 @@ class OptimizerTester(unittest.TestCase):
         is_failed = False
         try:
             RandDesc()
-        except:
+        except Exception:
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of RandDesc optimizer object failed.')
 

@@ -42,6 +42,7 @@ time_start = timer()
 
 # Types
 _Data = Union[list, tuple, int, float]
+_Number = Union[float, int]
 _OptimizerType = Union[str, object]
 _ListLike = Union[list, tuple]
 
@@ -69,7 +70,7 @@ class Matrix(classmethod):
         =======
 
         '''
-        if (type(list_1) == int or type(list_2) == float) and (type(list_1) == int or type(list_2) == float):
+        if isinstance(list_1, _Number) and isinstance(list_2, _Number):
             return Decimal(list_1 * list_2)
         else:
             return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
@@ -170,7 +171,7 @@ class Data(classmethod):
             with open('Data/MNIST.csv') as file:
                 raw = csv.reader(file.readlines())
 
-        except:
+        except Exception:
             raise FileNotFoundError(
                 'You must have the folders of data installed to load MNIST data using easyNeuron.')
 
@@ -193,12 +194,12 @@ class Random(classmethod):
 # Network Classmethods
 class Activation(classmethod):
 
-    def sigmoid(inputs: list or tuple or float or int):
+    def sigmoid(inputs: _Data):
         '''
         Run the Sigmoid activation forwards.
         (for forwardpropagation)
         '''
-        if type(inputs) == list or type(inputs) == tuple:
+        if isinstance(inputs, _ListLike):
             output = []
             for i in inputs:
                 output.append(Decimal(1/(1+math.e**-float(i))))
@@ -207,8 +208,8 @@ class Activation(classmethod):
         else:
             return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
 
-    def sigmoid_prime(inputs: list or tuple or float or int):
-        if type(inputs) == list or type(inputs) == tuple:
+    def sigmoid_prime(inputs: _Data):
+        if isinstance(inputs, _ListLike):
             output = []
             for i in inputs:
                 output.append( (1/(1+math.e**-float(i))) * (1-(1/(1+math.e**-float(i)))) )
@@ -217,12 +218,12 @@ class Activation(classmethod):
         else:
             return (1/(1+math.e**-float(inputs))) * (1-(1/(1+math.e**-float(inputs))))
 
-    def relu(inputs: list or tuple or float or int):
+    def relu(inputs: _Data):
         '''
         Run the ReLU activation forwards.
         (for forwardpropagation)
         '''
-        if type(inputs) == list or type(inputs) == tuple:
+        if isinstance(inputs, _ListLike):
             output = []
             for i in inputs:
                 output.append(Decimal(max(0, i)))
@@ -231,7 +232,7 @@ class Activation(classmethod):
             return Decimal(max(0, inputs))
 
     def relu_prime(inputs: list or tuple or int):
-        if type(inputs) == list or type(inputs) == tuple:
+        if isinstance(inputs, _ListLike):
             output = []
             for i in inputs:
                 if i < 0:
@@ -257,14 +258,14 @@ class Loss(classmethod):
                 elif tp == int or tp == float:
                     inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets):
+                    if isinstance(inputs, type(targets)):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {tp}.')
                     else:
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if type(inputs) == list or type(inputs) == tuple:
+        if isinstance(inputs, _ListLike):
 
             length = len(inputs)
             if length != len(targets):
@@ -291,7 +292,7 @@ class Loss(classmethod):
                 elif tp == int or tp == float:
                     inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets):
+                    if isinstance(input, type(targets)):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {tp}.')
                     else:
@@ -320,14 +321,14 @@ class Loss(classmethod):
                 elif tp == int or tp == float:
                     inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets):
+                    if isinstance(inputs, type(targets)):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {tp}.')
                     else:
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if type(inputs) == list or type(inputs) == tuple:
+        if isinstance(inputs, _ListLike):
 
             length = len(inputs)
             if length != len(targets):
@@ -354,14 +355,14 @@ class Loss(classmethod):
                 elif tp == int or tp == float:
                     inpt = [inpt]
                 else:
-                    if type(inputs) == type(targets):
+                    if isinstance(inputs, type(targets)):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {tp}.')
                     else:
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if type(inputs) == list or type(inputs) == tuple: length = len(inputs)
+        if isinstance(inputs, _ListLike): length = len(inputs)
         else: length = 1
         if length != len(targets):
             raise IndexError(
@@ -369,7 +370,7 @@ class Loss(classmethod):
 
         output = []
         for i in range(length):
-            if type(inputs) == list or type(inputs) == tuple:
+            if isinstance(inputs, _ListLike):
                 if inputs[i] < targets[i]: output.append(-1)
                 else: output.append(1)
             else:
@@ -410,7 +411,7 @@ class Layer(object):
                 return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
-        except:
+        except Exception:
             raise TypeError(
                 f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
@@ -463,7 +464,7 @@ class Optimizer(object):
                 return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
-        except:
+        except Exception:
             raise TypeError(
                 f'Optimizer_{self.category} object is not comparable to given {type(o)} object.')
 
@@ -515,7 +516,7 @@ class Model(object):
                 return (self.output, self.category) == (o.output, o.type)
             else:
                 return NotImplemented
-        except:
+        except Exception:
             raise TypeError(
                 f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
@@ -646,7 +647,7 @@ class FeedForward(Model):
         Returns
         =======
          - Nothing"""
-        if type(optimizer) == str:
+        if isinstance(optimizer, str):
             self.optimizer = globals()[optimizer]()
             if not optimizer.replace(' ', '_') in valid_optimizers:
                 raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
