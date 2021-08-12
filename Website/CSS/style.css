@@ -1,7 +1,7 @@
 :root {
   --bg-col: #fefefe;
-  --text-col: #000000;
-
+  --text-col: #000;
+  
   --red-gradient: linear-gradient(95deg, #f0150d, #ff8c49);
   --red-gradient-light: linear-gradient(95deg, #f34028, #ff8a5c);
   --red-gradient-dark: linear-gradient(95deg, #d61711, #e98838);
@@ -22,10 +22,10 @@
   --purple-gradient-light: linear-gradient(95deg, #6c29e7, #a364f5);
   --purple-gradient-dark: linear-gradient(95deg, #450b7b, #9661eb);
 
-  --navbar-text-col: #ffffff;
-
-  --section-bg-col: linear-gradient(135deg, #ffffff, #f5f5f5, #f8f8f8);
-  --section-text-col: #000000;
+  --navbar-text-col: #fff;
+  
+  --section-bg-col: linear-gradient(135deg, #fff, #f5f5f5, #f8f8f8);
+  --section-text-col: #000;
   --section-border-col: #f5f4f4;
 }
 
@@ -34,7 +34,6 @@
 }
 
 * {
-  font-family: Poppins;
   background-color: var(--bg-col);
 }
 
