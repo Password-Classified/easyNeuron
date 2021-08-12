@@ -34,6 +34,3 @@ with open('Data/DNA.tsv') as file:
     #     if i != ['phylum_taxID', 'phylum_name', 'class_taxID', 'class_name', 'order_taxID', 'order_name', 'family_taxID', 'family_name', 'subfamily_name', 'genus_name', 'species_taxID', 'species_name', 'nucleotides']:
     #         for x in [1, 3, 5, 7, 11]: # Positions of integers
     #             i[x-1] = float(i[x-1])
-            
-            
-# print(raw[1])
