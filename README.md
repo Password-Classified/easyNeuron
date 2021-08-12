@@ -4,9 +4,8 @@
   <img src="Images/build%20badge.svg"/>
   <img src="Images/dependency%20badge.svg"/> 
   <img src="Images/pypi%20badge.svg" href="https://pypi.org/project/easyNeuron/"/> 
-  <img src="Images/repo%20badge.svg" href="https://github.com/Password-Classified/easyNeuron"/> 
-</p>
-
+  <img src="Images/repo%20badge.svg" href="https://github.com/Password-Classified/easyNeuron"/>
+  <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/780726496bc3441e829510182f483249"/>
 
 <br/>
 
@@ -53,7 +52,6 @@ A GitHub.io website will come soon, with developer and user documentation.
 Still under heavy initial development, this has some unfinished issues.
 
  + `GradDesc` optimizer is encountering reliability issues.
-
 
 <br/>
 
