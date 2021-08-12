@@ -34,11 +34,6 @@ class Matrix(classmethod):
             pprint(new)
         return new
 
-class Calculus(classmethod):
-    def deriv(expression: str):
-        with expression as exp:
-            pass
-
 class Timing(classmethod):
     def get_time(disp=False):
         current_time = timer()-time_start

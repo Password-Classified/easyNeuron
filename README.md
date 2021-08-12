@@ -2,8 +2,8 @@
 
 <p float="left">
   <img src="Images/build%20badge.svg"/>
-  <img src="Images/dependency%20badge.svg"/> 
-  <img src="Images/pypi%20badge.svg" href="https://pypi.org/project/easyNeuron/"/> 
+  <img src="Images/dependency%20badge.svg"/>
+  <img src="Images/pypi%20badge.svg" href="https://pypi.org/project/easyNeuron/"/>
   <img src="Images/repo%20badge.svg" href="https://github.com/Password-Classified/easyNeuron"/>
   <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/780726496bc3441e829510182f483249"/>
 

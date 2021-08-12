@@ -1,7 +1,7 @@
 :root {
   --bg-col: #fefefe;
   --text-col: #000;
-  
+
   --red-gradient: linear-gradient(95deg, #f0150d, #ff8c49);
   --red-gradient-light: linear-gradient(95deg, #f34028, #ff8a5c);
   --red-gradient-dark: linear-gradient(95deg, #d61711, #e98838);
@@ -23,7 +23,7 @@
   --purple-gradient-dark: linear-gradient(95deg, #450b7b, #9661eb);
 
   --navbar-text-col: #fff;
-  
+
   --section-bg-col: linear-gradient(135deg, #fff, #f5f5f5, #f8f8f8);
   --section-text-col: #000;
   --section-border-col: #f5f4f4;
@@ -133,14 +133,14 @@ details, summary {
 
 .tab-one {
   padding-left: 2rem;
-  margin: 0% !important;
-  padding-top: 0% !important;
+  margin: 0%;
+  padding-top: 0%;
 }
 
 .tab-two {
   padding-left: 4rem;
-  margin: 0% !important;
-  padding-top: 0% !important;
+  margin: 0%;
+  padding-top: 0%;
 }
 
 .contents {

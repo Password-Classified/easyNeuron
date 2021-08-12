@@ -87,7 +87,7 @@ class LossTester(unittest.TestCase):
             [ [5, 3, 4], [5.1, 3.1, 4.1], -0.1 ],
             [ [3, 6, 9], [2.5, 5.5, 8.5], 0.5]
         ]: self.assertAlmostEqual(Loss.MSE_prime(i[0], i[1]), i[2])
-        
+
     def test_MAE(self):
         for i in [
             [[1, 2, 3], [1.5, 2.5, 3.5], 0.5],
@@ -151,7 +151,7 @@ class ModelTester(unittest.TestCase):
         self.assertFalse(is_failed, msg='Creation of FeedForward model object failed.')
 
 class OptimizerTester(unittest.TestCase):
-    
+
     def test_gradDesc(self):
         is_failed = False
         try:
@@ -167,7 +167,7 @@ class OptimizerTester(unittest.TestCase):
         except:
             is_failed = True
         self.assertFalse(is_failed, msg='Creation of RandDesc optimizer object failed.')
-            
+
 class FullTester(unittest.TestCase):
 
     def test_full_rand(self):
