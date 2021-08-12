@@ -8,20 +8,53 @@
 </p>
 
 
+<br/>
+
 # easyNeuron
+
+**Table of Contents**
+
+- [easyNeuron](#easyneuron)
+  - [Thank you! 🎉](#thank-you-)
+- [Documentation](#documentation)
+- [Current issues ⛔](#current-issues-)
+
+<br/>
+<br/>
+
+**Note:** this is an unfinished project, so should not be used yet.
 <br/>
 
 ***easyNeuron*** is the new Python module for creating deep learning algorithms and artificial
 neural networks. Equipped with datasets to get you started, functions for the calculus and
 maths so you don't have to and with infinite model configurations for you to use, ***easyNeuron*** is ready for all your data science projects. Find ***easyNeuron*** at it's [Github Repository](https://github.com/Password-Classified/easyNeuron), with a GitHub.io website coming soon!
 
+<br/>
+<br/>
 
-# Thank you! 🎉
+## Thank you! 🎉
 I'd link to thank those who have helped make this happen...
 
  + [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
 
 <br/>
+<br/>
+<br/>
+
+# Documentation
+
+A GitHub.io website will come soon, with developer and user documentation.
+
+<br/>
+<br/>
+
+# Current issues ⛔
+
+Still under heavy initial development, this has some unfinished issues.
+
+ + `GradDesc` optimizer is encountering reliability issues.
+
+
 <br/>
 
 -----------
