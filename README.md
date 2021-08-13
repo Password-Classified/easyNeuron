@@ -15,8 +15,8 @@
 
 - [easyNeuron](#easyneuron)
   - [Thank you! 🎉](#thank-you-)
-- [Documentation](#documentation)
-- [Current issues ⛔](#current-issues-)
+  - [Documentation](#documentation)
+  - [Current issues ⛔](#current-issues-)
 
 <br/>
 <br/>
@@ -34,24 +34,24 @@ maths so you don't have to and with infinite model configurations for you to use
 ## Thank you! 🎉
 I'd link to thank those who have helped make this happen...
 
- - [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
+- [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
 
 <br/>
 <br/>
 <br/>
 
-# Documentation
+## Documentation
 
 A GitHub.io website will come soon, with developer and user documentation.
 
 <br/>
 <br/>
 
-# Current issues ⛔
+## Current issues ⛔
 
 Still under heavy initial development, this has some unfinished issues.
 
- - `GradDesc` optimizer is encountering reliability issues.
+- `GradDesc` optimizer is encountering reliability issues.
 
 <br/>
 

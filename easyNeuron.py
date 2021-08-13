@@ -46,6 +46,27 @@ _Number = Union[float, int]
 _OptimizerType = Union[str, object]
 _ListLike = Union[list, tuple]
 
+# Developer Classmethods
+class _Utils(classmethod):
+    def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
+        """Display information on the current training state. Not needed by the user."""
+        
+        if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
+        
+    def _dispRand(epoch: int, loss: float, disp_level: int,  found: bool) -> None:
+        """
+        Display information of the epoch. Not to be used by user.
+
+        Parameters
+        ==========
+        epoch = current epoch
+        loss = current cost function output
+        disp_level = amount to display
+        found = whether a new weight configuration has been found
+        """
+        if disp_level != 0:
+            print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {str(found)}')
+
 # General Classmethods
 class Matrix(classmethod):
     '''
@@ -190,6 +211,7 @@ class Data(classmethod):
 class Random(classmethod):
     def seed(seed: int) -> None:
         random.seed(seed)
+
 
 # Network Classmethods
 class Activation(classmethod):
@@ -424,7 +446,7 @@ class Layer(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, category, value, traceback):
         pass
 
     def forward(self, inputs):
@@ -477,7 +499,7 @@ class Optimizer(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, category, value, traceback):
         pass
 
     @property
@@ -529,7 +551,7 @@ class Model(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, category, value, traceback):
         pass
 
     def forward(self, inputs) -> list:
@@ -578,7 +600,7 @@ class Dense(Layer):
 
         for i in range(n_neurons):
             self.weights.append([])
-            for n in range(n_inputs):
+            for _ in range(n_inputs):
                 if (weight_init == 'xavier' or weight_init == 'glorot') and activation != 'relu':
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
                 elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
@@ -698,11 +720,6 @@ class GradDesc(Optimizer):
         self._biasGradientVector = []
         self._type = 'GradDesc'
 
-    def _disp(self, epoch: int, loss: float, disp_level: int = 0) -> None:
-        """Display information on the current training state. Not needed by the user."""
-        if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
-        self._epoch = epoch
-
     def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
         '''
         Calculate the gradients and adjust the weights and
@@ -777,7 +794,7 @@ class GradDesc(Optimizer):
                     model.network[layer].biases[neuron] -= self._biasGradientVector[layer][neuron]
 
             currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item in range(len(X))])
-            self._disp(epoch, currLoss, disp_level)
+            _Utils._dispGrad(epoch, currLoss, disp_level)
             self._history.append(currLoss)
 
         if disp_level != 0: print()
@@ -813,20 +830,6 @@ class RandDesc(Optimizer):
         self.learningRate = learning_rate
         self._type = 'RandomDesc'
 
-    def _disp(self, epoch: int, loss: float, disp_level: int,  found: bool) -> None:
-        """
-        Display information of the epoch. Not to be used by user.
-
-        Parameters
-        ==========
-        epoch = current epoch
-        loss = current cost function output
-        disp_level = amount to display
-        found = whether a new weight configuration has been found
-        """
-        if disp_level != 0:
-            print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {str(found)}')
-
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 0):
         """
         Optimize the specified model object for the
@@ -861,11 +864,11 @@ class RandDesc(Optimizer):
                 losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
             newLoss = statistics.fmean(losses)
             if newLoss <= oldLoss:
-                self._disp(epoch, newLoss, disp_level, True)
+                _Utils._dispRand(epoch, newLoss, disp_level, True)
                 oldLoss = newLoss
                 self.history.append(float(newLoss))
             else:
-                self._disp(epoch, oldLoss, disp_level, False)
+                _Utils._dispRand(epoch, oldLoss, disp_level, False)
                 self.history.append(float(oldLoss))
                 count = 0
                 for layer, weightSet in zip(model.network, oldWeights):

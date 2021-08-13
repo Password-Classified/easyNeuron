@@ -119,7 +119,8 @@ button:active {
   background: var(--blue-gradient-dark);
 }
 
-details, summary {
+details,
+summary {
   margin: 0;
   padding: none;
 }
@@ -163,7 +164,7 @@ details, summary {
   padding: 1rem;
 }
 
-.navbar-title{
+.navbar-title {
   font-weight: bolder;
   background-color: inherit;
   color: var(--navbar-text-col);
@@ -200,7 +201,8 @@ details, summary {
   box-shadow: 1rem 0.6rem 1rem #d1d1d1;
 }
 
-.large-header *, .medium-header * {
+.large-header *,
+.medium-header * {
   max-width: 70%;
   padding: 0;
   color: inherit;
