@@ -9,13 +9,16 @@ a full version that uses `numba` (non-standard library) to speed up code by runn
 ## Dependencies
 This module uses only Python `Standard Library` modules for it - and here they are.
 
+ - copy
  - csv
+ - decimal
+ - functools
  - math
  - pickle
  - random
- - decimal
- - pprint
+ - statistics
  - timeit
+ - typing
 
 ### Docstrings
 
@@ -49,12 +52,20 @@ _ListLike = Union[list, tuple]
 # Developer Classmethods
 class _Utils(classmethod):
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
-        """Display information on the current training state for GradDesc. Not needed by the user."""
+        """
+        Display information on the current training state for GradDesc. Not needed by the user.
+        
+        ### Params
+        
+        epoch = current epoch
+        loss = current cost function output
+        disp_level = amount to display
+        """
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
         
     def _dispRand(epoch: int, loss: float, disp_level: int,  found: bool) -> None:
         """
-        Display information of the epoch. Not to be used by user.
+        Display information of the epoch for RandDesc. Not needed used by user.
 
         ### Params
         
