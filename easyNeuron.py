@@ -1,13 +1,14 @@
-'''# easyNeuron
+'''
+# easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
-
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
 -------------------------------------------------------------------------------------------------
 
 ## Dependencies
+
 This module uses only Python `Standard Library` modules for it - and here they are.
 
  - copy
@@ -58,14 +59,14 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
+
     """_Util classmethods.
-    
+
     Developer methods for the module, not necessary for users.
     """
 
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
-        """
-        Display information on the current training state for GradDesc. Not needed by the user.
+        """Display information on the current training state for GradDesc. Not needed by the user.
 
         ### Params
 
@@ -92,6 +93,7 @@ class _Utils(classmethod):
 # General Classmethods
 class Matrix(classmethod):
     '''
+    
     A classmethod for matrix operations,
     since numpy isn't used here, I had
     to write my own matrix operations.
