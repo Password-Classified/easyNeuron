@@ -16,7 +16,7 @@ with open('Data/DNA.tsv') as file:
 
 
     x = []
-    for i in range(len(raw)):
+    for i, j in enumerate(raw):
         try:
             if 'N' in raw[i][12]:
                 x.append(i)

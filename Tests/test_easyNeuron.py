@@ -61,12 +61,12 @@ class DataTester(unittest.TestCase):
             Data.gen_cluster(200, 200)
         except Exception:
             is_failed = True
-            infoType, infoValue, infoTraceback = sys.exc_info()
+            _, _, infoTraceback = sys.exc_info()
             traceback.print_tb(infoTraceback)
 
         self.assertFalse(is_failed, msg=f'Creation of clustered data failed. See above.')
- 
-            
+
+
 
 class TimingTester(unittest.TestCase):
 

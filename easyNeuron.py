@@ -1,5 +1,5 @@
-'''
 
+'''
 # easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
@@ -60,6 +60,7 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
+    """Developer methods for the module, not necessary for users."""
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
         Display information on the current training state for GradDesc. Not needed by the user.
@@ -163,7 +164,6 @@ class Data(classmethod):
         return data
 
     def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
-        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
         if len(feature_range) != 2:
             raise ValueError(
                 f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
@@ -186,6 +186,7 @@ class Data(classmethod):
                     largest = item
                 elif item < smallest:
                     smallest = item
+        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
     def shuffle(data: _Data):
         return random.shuffle(data)
@@ -201,18 +202,18 @@ class Data(classmethod):
 
         return X, y
 
-    def load_mnist() -> _Data:
-        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
-        train_samples = []
-        train_labels = []
-        scaled_train_samples = []
-        try:
-            with open('Data/MNIST.csv') as file:
-                raw = csv.reader(file.readlines())
+    # def load_mnist() -> _Data:
+    #     train_samples = []
+    #     train_labels = []
+    #     scaled_train_samples = []
+    #     try:
+    #         with open('Data/MNIST.csv') as file:
+    #             raw = csv.reader(file.readlines())
 
-        except Exception:
-            raise FileNotFoundError(
-                'You must have the folders of data installed to load MNIST data using easyNeuron.')
+    #     except Exception:
+    #         raise FileNotFoundError(
+    #             'You must have the folders of data installed to load MNIST data using easyNeuron.')
+    #     raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
     def load_dna() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
@@ -524,7 +525,7 @@ class Optimizer(object):
         return len(self.output)
 
     def __eq__(self, o: object):
-        """Check if is equal to object"""
+        """Check if is equal to object."""
         try:
             return self is o
         except Exception:
@@ -634,7 +635,19 @@ class Dense(Layer):
 
     def __init__(self, n_inputs: int, n_neurons: int,
                  activation: str, weight_accuracy: float = 2,
-                 weight_init:str='xavier', bias_init: float = 0) -> None:
+                 weight_init: str='xavier', bias_init: float = 0) -> None:
+        """
+        Create a fully connected layer.
+        
+        ### Params
+        
+         - n_inputs = number of outputs from the previous layer or length of one line of data
+         - n_neurons = number of neurons
+         - activation = string name of activation
+         - weight_accuracy = max decimal places in weights
+         - weight_init = style of initialization
+         - bias_init = value of initialization
+        """
         if n_inputs <= 0:
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
@@ -660,7 +673,7 @@ class Dense(Layer):
                 elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
                 elif (weight_init == 'integer' or weight_init == 'range'):
-                    self.weights[i].append(random.randrange(-4, 4))
+                    self.weights[i].append(Random.random_int(-4, 4))
 
         self._type = 'Dense'
         self._act = activation
@@ -801,37 +814,37 @@ class GradDesc(Optimizer):
 
         loss_prime = f'{model.loss}_prime'
         for epoch in range(epochs):
-            for sample in range(len(X)):
-                model.forward(X[sample])
+            for sampleIndex, sample in enumerate(X):
+                model.forward(sample)
 
-                for layer in range(len(model.network)):
-                    act_prime = f'{model.network[-layer].activation}'
+                for layerIndex, layer in enumerate(model.network):
+                    act_prime = f'{model.network[-layerIndex].activation}'
 
                     weightLayVector = []
                     biasLayVector = []
                     gradMult = 0
-                    for vector_layer_col in range(layer):
+                    for vector_layer_col in range(layerIndex):
                         gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
 
-                    for neuron in range(len(model.network[-layer].weights)):
+                    for neuronIndex, neuron in enumerate(model.network[-layerIndex].weights):
 
                         newWeightVector = []
-                        for weight in range(len(model.network[-layer].weights[neuron])):
+                        for weight in range(len(model.network[-layerIndex].weights[neuronIndex])):
 
-                            if layer > 0:
+                            if layerIndex > 0:
                                 weightGradient = getattr(
                                     Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])), y[sample]) * gradMult * self.learningRate
+                                    )(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])), y[sampleIndex]) * gradMult * self.learningRate
                             else:
-                                weightGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layer].inputs[neuron][weight])) ), y[sample]) * self.learningRate
+                                weightGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])) ), y[sampleIndex]) * self.learningRate
                             newWeightVector.append(weightGradient)
 
-                        if layer > 0:
+                        if layerIndex > 0:
                                 biasGradient = getattr(
                                     Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(1), y[sample]) * gradMult * self.learningRate
+                                    )(getattr(Activation, act_prime)(1), y[sampleIndex]) * gradMult * self.learningRate
                         else:
-                            biasGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)( 1) ), y[sample]) * self.learningRate
+                            biasGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)( 1) ), y[sampleIndex]) * self.learningRate
 
 
                         weightLayVector.append(newWeightVector)
@@ -840,12 +853,12 @@ class GradDesc(Optimizer):
                     self._biasGradientVector.append(biasLayVector)
                     self._weightGradientVector.append(weightLayVector)
 
-            for layer in range(len(model.network)):
-                for neuron in range(len(model.network[layer].weights)):
-                    for weight in range(len(model.network[layer].weights[neuron])):
-                        weight -= self._weightGradientVector[layer][neuron][weight]
+            for layerIndex in range(len(model.network)):
+                for neuronIndex in range(len(model.network[layerIndex].weights)):
+                    for weight in range(len(model.network[layerIndex].weights[neuronIndex])):
+                        weight -= self._weightGradientVector[layerIndex][neuronIndex][weight]
 
-                    model.network[layer].biases[neuron] -= self._biasGradientVector[layer][neuron]
+                    model.network[layerIndex].biases[neuronIndex] -= self._biasGradientVector[layerIndex][neuronIndex]
 
             currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item in range(len(X))])
             _Utils._dispGrad(epoch, currLoss, disp_level)
