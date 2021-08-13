@@ -151,22 +151,23 @@ class Data(classmethod):
     A classmethod for data manipulation,
     acquirement, loading and saving.
     '''
+    
+    # ! These below methods are commented out due to security concerns with the pickle module.
+    # def load_object(file_to_open: str) -> list:
+    #     '''
+    #     Load a list or any other object from a
+    #     text file that will be created/opened.
+    #     '''
+    #     with open(file_to_open, "rb") as file:
+    #         data = pickle.load(file)
 
-    def load_object(file_to_open: str) -> list:
-        '''
-        Load a list or any other object from a
-        text file that will be created/opened.
-        '''
-        with open(file_to_open, "rb") as file:
-            data = pickle.load(file)
+    #     return data
 
-        return data
+    # def save_object(data: Any, file_to_open: str) -> str:
+    #     with open(file_to_open, "wb") as file:
+    #         pickle.dump(data, file)
 
-    def save_object(data: Any, file_to_open: str) -> str:
-        with open(file_to_open, "wb") as file:
-            pickle.dump(data, file)
-
-        return data
+    #     return data
 
     def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
         if len(feature_range) != 2:
@@ -607,9 +608,9 @@ class Model(object):
         self.inputs = inputs
         return inputs
 
-    def save(self) -> None:
-        """Save object to binary file."""
-        Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
+    # def save(self) -> None:
+    #     """Save object to binary file."""
+    #     Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
 
     @property
     def category(self) -> str:

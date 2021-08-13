@@ -26,7 +26,7 @@
 
   --navbar-text-col: #fff;
 
-  --section-bg-col: linear-gradient(135deg, #fff, #f9f9f);
+  --section-bg-col: linear-gradient(135deg, #fff, #f9f9f9);
   --section-text-col: #000;
   --section-border-col: #f5f4f4;
 }
@@ -130,14 +130,14 @@ summary {
 
 .tab-one {
   padding-left: 2rem;
-  margin: 0%;
-  padding-top: 0%;
+  margin: 0;
+  padding-top: 0;
 }
 
 .tab-two {
   padding-left: 4rem;
-  margin: 0%;
-  padding-top: 0rem;
+  margin: 0;
+  padding-top: 0;
 }
 
 .contents {
