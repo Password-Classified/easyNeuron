@@ -59,8 +59,10 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
-    
-    """Developer methods for the module, not necessary for users."""
+    """
+    Developer methods for the module, not necessary for users.
+    """
+
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
         Display information on the current training state for GradDesc. Not needed by the user.
@@ -203,7 +205,7 @@ class Data(classmethod):
         return X, y
 
     def load_mnist() -> _Data:
-        pass
+        raise NotImplementedError("This is a new feature coming soon.")
 
     def load_dna() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
@@ -910,6 +912,7 @@ class RandDesc(Optimizer):
             for sample, _ in enumerate(X):
                 oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
                 for layer, _ in enumerate(model.network):
+
                     if "Dense" in str(model.network[layer].__class__):
                         for neuron, _ in enumerate(model.network[layer].weights):
                             for weight, _ in enumerate(model.network[layer].weights[neuron]):
