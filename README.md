@@ -3,9 +3,10 @@
 <p float="left">
   <img src="Images/build%20badge.svg"/>
   <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/e9e0485034e84412aa21b93e26f915be"/>
-  <img src="Images/dependency%20badge.svg"/>
-  <img src="Images/pypi%20badge.svg" href="https://pypi.org/project/easyNeuron/"/>
-  <img src="Images/repo%20badge.svg" href="https://github.com/Password-Classified/easyNeuron"/>
+  <!-- <img src="Images/dependency%20badge.svg"/> -->
+  <img src="https://badges.pufler.dev/created/Password-Classified/easyNeuron"/>
+  <img src="https://badges.pufler.dev/updated/Password-Classified/easyNeuron"/>
+  <img src="https://badges.pufler.dev/visits/Password-Classified/easyNeuron"/>
 
 <br/>
 
@@ -35,6 +36,9 @@ maths so you don't have to and with infinite model configurations for you to use
 I'd link to thank those who have helped make this happen...
 
 - [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
+- Also, a big thanks to all of the fantastic contributors so far:
+
+![Contributors](https://badges.pufler.dev/contributors/Password-Classified/easyNeuron?size=80&padding=5&bots=true)
 
 <br/>
 <br/>
