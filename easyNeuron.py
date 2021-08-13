@@ -49,16 +49,15 @@ _ListLike = Union[list, tuple]
 # Developer Classmethods
 class _Utils(classmethod):
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
-        """Display information on the current training state. Not needed by the user."""
-        
+        """Display information on the current training state for GradDesc. Not needed by the user."""
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
         
     def _dispRand(epoch: int, loss: float, disp_level: int,  found: bool) -> None:
         """
         Display information of the epoch. Not to be used by user.
 
-        Parameters
-        ==========
+        ### Params
+        
         epoch = current epoch
         loss = current cost function output
         disp_level = amount to display
@@ -74,7 +73,6 @@ class Matrix(classmethod):
     since numpy isn't used here, I had
     to write my own matrix operations.
     '''
-
     def dot(list_1: _Data, list_2: _Data) -> list:
         '''
         Return the dot product between 2
@@ -82,13 +80,13 @@ class Matrix(classmethod):
         dimensional) or return both the
         elements multiplie (for numbers).
 
-        Params
-        ======
+        ### Params
+        
          - list_1 = a list, tuple, float or integer
          - list_2 = a list, tuple. float or integer
 
-        Returns
-        =======
+        ### Returns
+        
 
         '''
         if isinstance(list_1, _Number) and isinstance(list_2, _Number):
@@ -660,14 +658,14 @@ class FeedForward(Model):
         Sequential model that can contain any
         layer type.
 
-        Params
-        ======
+        ### Params
+        
          - network = list of layer objects
          - optimizer = an optimizer object or string name, defaulted to 'GradDesc'
          - loss = string name for a loss
 
-        Returns
-        =======
+        ### Returns
+        
          - Nothing"""
         if isinstance(optimizer, str):
             self.optimizer = globals()[optimizer]()
@@ -706,12 +704,12 @@ class GradDesc(Optimizer):
         regular backpropagation and simple gradient descent
         to train weights.
 
-        Params
-        ======
+        ### Params
+        
          - learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
-        Returns
-        =======
+        ### Returns
+        
          - Nothing
         """
         self.output = []
@@ -726,8 +724,8 @@ class GradDesc(Optimizer):
         biases for the specified model for the specified
         number of epochs.
 
-        Params
-        ======
+        ### Params
+        
          - model: a Model object with at least one layer
          - epochs: the number of epochs to train for
          - disp_level: how much to output in console
@@ -735,8 +733,8 @@ class GradDesc(Optimizer):
             +    0 = display nothing
             +    1 = display epoch and loss
 
-        Returns
-        =======
+        ### Returns
+        
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
@@ -807,21 +805,21 @@ class RandDesc(Optimizer):
         Random optimizer that uses random changes to
         try to "brute force" it's way to an optimum.
 
-        Parameters
-        ==========
+        ### Params
+        
         learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
-        Returns
-        =======
-        Nothing
+        ###Returns
+        
+         - Nothing
 
 
-        Advantages
-        ==========
+        ### Advantages
+        
          - Easy to understand and implement for beginners
 
-        Disadvangtages
-        ==============
+        ### Disadvangtages
+        
          - Doesn't usually find global minimum loss
          - Slow
          - Inconsistent
@@ -835,8 +833,8 @@ class RandDesc(Optimizer):
         Optimize the specified model object for the
         specified number of epochs.
 
-        Parameters
-        ==========
+        ### Params
+        
         model = Model object which needs to be optimized.
         X = Training samples (X data)
         y = Training targets (labels)
