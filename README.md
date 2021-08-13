@@ -11,6 +11,8 @@
 
 # easyNeuron
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f3ce46e3a8e4494aafe007106fb0899e)](https://app.codacy.com/gh/Password-Classified/easyNeuron?utm_source=github.com&utm_medium=referral&utm_content=Password-Classified/easyNeuron&utm_campaign=Badge_Grade_Settings)
+
 **Table of Contents**
 
 - [easyNeuron](#easyneuron)
