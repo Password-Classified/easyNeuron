@@ -1,5 +1,4 @@
-'''
-# easyNeuron
+'''# easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
 
@@ -59,7 +58,8 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
-    """
+    """_Util classmethods.
+    
     Developer methods for the module, not necessary for users.
     """
 
