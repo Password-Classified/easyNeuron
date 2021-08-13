@@ -1,8 +1,8 @@
-
 '''
 # easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
+
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
@@ -34,7 +34,6 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 '''
 
 import copy
-import csv
 import math
 import pickle
 import random
@@ -60,6 +59,7 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
+    
     """Developer methods for the module, not necessary for users."""
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
@@ -67,9 +67,9 @@ class _Utils(classmethod):
 
         ### Params
 
-        epoch = current epoch
-        loss = current cost function output
-        disp_level = amount to display
+         - epoch = current epoch
+         - loss = current cost function output
+         - disp_level = amount to display
         """
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
 
@@ -79,10 +79,10 @@ class _Utils(classmethod):
 
         ### Params
 
-        epoch = current epoch
-        loss = current cost function output
-        disp_level = amount to display
-        found = whether a new weight configuration has been found
+         - epoch = current epoch
+         - loss = current cost function output
+         - disp_level = amount to display
+         - found = whether a new weight configuration has been found
         """
         if disp_level != 0:
             print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {str(found)}')
@@ -122,7 +122,7 @@ class Matrix(classmethod):
         '''
         new = list(zip(*matrix))
 
-        for i in range(len(new)):
+        for i, _ in enumerate(new):
             new[i] = list(new[i])
 
         return new
@@ -202,18 +202,8 @@ class Data(classmethod):
 
         return X, y
 
-    # def load_mnist() -> _Data:
-    #     train_samples = []
-    #     train_labels = []
-    #     scaled_train_samples = []
-    #     try:
-    #         with open('Data/MNIST.csv') as file:
-    #             raw = csv.reader(file.readlines())
-
-    #     except Exception:
-    #         raise FileNotFoundError(
-    #             'You must have the folders of data installed to load MNIST data using easyNeuron.')
-    #     raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
+    def load_mnist() -> _Data:
+        pass
 
     def load_dna() -> _Data:
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
@@ -638,9 +628,9 @@ class Dense(Layer):
                  weight_init: str='xavier', bias_init: float = 0) -> None:
         """
         Create a fully connected layer.
-        
+
         ### Params
-        
+
          - n_inputs = number of outputs from the previous layer or length of one line of data
          - n_neurons = number of neurons
          - activation = string name of activation
@@ -688,13 +678,13 @@ class Dense(Layer):
         to a default of 0.
         '''
         self.biases = []
-        for _ in range(len(self.biases)):
+        for _, _ in enumerate(self.biases):
             self.biases.append(bias_init)
 
         self.weights = []
-        for i in range(len(self.biases)):
+        for i, _ in enumerate(self.biases):
             self.weights.append([])
-            for _ in range(len(self.weights)):
+            for _, _ in enumerate(self.weights):
                 self.weights[i].append(random.normalvariate(0, 1))
 
     def forward(self, inputs: _ListLike) -> list:
@@ -710,11 +700,11 @@ class Dense(Layer):
         self.inputs = [inputs]
 
         # Dot product
-        for neuron in range(len(self.biases)):
+        for neuron, _ in enumerate(self.biases):
             self.output.append(Decimal(float(Matrix.dot(self.weights[neuron], inputs)) + float(self.biases[neuron])))
 
         # Activation
-        for i in range(len(self.output)):
+        for i, _ in enumerate(self.output):
             self.output[i] = getattr(Activation, self.activation)(self.output[i]) # run activation on it
 
         return self.output
@@ -817,7 +807,7 @@ class GradDesc(Optimizer):
             for sampleIndex, sample in enumerate(X):
                 model.forward(sample)
 
-                for layerIndex, layer in enumerate(model.network):
+                for layerIndex, _ in enumerate(model.network):
                     act_prime = f'{model.network[-layerIndex].activation}'
 
                     weightLayVector = []
@@ -826,7 +816,7 @@ class GradDesc(Optimizer):
                     for vector_layer_col in range(layerIndex):
                         gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
 
-                    for neuronIndex, neuron in enumerate(model.network[-layerIndex].weights):
+                    for neuronIndex, _ in enumerate(model.network[-layerIndex].weights):
 
                         newWeightVector = []
                         for weight in range(len(model.network[-layerIndex].weights[neuronIndex])):
@@ -853,14 +843,14 @@ class GradDesc(Optimizer):
                     self._biasGradientVector.append(biasLayVector)
                     self._weightGradientVector.append(weightLayVector)
 
-            for layerIndex in range(len(model.network)):
-                for neuronIndex in range(len(model.network[layerIndex].weights)):
-                    for weight in range(len(model.network[layerIndex].weights[neuronIndex])):
+            for layerIndex, _ in enumerate(model.network):
+                for neuronIndex, _ in enumerate(model.network[layerIndex].weights):
+                    for weight, _ in enumerate(model.network[layerIndex].weights[neuronIndex]):
                         weight -= self._weightGradientVector[layerIndex][neuronIndex][weight]
 
                     model.network[layerIndex].biases[neuronIndex] -= self._biasGradientVector[layerIndex][neuronIndex]
 
-            currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item in range(len(X))])
+            currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item, _ in enumerate(X)])
             _Utils._dispGrad(epoch, currLoss, disp_level)
             self._history.append(currLoss)
 
@@ -917,12 +907,12 @@ class RandDesc(Optimizer):
 
         for epoch in range(epochs):
             losses = []
-            for sample in range(len(X)):
+            for sample, _ in enumerate(X):
                 oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
-                for layer in range(len(model.network)):
+                for layer, _ in enumerate(model.network):
                     if "Dense" in str(model.network[layer].__class__):
-                        for neuron in range(len(model.network[layer].weights)):
-                            for weight in range(len(model.network[layer].weights[neuron])):
+                        for neuron, _ in enumerate(model.network[layer].weights):
+                            for weight, _ in enumerate(model.network[layer].weights[neuron]):
                                 model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
 
                             model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate

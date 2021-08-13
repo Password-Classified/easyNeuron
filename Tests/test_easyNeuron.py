@@ -189,11 +189,8 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 30, disp_level=0)
-        import matplotlib.pyplot as plt
-        plt.plot(history)
-        plt.show()
-        self.assertGreaterEqual(history[0], history[-1], f"\nThe loss has risen since starting optimization by\n{abs(history[0] - history[-1])}") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
+        history = network.fit(X, y, 10, disp_level=0)
+        self.assertGreaterEqual(history[0], history[-1], f"\nThe loss has risen since starting optimization by\n{abs(history[0] - history[-1])}\nThis is an issue I am encountering.\nAny help is welcome on the Github repository.") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
 
 if __name__ == '__main__':
     unittest.main()
