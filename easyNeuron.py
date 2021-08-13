@@ -1,4 +1,5 @@
 '''
+
 # easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
@@ -233,9 +234,9 @@ class Random(classmethod):
         """
         A version of random.randrange() using
         the `secrets` module.
-        
+
         ### Params
-        
+
          - x = a number, start of range
          - y = a number, end of range
         """
@@ -438,6 +439,7 @@ class Layer(object):
     '''
 
     def __init__(self):
+        """Sets default values for properties."""
         self.biases = []
         self.weights = []
         self.output = []
@@ -445,49 +447,57 @@ class Layer(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Layer_{self.category}(activation={self._act})'
+        """Display info as a string."""
+        return f'{self.category}(activation={self._act})'
 
     def __str__(self):
-        return f'Layer_{self.category}(output={self.output})'
+        """Return as str."""
+        return f'{self.category}(activation={self._act})'
 
     def __call__(self, inputs):
         return self.forward(inputs)
 
     def __len__(self):
+        """Return number of neurons."""
         return len(self.biases)
 
     def __eq__(self, o: object):
+        """Check if equivalent to object."""
         try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.category) == (o.output, o.type)
-            else:
-                return NotImplemented
+            return self is o
         except Exception:
             raise TypeError(
                 f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
+        """Create a hash for a dictionary."""
         return hash(self)
 
     def __bytes__(self):
+        """Turn to bytes."""
         return bytes(self)
 
     def __enter__(self):
+        """Use within a with statement."""
         return self
 
     def __exit__(self, category, value, traceback):
+        """Placeholder to avoid errors."""
         pass
 
     def forward(self, inputs):
+        """Run layer forwards."""
         self.inputs = inputs
         return inputs
 
     @property
-    def category(self):
+    def category(self) -> str:
+        """The category, e.g. Dense."""
         return self._type
 
     @property
-    def activation(self):
+    def activation(self) -> str:
+        """The activation for the layer. e.g. ReLU."""
         return self._act
 
 class Optimizer(object):
@@ -497,42 +507,49 @@ class Optimizer(object):
     '''
 
     def __init__(self):
+        """Set property values."""
         self.output = []
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Optimizer - {self.category}(output={self.output})'
+        """Return self as a string."""
+        return f'{self.category}(output={self.output})'
 
     def __str__(self):
-        return f'Optimizer_{self.category}(output={self.output})'
+        """Return self as a string."""
+        return f'{self.category}(output={self.output})'
 
     def __len__(self):
+        """Return the length of the output."""
         return len(self.output)
 
     def __eq__(self, o: object):
+        """Check if is equal to object"""
         try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.category) == (o.output, o.type)
-            else:
-                return NotImplemented
+            return self is o
         except Exception:
             raise TypeError(
                 f'Optimizer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
+        """Hash the object."""
         return hash(self)
 
     def __bytes__(self):
+        """Convert to bytes."""
         return bytes(self)
 
     def __enter__(self):
+        """For use within a with statement."""
         return self
 
     def __exit__(self, category, value, traceback):
+        """Placeholder to prevent exceptions."""
         pass
 
     @property
-    def category(self):
+    def category(self) -> str:
+        """The category, e.g. GradDesc."""
         return self._type
 
 class Model(object):
@@ -543,6 +560,7 @@ class Model(object):
 
     def __init__(self, network: list, optimizer: str = 'GradDesc',
                  loss: str = 'MSE'):
+        """Create a model object of unspecified type."""
         self.biases = []
         self.weights = []
         self.output = []
@@ -553,41 +571,48 @@ class Model(object):
         self._type = 'Undefined'
 
     def __repr__(self):
-        return f'Layer_{self.category}(activation={self._net})'
+        """Return self as a string."""
+        return f'{self.category}(activation={self._net})'
 
     def __str__(self):
+        """Return self as a string."""
         return f'Layer_{self.category}(output={self.output})'
 
     def __len__(self):
+        """Return length of layers."""
         return len(self.network)
 
     def __eq__(self, o: object):
+        """Check if equal to other object."""
         try:
-            if self.__class__ == o.__class__:
-                return (self.output, self.category) == (o.output, o.type)
-            else:
-                return NotImplemented
+            return self is o
         except Exception:
             raise TypeError(
                 f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
     def __hash__(self):
+        """Hash object for dictionary."""
         return hash((self))
 
     def __bytes__(self):
+        """Convert to bytes."""
         return bytes(self)
 
     def __enter__(self):
+        """For use in a with statement."""
         return self
 
     def __exit__(self, category, value, traceback):
+        """Placeholder to prevent exceptions."""
         pass
 
     def forward(self, inputs) -> list:
+        """Run the whole network forward."""
         self.inputs = inputs
         return inputs
 
     def save(self) -> None:
+        """Save object to binary file."""
         Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
 
     @property
