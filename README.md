@@ -26,7 +26,7 @@
 <br/>
 
 ***easyNeuron*** is the new Python module for creating deep learning algorithms and artificial
-neural networks. Equipped with datasets to get you started, functions for the calculus and
+neural networks started by [Password-Classified](https://github.com/Password-Classified) in 2021. Equipped with datasets to get you started, functions for the calculus and
 maths so you don't have to and with infinite model configurations for you to use, ***easyNeuron*** is ready for all your data science projects. Find ***easyNeuron*** at it's [Github Repository](https://github.com/Password-Classified/easyNeuron), with a GitHub.io website coming soon!
 
 <br/>

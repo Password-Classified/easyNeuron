@@ -59,20 +59,22 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
-
-    """_Util classmethods.
+    """
+    _Util classmethods.
 
     Developer methods for the module, not necessary for users.
+    
     """
-
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
-        """Display information on the current training state for GradDesc. Not needed by the user.
+        """
+        Display information on the current training state for GradDesc. Not needed by the user.
 
         ### Params
 
          - epoch = current epoch
          - loss = current cost function output
          - disp_level = amount to display
+
         """
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
 
@@ -93,7 +95,7 @@ class _Utils(classmethod):
 # General Classmethods
 class Matrix(classmethod):
     '''
-    
+
     A classmethod for matrix operations,
     since numpy isn't used here, I had
     to write my own matrix operations.
@@ -140,9 +142,8 @@ class Matrix(classmethod):
 class Timing(classmethod):
 
     def get_time(disp: bool=False) -> float:
-        current_time = timer()-time_start
-        if disp:
-            print(f'Time Elapsed: {current_time}')
+        current_time = timer() - time_start
+        if disp: print(f'Time Elapsed: {current_time}')
         return current_time
 
 class Data(classmethod):
