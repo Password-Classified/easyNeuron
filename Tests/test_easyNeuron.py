@@ -2,6 +2,7 @@ import inspect
 import os
 import sys
 import unittest
+import traceback
 
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
@@ -60,7 +61,12 @@ class DataTester(unittest.TestCase):
             Data.gen_cluster(200, 200)
         except Exception:
             is_failed = True
-        self.assertFalse(is_failed, msg='Creation of clustered data failed.')
+            infoType, infoValue, infoTraceback = sys.exc_info()
+            traceback.print_tb(infoTraceback)
+
+        self.assertFalse(is_failed, msg=f'Creation of clustered data failed. See above.')
+ 
+            
 
 class TimingTester(unittest.TestCase):
 
@@ -175,7 +181,7 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid')
         ], optimizer='RandDesc', loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 10, disp_level=1)
+        history = network.fit(X, y, 10, disp_level=0)
         self.assertGreaterEqual(history[0], history[-1],  "The loss has risen since starting optimization.")
 
     def test_full_grad(self):
@@ -183,11 +189,11 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
-        history = network.fit(X, y, 30, disp_level=1)
+        history = network.fit(X, y, 30, disp_level=0)
         import matplotlib.pyplot as plt
         plt.plot(history)
         plt.show()
-        self.assertGreaterEqual(history[0], history[-1], f"The loss has risen since starting optimization by {abs(history[0] - history[-1])}") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
+        self.assertGreaterEqual(history[0], history[-1], f"\nThe loss has risen since starting optimization by\n{abs(history[0] - history[-1])}") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
 
 if __name__ == '__main__':
     unittest.main()

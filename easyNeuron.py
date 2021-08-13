@@ -1,5 +1,6 @@
 '''
 # easyNeuron
+
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
@@ -16,6 +17,7 @@ This module uses only Python `Standard Library` modules for it - and here they a
  - math
  - pickle
  - random
+ - secrets
  - statistics
  - timeit
  - typing
@@ -35,6 +37,7 @@ import csv
 import math
 import pickle
 import random
+import secrets
 import statistics
 from decimal import Decimal
 from functools import reduce
@@ -49,26 +52,31 @@ _Number = Union[float, int]
 _OptimizerType = Union[str, object]
 _ListLike = Union[list, tuple]
 
+_Data_Tuple = (list, tuple, int, float)
+_Number_Tuple = (float, int)
+_OptimizerType_Tuple = (str, object)
+_ListLike_Tuple = (list, tuple)
+
 # Developer Classmethods
 class _Utils(classmethod):
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
         Display information on the current training state for GradDesc. Not needed by the user.
-        
+
         ### Params
-        
+
         epoch = current epoch
         loss = current cost function output
         disp_level = amount to display
         """
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
-        
+
     def _dispRand(epoch: int, loss: float, disp_level: int,  found: bool) -> None:
         """
         Display information of the epoch for RandDesc. Not needed used by user.
 
         ### Params
-        
+
         epoch = current epoch
         loss = current cost function output
         disp_level = amount to display
@@ -92,15 +100,15 @@ class Matrix(classmethod):
         elements multiplie (for numbers).
 
         ### Params
-        
+
          - list_1 = a list, tuple, float or integer
          - list_2 = a list, tuple. float or integer
 
         ### Returns
-        
+
 
         '''
-        if isinstance(list_1, _Number) and isinstance(list_2, _Number):
+        if isinstance(list_1, _Number_Tuple) and isinstance(list_2, _Number_Tuple):
             return Decimal(list_1 * list_2)
         else:
             return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
@@ -184,8 +192,8 @@ class Data(classmethod):
     def gen_cluster(size: int, difficulty: float) -> _Data:
         raw = []
         for _ in range(size):
-            raw.append([random.randrange(2500, 3500)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(100, 800)/100 + random.randrange(2000, 3500)/difficulty, 1])
-            raw.append([random.randrange(100, 800)/100 + random.randrange(2500, 3500)/difficulty, random.randrange(2500, 3500)/100 + random.randrange(2000, 3500)/difficulty, 0])
+            raw.append([Random.random_int(2500, 3500)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(100, 800)/100 + Random.random_int(2000, 3500)/difficulty, 1])
+            raw.append([Random.random_int(100, 800)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(2500, 3500)/100 + Random.random_int(2000, 3500)/difficulty, 0])
 
         X = [[round(i[0], 5), round(i[1], 5)] for i in raw]
         y = [[round(i[2], 5)] for i in raw]
@@ -221,6 +229,18 @@ class Random(classmethod):
     def seed(seed: int) -> None:
         random.seed(seed)
 
+    def random_int(x: _Number, y: _Number):
+        """
+        A version of random.randrange() using
+        the `secrets` module.
+        
+        ### Params
+        
+         - x = a number, start of range
+         - y = a number, end of range
+        """
+
+        return secrets.randbelow(abs(y - x)) + x
 
 # Network Classmethods
 class Activation(classmethod):
@@ -230,7 +250,7 @@ class Activation(classmethod):
         Run the Sigmoid activation forwards.
         (for forwardpropagation)
         '''
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
             output = []
             for i in inputs:
                 output.append(Decimal(1/(1+math.e**-float(i))))
@@ -240,7 +260,7 @@ class Activation(classmethod):
             return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
 
     def sigmoid_prime(inputs: _Data):
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
             output = []
             for i in inputs:
                 output.append( (1/(1+math.e**-float(i))) * (1-(1/(1+math.e**-float(i)))) )
@@ -254,7 +274,7 @@ class Activation(classmethod):
         Run the ReLU activation forwards.
         (for forwardpropagation)
         '''
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
             output = []
             for i in inputs:
                 output.append(Decimal(max(0, i)))
@@ -263,7 +283,7 @@ class Activation(classmethod):
             return Decimal(max(0, inputs))
 
     def relu_prime(inputs: list or tuple or int):
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
             output = []
             for i in inputs:
                 if i < 0:
@@ -296,7 +316,7 @@ class Loss(classmethod):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
 
             length = len(inputs)
             if length != len(targets):
@@ -359,7 +379,7 @@ class Loss(classmethod):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike):
+        if isinstance(inputs, _ListLike_Tuple):
 
             length = len(inputs)
             if length != len(targets):
@@ -393,7 +413,7 @@ class Loss(classmethod):
                         raise TypeError(
                             f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike): length = len(inputs)
+        if isinstance(inputs, _ListLike_Tuple): length = len(inputs)
         else: length = 1
         if length != len(targets):
             raise IndexError(
@@ -401,7 +421,7 @@ class Loss(classmethod):
 
         output = []
         for i in range(length):
-            if isinstance(inputs, _ListLike):
+            if isinstance(inputs, _ListLike_Tuple):
                 if inputs[i] < targets[i]: output.append(-1)
                 else: output.append(1)
             else:
@@ -670,13 +690,13 @@ class FeedForward(Model):
         layer type.
 
         ### Params
-        
+
          - network = list of layer objects
          - optimizer = an optimizer object or string name, defaulted to 'GradDesc'
          - loss = string name for a loss
 
         ### Returns
-        
+
          - Nothing"""
         if isinstance(optimizer, str):
             self.optimizer = globals()[optimizer]()
@@ -716,11 +736,11 @@ class GradDesc(Optimizer):
         to train weights.
 
         ### Params
-        
+
          - learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
         ### Returns
-        
+
          - Nothing
         """
         self.output = []
@@ -736,7 +756,7 @@ class GradDesc(Optimizer):
         number of epochs.
 
         ### Params
-        
+
          - model: a Model object with at least one layer
          - epochs: the number of epochs to train for
          - disp_level: how much to output in console
@@ -745,7 +765,7 @@ class GradDesc(Optimizer):
             +    1 = display epoch and loss
 
         ### Returns
-        
+
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
@@ -817,20 +837,20 @@ class RandDesc(Optimizer):
         try to "brute force" it's way to an optimum.
 
         ### Params
-        
+
         learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
         ###Returns
-        
+
          - Nothing
 
 
         ### Advantages
-        
+
          - Easy to understand and implement for beginners
 
         ### Disadvangtages
-        
+
          - Doesn't usually find global minimum loss
          - Slow
          - Inconsistent
@@ -845,7 +865,7 @@ class RandDesc(Optimizer):
         specified number of epochs.
 
         ### Params
-        
+
         model = Model object which needs to be optimized.
         X = Training samples (X data)
         y = Training targets (labels)
