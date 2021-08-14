@@ -1,7 +1,4 @@
-'''
-
-# easyNeuron
-
+'''# easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
 
@@ -26,17 +23,14 @@ This module uses only Python `Standard Library` modules for it - and here they a
  - timeit
  - typing
 
-
 ### Docstrings
 
 This module has extensive docstrings that are being constantly updated through time. They use
 MarkDown formatting, so I am not sure if they show up properly on IDLE, but should on IDEs like
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
 
-
 #### [Github Repository](https://github.com/Password-Classified/easyNeuron)
-'''
-
+'''  
 import copy
 import math
 import random
@@ -62,11 +56,9 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
-    """
-    _Util classmethods.
+    """_Util classmethods.
 
     Developer methods for the module, not necessary for users.
-
     """
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
@@ -806,64 +798,7 @@ class GradDesc(Optimizer):
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
-        self._disp_level = disp_level
         self._history = []
-
-        if disp_level != 0: print()
-
-        loss_prime = f'{model.loss}_prime'
-        for epoch in range(epochs):
-            for sampleIndex, sample in enumerate(X):
-                model.forward(sample)
-
-                for layerIndex, _ in enumerate(model.network):
-                    act_prime = f'{model.network[-layerIndex].activation}'
-
-                    weightLayVector = []
-                    biasLayVector = []
-                    gradMult = 0
-                    for vector_layer_col in range(layerIndex):
-                        gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
-
-                    for neuronIndex, _ in enumerate(model.network[-layerIndex].weights):
-
-                        newWeightVector = []
-                        for weight, _ in enumerate(model.network[-layerIndex].weights[neuronIndex]):
-
-                            if layerIndex > 0:
-                                weightGradient = getattr(
-                                    Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])), y[sampleIndex]) * gradMult * self.learningRate
-                            else:
-                                weightGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])) ), y[sampleIndex]) * self.learningRate
-                            newWeightVector.append(weightGradient)
-
-                        if layerIndex > 0:
-                                biasGradient = getattr(
-                                    Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(1), y[sampleIndex]) * gradMult * self.learningRate
-                        else:
-                            biasGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)( 1) ), y[sampleIndex]) * self.learningRate
-
-
-                        weightLayVector.append(newWeightVector)
-                        biasLayVector.append(biasGradient)
-
-                    self._biasGradientVector.append(biasLayVector)
-                    self._weightGradientVector.append(weightLayVector)
-
-            for layerIndex, _ in enumerate(model.network):
-                for neuronIndex, _ in enumerate(model.network[layerIndex].weights):
-                    for weight, _ in enumerate(model.network[layerIndex].weights[neuronIndex]):
-                        weight -= self._weightGradientVector[layerIndex][neuronIndex][weight]
-
-                    model.network[layerIndex].biases[neuronIndex] -= self._biasGradientVector[layerIndex][neuronIndex]
-
-            currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item, _ in enumerate(X)])
-            _Utils._dispGrad(epoch, currLoss, disp_level)
-            self._history.append(currLoss)
-
-        if disp_level != 0: print()
 
         return self._history
 
