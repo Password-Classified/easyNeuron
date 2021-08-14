@@ -1,7 +1,10 @@
 '''
+
 # easyNeuron
 
+
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
+
 It only uses Python Standard Library modules - not even numpy - to program it. I may also release
 a full version that uses `numba` (non-standard library) to speed up code by running on the GPU.
 
@@ -23,6 +26,7 @@ This module uses only Python `Standard Library` modules for it - and here they a
  - timeit
  - typing
 
+
 ### Docstrings
 
 This module has extensive docstrings that are being constantly updated through time. They use
@@ -41,7 +45,7 @@ import statistics
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
-from typing import Any, Union
+from typing import Union
 
 time_start = timer()
 
@@ -62,7 +66,7 @@ class _Utils(classmethod):
     _Util classmethods.
 
     Developer methods for the module, not necessary for users.
-    
+
     """
     def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
         """
@@ -150,7 +154,7 @@ class Data(classmethod):
     A classmethod for data manipulation,
     acquirement, loading and saving.
     '''
-    
+
     # ! These below methods are commented out due to security concerns with the pickle module.
     # def load_object(file_to_open: str) -> list:
     #     '''
