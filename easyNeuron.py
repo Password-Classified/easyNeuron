@@ -35,7 +35,6 @@ VS Code. Please raise any issues if there are terminological or grammatical issu
 
 import copy
 import math
-import pickle
 import random
 import secrets
 import statistics
@@ -825,7 +824,7 @@ class GradDesc(Optimizer):
                     for neuronIndex, _ in enumerate(model.network[-layerIndex].weights):
 
                         newWeightVector = []
-                        for weight in range(len(model.network[-layerIndex].weights[neuronIndex])):
+                        for weight, _ in enumerate(model.network[-layerIndex].weights[neuronIndex]):
 
                             if layerIndex > 0:
                                 weightGradient = getattr(
