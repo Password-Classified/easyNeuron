@@ -30,12 +30,14 @@ MarkDown formatting, so I am not sure if they show up properly on IDLE, but shou
 VS Code. Please raise any issues if there are terminological or grammatical issues on any docstrings.
 
 #### [Github Repository](https://github.com/Password-Classified/easyNeuron)
-'''  
+'''
+
 import copy
 import math
 import random
 import secrets
 import statistics
+from operator import mul as _listmul
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
@@ -275,7 +277,7 @@ class Activation(classmethod):
         else:
             return Decimal(max(0, inputs))
 
-    def relu_prime(inputs: list or tuple or int):
+    def relu_prime(inputs: _Data):
         if isinstance(inputs, _ListLike_Tuple):
             output = []
             for i in inputs:
@@ -289,6 +291,16 @@ class Activation(classmethod):
                 return 0
             else:
                 return 1
+            
+    def argmax(inputs: _Data):
+        index = 0
+        val = 0
+        for i, currIndex in enumerate(inputs):
+            if i > val:
+                index = currIndex
+                val = i
+        return index
+                
 
 class Loss(classmethod):
 
@@ -799,6 +811,54 @@ class GradDesc(Optimizer):
                           so it can be plotted.
         '''
         self._history = []
+
+        self._weightGradientVector = []
+        self._biasGradientVector = []
+
+        loss_prime = f"{model.loss}_prime"
+
+        for epoch in range(epochs):
+            losses = []
+            accuracy = []
+            for sampleId, sample in enumerate(X):
+                modelOut = model.forward(sample)
+                
+                accuracy.append(1 if Activation.argmax(modelOut) == y[sampleId] else 0)
+                losses.append(getattr(Loss, loss_prime)(modelOut, y[sampleId]))
+
+                for layerId, layer in enumerate(model.network.reverse()): #* .reverse() is IMPORTANT because we are BACKpropagating
+                    self._weightGradientVector.append([])
+                    self._biasGradientVector.append([])
+
+                    act_prime = f"{layer._activation}_prime"
+
+                    # This is OK to put here to, since the input to the bias "neuron" always = 1
+                    # and it only needs to be added to the bias gradient vector
+                    bias_grad = self._biasGradientVector.append(
+                        getattr(Loss, loss_prime)(
+                            getattr(Activation, act_prime)(1), y[sampleId]
+                        ) * self.learningRate
+                    )
+
+                    for neuronId, neuronWeights in enumerate(model.network[layerId].weights):
+                        self._weightGradientVector.append([])
+
+                        gradMult = 1
+                        for column, _ in enumerate(self._weightGradientVector):
+                            gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[column])
+
+                        for weightId, weight in enumerate(model.network[layerId].weights[neuronId]):
+
+                            # Calculate weight gradient
+                            self._weightGradientVector[layerId][neuronId].append(
+                                getattr(Loss, loss_prime)(
+                                    getattr(Activation, act_prime)(layer.inputs[weightId])
+                                ) * gradMult * self.learningRate
+                            )
+                            
+                        self._biasGradientVector[neuronId].append(bias_grad * gradMult * self.learningRate)
+
+            self._history.append(statistics.fmean(losses))
 
         return self._history
 
