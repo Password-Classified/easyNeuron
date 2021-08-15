@@ -672,6 +672,10 @@ class History(object):
         """Placeholder to prevent exceptions."""
         pass
 
+    def _reset(self):
+        self.accuracy = []
+        self.loss = []
+
 # Subclasses: Layers
 class Dense(Layer):
     '''
@@ -834,6 +838,7 @@ class GradDesc(Optimizer):
         self._weightGradientVector = []
         self._biasGradientVector = []
         self._type = 'GradDesc'
+        self._history = History()
 
     def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
         '''
@@ -857,6 +862,54 @@ class GradDesc(Optimizer):
         '''
         loss_prime = f"{model.loss}_prime"
 
+        self._history._reset()
+
+        model.network.reverse() # since we are BACKpropagating
+
+        for _ in range(epochs):
+            losses = []
+            accuracy = []
+            
+            for sampleId, sample in enumerate(X):
+                modelOut = model.forward(sample)
+                
+                losses.append(getattr(Loss, model.loss)(modelOut, y[sampleId]))
+                accuracy.append(1 if Activation.argmax(modelOut) else 0)
+                
+                self._weightGradientVector = []
+                self._biasGradientVector = []
+
+                for layerId, layer in enumerate(model.network):
+                    act_prime = f"{layer.activation}_prime"
+
+                    self._weightGradientVector.append([])
+                    self._biasGradientVector.append([])
+
+                    gradMult = 1
+                    if layerId > 0:
+                        for column, _ in enumerate(self._weightGradientVector):
+                            gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[column])
+
+                    biasGrad = getattr(Loss, loss_prime)(
+                        getattr(Activation, act_prime)(1), y[sampleId]
+                    ) * gradMult * self.learningRate
+
+                    for neuronId, neuron in enumerate(model.network[-layerId].weights):
+                        self._weightGradientVector.append([])
+
+                        for weightId, weight in enumerate(model.network[-layerId].weights[neuronId]):
+                            self._weightGradientVector[-layerId][neuronId].append(
+                                getattr(Loss, loss_prime)(
+                                    getattr(Activation, act_prime)(layer.inputs[weightId]), y[sampleId]
+                                )
+                            ) * gradMult * self.learningRate
+
+                        self._biasGradientVector[-layerId].append(biasGrad)
+                        
+            self._history.loss.append(statistics.fmean(losses))
+            self._history.accuracy.append(sum(accuracy) / sampleId + 1)
+
+        model.network.reverse() # reset order
         return self._history
 
 class RandDesc(Optimizer):
