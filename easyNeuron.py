@@ -1,4 +1,5 @@
-'''# easyNeuron
+'''
+# easyNeuron
 
 `easyNeuron` is an easy-to-use lightweight neural network framework written in raw Python.
 
@@ -37,7 +38,6 @@ import math
 import random
 import secrets
 import statistics
-from operator import mul as _listmul
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
@@ -58,6 +58,7 @@ _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
 class _Utils(classmethod):
+
     """_Util classmethods.
 
     Developer methods for the module, not necessary for users.
@@ -71,7 +72,6 @@ class _Utils(classmethod):
          - epoch = current epoch
          - loss = current cost function output
          - disp_level = amount to display
-
         """
         if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
 
@@ -291,8 +291,14 @@ class Activation(classmethod):
                 return 0
             else:
                 return 1
-            
+
     def argmax(inputs: _Data):
+        """
+        # Argmax
+
+        ## Parameters
+         - inputs = input to the function (dot product during forwardprop)
+        """
         index = 0
         val = 0
         for i, currIndex in enumerate(inputs):
@@ -300,7 +306,7 @@ class Activation(classmethod):
                 index = currIndex
                 val = i
         return index
-                
+
 
 class Loss(classmethod):
 
@@ -441,7 +447,7 @@ class Layer(object):
     Parent class to all layers, containing
     the `__special__` methods needed.
     '''
-
+    __slots__ = 'biases', 'weights', 'output', '_act', '_type'
     def __init__(self):
         """Sets default values for properties."""
         self.biases = []
@@ -509,10 +515,14 @@ class Optimizer(object):
     Parent class to all optimizers  , containing
     the `__special__` methods needed.
     '''
-
+    __slots__ = 'output', 'learningRate', '_weightGradientVector', '_biasGradientVector', '_history' '_type'
     def __init__(self):
         """Set property values."""
         self.output = []
+        self.learningRate = 0.001
+        self._weightGradientVector = []
+        self._biasGradientVector = []
+        self._history = History()
         self._type = 'Undefined'
 
     def __repr__(self):
@@ -561,7 +571,7 @@ class Model(object):
     Parent class to all layers, containing
     the `__special__` methods needed.
     '''
-
+    __slots__ = 'biases', 'weights', 'output', 'inputs', 'optimizer', '_loss', '_net', '_type'
     def __init__(self, network: list, optimizer: str = 'GradDesc',
                  loss: str = 'MSE'):
         """Create a model object of unspecified type."""
@@ -626,6 +636,41 @@ class Model(object):
     @property
     def network(self):
         return self._net
+
+class History(object):
+    __slots__ = 'loss', 'accuracy'
+    def __init__(self, loss: _ListLike = [], accuracy: _ListLike = []):
+        """Create a model object of unspecified type."""
+        self.loss = []
+        self.accuracy = []
+
+    def __len__(self):
+        """Return length of layers."""
+        return len(self.loss)
+
+    def __eq__(self, o: object):
+        """Check if equal to other object."""
+        try:
+            return self is o
+        except Exception:
+            raise TypeError(
+                f'History object is not comparable to given {type(o)} object.')
+
+    def __hash__(self):
+        """Hash object for dictionary."""
+        return hash((self))
+
+    def __bytes__(self):
+        """Convert to bytes."""
+        return bytes(self)
+
+    def __enter__(self):
+        """For use in a with statement."""
+        return self
+
+    def __exit__(self, category, value, traceback):
+        """Placeholder to prevent exceptions."""
+        pass
 
 # Subclasses: Layers
 class Dense(Layer):
@@ -703,7 +748,7 @@ class Dense(Layer):
     def forward(self, inputs: _ListLike) -> list:
         '''
         Run the Dense Layer forwards.
-        (forward propagate). It takes the
+        (forward-propagate). It takes the
         dot product (matrices multiplied
         together) plus the bias of each
         neuron to give an output to be
@@ -810,27 +855,26 @@ class GradDesc(Optimizer):
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
-        self._history = []
-
-        self._weightGradientVector = []
-        self._biasGradientVector = []
-
         loss_prime = f"{model.loss}_prime"
-
-        for epoch in range(epochs):
+        network = list(model.network.__reversed__())
+        
+        for _ in range(epochs):
             losses = []
             accuracy = []
             for sampleId, sample in enumerate(X):
+                self._weightGradientVector = []
+                self._biasGradientVector = []
+
                 modelOut = model.forward(sample)
-                
+
                 accuracy.append(1 if Activation.argmax(modelOut) == y[sampleId] else 0)
                 losses.append(getattr(Loss, loss_prime)(modelOut, y[sampleId]))
 
-                for layerId, layer in enumerate(model.network.reverse()): #* .reverse() is IMPORTANT because we are BACKpropagating
+                for layerId, layer in enumerate(network):
                     self._weightGradientVector.append([])
                     self._biasGradientVector.append([])
 
-                    act_prime = f"{layer._activation}_prime"
+                    act_prime = f"{layer.activation}_prime"
 
                     # This is OK to put here to, since the input to the bias "neuron" always = 1
                     # and it only needs to be added to the bias gradient vector
@@ -840,12 +884,13 @@ class GradDesc(Optimizer):
                         ) * self.learningRate
                     )
 
-                    for neuronId, neuronWeights in enumerate(model.network[layerId].weights):
+                    for neuronId, neuronWeights in enumerate(model.network[-layerId].weights):
                         self._weightGradientVector.append([])
 
-                        gradMult = 1
-                        for column, _ in enumerate(self._weightGradientVector):
-                            gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[column])
+                        if layerId > 0:
+                            gradMult = 1
+                            for column, _ in enumerate(self._weightGradientVector):
+                                gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[column])
 
                         for weightId, weight in enumerate(model.network[layerId].weights[neuronId]):
 
@@ -855,10 +900,11 @@ class GradDesc(Optimizer):
                                     getattr(Activation, act_prime)(layer.inputs[weightId])
                                 ) * gradMult * self.learningRate
                             )
-                            
+
                         self._biasGradientVector[neuronId].append(bias_grad * gradMult * self.learningRate)
 
-            self._history.append(statistics.fmean(losses))
+            self._history.loss.append(statistics.fmean(losses))
+            self._history.accuracy.append(sum(accuracy) / sampleId + 1)
 
         return self._history
 
@@ -872,7 +918,7 @@ class RandDesc(Optimizer):
 
         learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
-        ###Returns
+        ### Returns
 
          - Nothing
 
@@ -890,6 +936,7 @@ class RandDesc(Optimizer):
         self.output = []
         self.learningRate = learning_rate
         self._type = 'RandomDesc'
+        self._history = History()
 
     def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 0):
         """
@@ -906,7 +953,6 @@ class RandDesc(Optimizer):
         """
         if disp_level != 0: print()
 
-        self.history = []
         oldLoss = float('inf')
 
         for epoch in range(epochs):
@@ -928,10 +974,10 @@ class RandDesc(Optimizer):
             if newLoss <= oldLoss:
                 _Utils._dispRand(epoch, newLoss, disp_level, True)
                 oldLoss = newLoss
-                self.history.append(float(newLoss))
+                self._history.loss.append(float(newLoss))
             else:
                 _Utils._dispRand(epoch, oldLoss, disp_level, False)
-                self.history.append(float(oldLoss))
+                self._history.loss.append(float(oldLoss))
                 count = 0
                 for layer, weightSet in zip(model.network, oldWeights):
                     model.network[count].weights = weightSet
@@ -939,7 +985,7 @@ class RandDesc(Optimizer):
 
         if disp_level != 0: print()
 
-        return self.history
+        return self._history
 
 
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
