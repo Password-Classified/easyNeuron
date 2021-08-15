@@ -856,55 +856,6 @@ class GradDesc(Optimizer):
                           so it can be plotted.
         '''
         loss_prime = f"{model.loss}_prime"
-        network = list(model.network.__reversed__())
-        
-        for _ in range(epochs):
-            losses = []
-            accuracy = []
-            for sampleId, sample in enumerate(X):
-                self._weightGradientVector = []
-                self._biasGradientVector = []
-
-                modelOut = model.forward(sample)
-
-                accuracy.append(1 if Activation.argmax(modelOut) == y[sampleId] else 0)
-                losses.append(getattr(Loss, loss_prime)(modelOut, y[sampleId]))
-
-                for layerId, layer in enumerate(network):
-                    self._weightGradientVector.append([])
-                    self._biasGradientVector.append([])
-
-                    act_prime = f"{layer.activation}_prime"
-
-                    # This is OK to put here to, since the input to the bias "neuron" always = 1
-                    # and it only needs to be added to the bias gradient vector
-                    bias_grad = self._biasGradientVector.append(
-                        getattr(Loss, loss_prime)(
-                            getattr(Activation, act_prime)(1), y[sampleId]
-                        ) * self.learningRate
-                    )
-
-                    for neuronId, neuronWeights in enumerate(model.network[-layerId].weights):
-                        self._weightGradientVector.append([])
-
-                        if layerId > 0:
-                            gradMult = 1
-                            for column, _ in enumerate(self._weightGradientVector):
-                                gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[column])
-
-                        for weightId, weight in enumerate(model.network[layerId].weights[neuronId]):
-
-                            # Calculate weight gradient
-                            self._weightGradientVector[layerId][neuronId].append(
-                                getattr(Loss, loss_prime)(
-                                    getattr(Activation, act_prime)(layer.inputs[weightId])
-                                ) * gradMult * self.learningRate
-                            )
-
-                        self._biasGradientVector[neuronId].append(bias_grad * gradMult * self.learningRate)
-
-            self._history.loss.append(statistics.fmean(losses))
-            self._history.accuracy.append(sum(accuracy) / sampleId + 1)
 
         return self._history
 
