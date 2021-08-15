@@ -872,14 +872,16 @@ class GradDesc(Optimizer):
             
             for sampleId, sample in enumerate(X):
                 modelOut = model.forward(sample)
+                modelAns = [Activation.argmax(modelOut)]
                 
-                losses.append(getattr(Loss, model.loss)(modelOut, y[sampleId]))
-                accuracy.append(1 if Activation.argmax(modelOut) else 0)
+                losses.append(getattr(Loss, model.loss)(modelAns, y[sampleId]))
+                accuracy.append(1 if modelAns == y[sampleId] else 0)
                 
                 self._weightGradientVector = []
                 self._biasGradientVector = []
 
                 for layerId, layer in enumerate(model.network):
+                    print(layerId)
                     act_prime = f"{layer.activation}_prime"
 
                     self._weightGradientVector.append([])
@@ -895,7 +897,7 @@ class GradDesc(Optimizer):
                     ) * gradMult * self.learningRate
 
                     for neuronId, neuron in enumerate(model.network[-layerId].weights):
-                        self._weightGradientVector.append([])
+                        self._weightGradientVector[-layerId].append([])
 
                         for weightId, weight in enumerate(model.network[-layerId].weights[neuronId]):
                             self._weightGradientVector[-layerId][neuronId].append(
