@@ -811,60 +811,6 @@ class GradDesc(Optimizer):
 
         if disp_level != 0: print()
 
-        loss_prime = f'{model.loss}_prime'
-        for epoch in range(epochs):
-            for sampleIndex, sample in enumerate(X):
-                model.forward(sample)
-
-                for layerIndex, _ in enumerate(model.network):
-                    act_prime = f'{model.network[-layerIndex].activation}'
-
-                    weightLayVector = []
-                    biasLayVector = []
-                    gradMult = 0
-                    for vector_layer_col in range(layerIndex):
-                        gradMult *= reduce((lambda f, j: f * j), self._weightGradientVector[vector_layer_col])
-
-                    for neuronIndex, _ in enumerate(model.network[-layerIndex].weights):
-
-                        newWeightVector = []
-                        for weight, _ in enumerate(model.network[-layerIndex].weights[neuronIndex]):
-
-                            if layerIndex > 0:
-                                weightGradient = getattr(
-                                    Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])), y[sampleIndex]) * gradMult * self.learningRate
-                            else:
-                                weightGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)(float(model.network[-layerIndex].inputs[neuronIndex][weight])) ), y[sampleIndex]) * self.learningRate
-                            newWeightVector.append(weightGradient)
-
-                        if layerIndex > 0:
-                                biasGradient = getattr(
-                                    Loss, loss_prime
-                                    )(getattr(Activation, act_prime)(1), y[sampleIndex]) * gradMult * self.learningRate
-                        else:
-                            biasGradient = getattr(Loss, loss_prime)( float(getattr(Activation, act_prime)( 1) ), y[sampleIndex]) * self.learningRate
-
-
-                        weightLayVector.append(newWeightVector)
-                        biasLayVector.append(biasGradient)
-
-                    self._biasGradientVector.append(biasLayVector)
-                    self._weightGradientVector.append(weightLayVector)
-
-            for layerIndex, _ in enumerate(model.network):
-                for neuronIndex, _ in enumerate(model.network[layerIndex].weights):
-                    for weight, _ in enumerate(model.network[layerIndex].weights[neuronIndex]):
-                        weight -= self._weightGradientVector[layerIndex][neuronIndex][weight]
-
-                    model.network[layerIndex].biases[neuronIndex] -= self._biasGradientVector[layerIndex][neuronIndex]
-
-            currLoss = statistics.fmean([getattr(Loss, model.loss)(model.forward(X[item]), y[item]) for item, _ in enumerate(X)])
-            _Utils._dispGrad(epoch, currLoss, disp_level)
-            self._history.append(currLoss)
-
-        if disp_level != 0: print()
-
         return self._history
 
 class RandDesc(Optimizer):
