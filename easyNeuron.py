@@ -149,23 +149,6 @@ class Data(classmethod):
     acquirement, loading and saving.
     '''
 
-    # ! These below methods are commented out due to security concerns with the pickle module.
-    # def load_object(file_to_open: str) -> list:
-    #     '''
-    #     Load a list or any other object from a
-    #     text file that will be created/opened.
-    #     '''
-    #     with open(file_to_open, "rb") as file:
-    #         data = pickle.load(file)
-
-    #     return data
-
-    # def save_object(data: Any, file_to_open: str) -> str:
-    #     with open(file_to_open, "wb") as file:
-    #         pickle.dump(data, file)
-
-    #     return data
-
     def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
         if len(feature_range) != 2:
             raise ValueError(
@@ -869,19 +852,19 @@ class GradDesc(Optimizer):
         for _ in range(epochs):
             losses = []
             accuracy = []
-            
+
             for sampleId, sample in enumerate(X):
                 modelOut = model.forward(sample)
                 modelAns = [Activation.argmax(modelOut)]
-                
+
                 losses.append(getattr(Loss, model.loss)(modelAns, y[sampleId]))
                 accuracy.append(1 if modelAns == y[sampleId] else 0)
-                
+
                 self._weightGradientVector = []
                 self._biasGradientVector = []
 
                 for layerId, layer in enumerate(model.network):
-                    print(layerId)
+
                     act_prime = f"{layer.activation}_prime"
 
                     self._weightGradientVector.append([])
@@ -896,18 +879,26 @@ class GradDesc(Optimizer):
                         getattr(Activation, act_prime)(1), y[sampleId]
                     ) * gradMult * self.learningRate
 
-                    for neuronId, neuron in enumerate(model.network[-layerId].weights):
-                        self._weightGradientVector[-layerId].append([])
+                    for neuronId, _ in enumerate(model.network[layerId].weights):
+                        self._weightGradientVector[layerId].append([])
+                        print()
+                        for weightId, weight in enumerate(model.network[layerId].weights[neuronId]):
 
-                        for weightId, weight in enumerate(model.network[-layerId].weights[neuronId]):
-                            self._weightGradientVector[-layerId][neuronId].append(
+                            print(f"Layer: {layerId} Weight: {weightId}, {weight}")
+                            print(model.network[0].inputs)
+
+                            actOut = getattr(Activation, act_prime)(model.network[layerId].inputs[weightId])
+                            for layerFunc in model.network[-layerId:]:
+                                actOut = layerFunc.forward(actOut)
+
+                            self._weightGradientVector[layerId][neuronId].append(
                                 getattr(Loss, loss_prime)(
-                                    getattr(Activation, act_prime)(layer.inputs[weightId]), y[sampleId]
-                                )
-                            ) * gradMult * self.learningRate
+                                    actOut, y[sampleId]
+                                ) * gradMult * self.learningRate
+                            )
 
-                        self._biasGradientVector[-layerId].append(biasGrad)
-                        
+                        self._biasGradientVector[layerId].append(biasGrad)
+
             self._history.loss.append(statistics.fmean(losses))
             self._history.accuracy.append(sum(accuracy) / sampleId + 1)
 
