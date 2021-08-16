@@ -882,6 +882,7 @@ class GradDesc(Optimizer):
                         getattr(Loss, loss_prime)(
                             getattr(Activation, act_prime)(1), y[sampleId]
                         ) * self.learningRate
+
                     )
 
                     for neuronId, neuronWeights in enumerate(model.network[-layerId].weights):
