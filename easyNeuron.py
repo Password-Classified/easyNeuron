@@ -885,11 +885,11 @@ class GradDesc(Optimizer):
                         for weightId, weight in enumerate(model.network[layerId].weights[neuronId]):
 
                             print(f"Layer: {layerId} Weight: {weightId}, {weight}")
-                            print(model.network[0].inputs)
+                            print(f"Layers: {len(model.network)}, Inputs: {model.network[layerId].inputs}")
 
-                            actOut = getattr(Activation, act_prime)(model.network[layerId].inputs[weightId])
-                            for layerFunc in model.network[-layerId:]:
-                                actOut = layerFunc.forward(actOut)
+                            actOut = getattr(Activation, act_prime)(model.network[layerId].inputs[neuronId])
+                            for layerFunc in model.network[layerId:]:
+                                actOut = layerFunc.forward([actOut])
 
                             self._weightGradientVector[layerId][neuronId].append(
                                 getattr(Loss, loss_prime)(

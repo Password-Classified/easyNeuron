@@ -189,6 +189,7 @@ class FullTester(unittest.TestCase):
             Dense(2, 1, activation='sigmoid'),
         ], loss='MAE')
         X, y = Data.gen_cluster(200, 1000)
+        print(X)
         history = network.fit(X, y, 10, disp_level=0)
         self.assertGreaterEqual(history.loss[0], history.loss[-1], f"\nThe loss has risen since starting optimization by\n{abs(history[0] - history[-1])}\nThis is an issue I am encountering.\nAny help is welcome on the Github repository.") # * The gradient does not update the weights yet, so that shall be next, but no history is recorded yet.
 
