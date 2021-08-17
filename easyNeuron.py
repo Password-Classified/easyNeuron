@@ -855,6 +855,7 @@ class GradDesc(Optimizer):
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
+        raise NotImplementedError("We are currently encountering issues. Please use RandDesc for the moment.")
         loss_prime = f"{model.loss}_prime"
         network = list(model.network.__reversed__())
         
