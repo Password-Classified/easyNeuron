@@ -1,0 +1,95 @@
+<mxfile host="65bd71144e">
+    <diagram id="mcYs00XTaWChpkOuZIIx" name="Backpropagation">
+        <mxGraphModel dx="732" dy="540" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="16" value="&lt;h1&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;Calculations&lt;/font&gt;&lt;/h1&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;N11 = a1(i1 * W11)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;N12 = a1(i2 * W12)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;N21 = a2(N11 * W211 + N12 * W212)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;N22 = a2(N11 * W222 + N12 * W221)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;O = a3(N21 * W31 + N22 * W32)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;cost = C(O, t)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font face=&quot;IBM Plex Sans Arabic&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Arabic&quot;&gt;z(x) = a2(a1(i1 * W11) * W211 + a1(i2 * W12) *&amp;nbsp; W212) * W31 +&amp;nbsp;2(a1(i1 * W11) * W211 + a1(i2 * W12) *&amp;nbsp; W212) * W31&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;" parent="1" vertex="1">
+                    <mxGeometry x="10" y="291" width="810" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="10" y="20" width="440" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="N11" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;" parent="35" vertex="1">
+                    <mxGeometry x="80" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;curved=1;" parent="35" source="3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="240" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="3" value="N12" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;" parent="35" vertex="1">
+                    <mxGeometry x="80" y="160" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="N21" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;" parent="35" vertex="1">
+                    <mxGeometry x="240" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;curved=1;" parent="35" source="2" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" style="rounded=1;sketch=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="N22" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;" parent="35" vertex="1">
+                    <mxGeometry x="240" y="160" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;rounded=1;sketch=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" source="2" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="O" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;" parent="35" vertex="1">
+                    <mxGeometry x="360" y="80" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="rounded=1;sketch=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" source="4" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" style="rounded=1;sketch=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="130" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" target="2" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="40" y="40" as="sourcePoint"/>
+                        <mxPoint x="420" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="35" target="3" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="40" y="200" as="sourcePoint"/>
+                        <mxPoint x="70" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="i1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry y="30" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="i2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry y="190" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="W11" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="40" y="20" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="W12" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="40" y="180" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="W211" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="180" y="20" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="W212" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="220" y="80" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="W221" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="180" y="200" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="W222" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="220" y="140" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="W31" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="340" y="60" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="W32" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=0;" parent="35" vertex="1">
+                    <mxGeometry x="334" y="160" width="40" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

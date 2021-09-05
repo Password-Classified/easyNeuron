@@ -855,14 +855,33 @@ class GradDesc(Optimizer):
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
-        
-        """
-        Start on OUTPUT layer
-        Iterate over neurons
-            Iterate over weight with each neuron
-                Calculate
-        """
 
+        # TODO: epochs, param adjustment
+        """
+        BACKPROP
+
+        create gradient vector
+        Start on OUTPUT layer (BACKpropagation)
+
+        Iterate over layers BACKwards
+            append list to gradient vector for weights
+            append lsit to gradient vector for biases
+
+            Iterate over neurons
+                calculate act prime of bias - act prime (0)
+                add list to weight gradient vect [layer]
+                add list to bias gradient vect [layer]
+
+                Iterate over weight with each neuron
+                    Calculating Loss Derivative With Respect to weight
+                    all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
+
+                    calc loss prime on output prime
+
+                    append to list of weight grad vect [layer][neuron]
+                
+                append bias grad to gradient vector of biases [layer][neuron]
+        """
         return self._history
 
 class RandDesc(Optimizer):
