@@ -4,9 +4,9 @@
   <img src="Images/build%20badge.svg"/>
   <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/e9e0485034e84412aa21b93e26f915be"/>
   <!-- <img src="Images/dependency%20badge.svg"/> -->
-  <img src="https://badges.pufler.dev/created/Password-Classified/easyNeuron"/>
-  <img src="https://badges.pufler.dev/updated/Password-Classified/easyNeuron"/>
-  <img src="https://badges.pufler.dev/visits/Password-Classified/easyNeuron"/>
+  <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
+  <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
+  <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
 
 <br/>
 
@@ -26,8 +26,8 @@
 <br/>
 
 ***easyNeuron*** is the new Python module for creating deep learning algorithms and artificial
-neural networks started by [Password-Classified](https://github.com/Password-Classified) in 2021. Equipped with datasets to get you started, functions for the calculus and
-maths so you don't have to and with infinite model configurations for you to use, ***easyNeuron*** is ready for all your data science projects. Find ***easyNeuron*** at it's [Github Repository](https://github.com/Password-Classified/easyNeuron), with a GitHub.io website coming soon!
+neural networks started by [Password-Classified](https://github.com/Neuron-AI) in 2021. Equipped with datasets to get you started, functions for the calculus and
+maths so you don't have to and with infinite model configurations for you to use, ***easyNeuron*** is ready for all your data science projects. Find ***easyNeuron*** at it's [Github Repository](https://github.com/Neuron-AI/easyNeuron), with a GitHub.io website coming soon!
 
 <br/>
 <br/>
@@ -38,7 +38,7 @@ I'd link to thank those who have helped make this happen...
 - [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
 - Also, a big thanks to all of the fantastic contributors so far:
 
-![Contributors](https://badges.pufler.dev/contributors/Password-Classified/easyNeuron?size=80&padding=5&bots=true)
+![Contributors](https://badges.pufler.dev/contributors/Neuron-AI/easyNeuron?size=80&padding=5&bots=true)
 
 <br/>
 <br/>
