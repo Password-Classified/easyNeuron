@@ -184,11 +184,10 @@ class Data(classmethod):
                         largest = item[deep]
                     elif item[deep] < smallest:
                         smallest = item[deep]
-            else:
-                if item > largest:
-                    largest = item
-                elif item < smallest:
-                    smallest = item
+            elif item > largest:
+                largest = item
+            elif item < smallest:
+                smallest = item
         raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
     def shuffle(data: _Data):
@@ -246,20 +245,18 @@ class Activation(classmethod):
         (for forwardpropagation)
         '''
         if isinstance(inputs, _ListLike_Tuple):
-            output = []
-            for i in inputs:
-                output.append(Decimal(1/(1+math.e**-float(i))))
-            return output
+            return [Decimal(1/(1+math.e**-float(i))) for i in inputs]
 
         else:
             return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
 
     def sigmoid_prime(inputs: _Data):
         if isinstance(inputs, _ListLike_Tuple):
-            output = []
-            for i in inputs:
-                output.append( (1/(1+math.e**-float(i))) * (1-(1/(1+math.e**-float(i)))) )
-            return output
+            return [
+                (1 / (1 + math.e ** -float(i))) * (1 - (1 / (1 + math.e ** -float(i))))
+                for i in inputs
+            ]
+
 
         else:
             return (1/(1+math.e**-float(inputs))) * (1-(1/(1+math.e**-float(inputs))))
@@ -270,10 +267,7 @@ class Activation(classmethod):
         (for forwardpropagation)
         '''
         if isinstance(inputs, _ListLike_Tuple):
-            output = []
-            for i in inputs:
-                output.append(Decimal(max(0, i)))
-            return output
+            return [Decimal(max(0, i)) for i in inputs]
         else:
             return Decimal(max(0, inputs))
 
@@ -317,32 +311,27 @@ class Loss(classmethod):
             if tp != list:
                 if tp == tuple:
                     inpt = list(inpt)
-                elif tp == int or tp == float:
+                elif tp in [int, float]:
                     inpt = [inpt]
+                elif isinstance(inputs, type(targets)):
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {tp}.')
                 else:
-                    if isinstance(inputs, type(targets)):
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else:
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike_Tuple):
-
-            length = len(inputs)
-            if length != len(targets):
-                raise IndexError(
-                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
-
-            output = 0
-            for i in range(length):
-                output += ((inputs[i] - targets[i])**2)/2
-            output /= length
-
-            return output
-
-        else:
+        if not isinstance(inputs, _ListLike_Tuple):
             return Decimal(((targets-inputs)**2)/2)
+
+        length = len(inputs)
+        if length != len(targets):
+            raise IndexError(
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+
+        output = sum(((inputs[i] - targets[i])**2)/2 for i in range(length))
+        output /= length
+
+        return output
 
     def MSE_prime(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
@@ -351,24 +340,21 @@ class Loss(classmethod):
             if tp != list:
                 if tp == tuple:
                     inpt = list(inpt)
-                elif tp == int or tp == float:
+                elif tp in [int, float]:
                     inpt = [inpt]
+                elif isinstance(input, type(targets)):
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {tp}.')
                 else:
-                    if isinstance(input, type(targets)):
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else:
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
         length = len(inputs)
         if length != len(targets):
             raise IndexError(
                 f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = 0
-        for i in range(length):
-            output += (inputs[i] - targets[i])
+        output = sum((inputs[i] - targets[i]) for i in range(length))
         output /= length
 
         return output
@@ -380,32 +366,27 @@ class Loss(classmethod):
             if tp != list:
                 if tp == tuple:
                     inpt = list(inpt)
-                elif tp == int or tp == float:
+                elif tp in [int, float]:
                     inpt = [inpt]
+                elif isinstance(inputs, type(targets)):
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {tp}.')
                 else:
-                    if isinstance(inputs, type(targets)):
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else:
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike_Tuple):
-
-            length = len(inputs)
-            if length != len(targets):
-                raise IndexError(
-                    f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
-
-            output = 0
-            for i in range(length):
-                output += abs(inputs[i] - targets[i])
-            output /= length
-
-            return output
-
-        else:
+        if not isinstance(inputs, _ListLike_Tuple):
             return Decimal(abs(targets-inputs))
+
+        length = len(inputs)
+        if length != len(targets):
+            raise IndexError(
+                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+
+        output = sum(abs(inputs[i] - targets[i]) for i in range(length))
+        output /= length
+
+        return output
 
     def MAE_prime(inputs: _Data, targets: _Data) -> float:
         inp = [inputs, targets]
@@ -414,18 +395,16 @@ class Loss(classmethod):
             if tp != list:
                 if tp == tuple:
                     inpt = list(inpt)
-                elif tp == int or tp == float:
+                elif tp in [int, float]:
                     inpt = [inpt]
+                elif isinstance(inputs, type(targets)):
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {tp}.')
                 else:
-                    if isinstance(inputs, type(targets)):
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {tp}.')
-                    else:
-                        raise TypeError(
-                            f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+                    raise TypeError(
+                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if isinstance(inputs, _ListLike_Tuple): length = len(inputs)
-        else: length = 1
+        length = len(inputs) if isinstance(inputs, _ListLike_Tuple) else 1
         if length != len(targets):
             raise IndexError(
                 f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
@@ -435,9 +414,8 @@ class Loss(classmethod):
             if isinstance(inputs, _ListLike_Tuple):
                 if inputs[i] < targets[i]: output.append(-1)
                 else: output.append(1)
-            else:
-                if inputs < targets[i]: output.append(-1)
-                else: output.append(1)
+            elif inputs < targets[i]: output.append(-1)
+            else: output.append(1)
 
         return statistics.fmean(output)
 
@@ -700,7 +678,7 @@ class Dense(Layer):
             raise ValueError('"n_inputs" parameter should be > 0.')
         elif n_neurons <= 0:
             raise ValueError('"n_neurons" parameter should be > 0.')
-        if not activation in valid_activations:
+        if activation not in valid_activations:
             raise ValueError(
                 f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n{valid_activations}')
 
@@ -716,11 +694,11 @@ class Dense(Layer):
         for i in range(n_neurons):
             self.weights.append([])
             for _ in range(n_inputs):
-                if (weight_init == 'xavier' or weight_init == 'glorot') and activation != 'relu':
+                if weight_init in {'xavier', 'glorot'} and activation != 'relu':
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
-                elif (weight_init == 'xavier' or weight_init == 'glorot') and activation == 'relu':
+                elif weight_init in ['xavier', 'glorot']:
                     self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
-                elif (weight_init == 'integer' or weight_init == 'range'):
+                elif weight_init in {'integer', 'range'}:
                     self.weights[i].append(Random.random_int(-4, 4))
 
         self._type = 'Dense'
@@ -786,14 +764,17 @@ class FeedForward(Model):
          - Nothing"""
         if isinstance(optimizer, str):
             self.optimizer = globals()[optimizer]()
-            if not optimizer.replace(' ', '_') in valid_optimizers:
+            if optimizer.replace(' ', '_') not in valid_optimizers:
                 raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
         else:
             self.optimizer = optimizer
 
         for layer in network:
             for form in valid_layers:
-                if (not (form in str(layer.__class__))) and (network.index(layer) == len(network) - 1):
+                if (
+                    form not in str(layer.__class__)
+                    and network.index(layer) == len(network) - 1
+                ):
                     raise ValueError(f'{layer.__class__} is not a valid layer class. The valid layer classes are {valid_layers}')
 
         self.output = []
@@ -857,31 +838,41 @@ class GradDesc(Optimizer):
         '''
 
         # TODO: epochs, param adjustment
-        """
-        BACKPROP
 
-        create gradient vector
-        Start on OUTPUT layer (BACKpropagation)
+        # ? This section is very commented due to original issues with the algorithm so I wrote it out in plain english first
 
-        Iterate over layers BACKwards
-            append list to gradient vector for weights
-            append lsit to gradient vector for biases
+        self._weightGradientVector = [] # create gradient vector
+        loss_prime =  f"{model.loss}_prime"
 
-            Iterate over neurons
-                calculate act prime of bias - act prime (0)
-                add list to weight gradient vect [layer]
-                add list to bias gradient vect [layer]
+        for layerIndex, layer in enumerate(model.network.__reversed__()): # Iterate over layers BACKwards
+            act_prime = f"{layer.activation}_prime"
 
-                Iterate over weight with each neuron
-                    Calculating Loss Derivative With Respect to weight
-                    all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
+            self._weightGradientVector.append([]) # append list to gradient vector for weights
+            self._biasGradientVector.append([]) # append list to gradient vector for biases
 
-                    calc loss prime on output prime
+            for neuronIndex, neuron in enumerate(layer.weights): # Iterate over neurons
+                biasPrime = getattr(
+                        Activation, act_prime
+                    )(0) # calculate act prime of bias - act prime (0)
+                self._weightGradientVector[layerIndex].append([]) # add list to weight gradient vect [layer]
+                self._biasGradientVector[layerIndex].append([]) # add list to bias gradient vect [layer]
 
-                    append to list of weight grad vect [layer][neuron]
+                for weightIndex, weight in enumerate(layer.weights[neuronIndex]): # Iterate over weight with each neuron
+                    # Calculating Loss Derivative With Respect to weight
+                    # all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
+                    oldWeightPrimeList = [getattr(Activation, act_prime)(weight)]
+                    newWeightPrimeList = []
+
+                    for gradientLayerIndex, gradientLayer in enumerate(self._weightGradientVector.__reversed__()):
+                        for gradientNeuronIndex, gradientNeuron in enumerate(gradientLayer):
+                            for newWeightPrimeItem in gradientNeuron:
+                                newWeightPrimeList.append(newWeightPrimeItem * reduce(lambda x, y: x*y, oldWeightPrimeList)) # add on the next layer shape
+                                oldWeightPrimeList = newWeightPrimeList
+
+                    self._weightGradientVector[layerIndex][neuronIndex].append(getattr(Loss, loss_prime)(newWeightPrimeList))
                 
-                append bias grad to gradient vector of biases [layer][neuron]
-        """
+        # append loss prime bias grad to gradient vector of biases [layer][neuron]
+
         return self._history
 
 class RandDesc(Optimizer):
@@ -914,7 +905,7 @@ class RandDesc(Optimizer):
         self._type = 'RandomDesc'
         self._history = History()
 
-    def train(self, model: Model, X: list or tuple, y: list or tuple,  epochs: int, disp_level:int = 0):
+    def train(self, model: Model, X: _ListLike, y: _ListLike,  epochs: int, disp_level: int = 0):
         """
         Optimize the specified model object for the
         specified number of epochs.
@@ -937,28 +928,26 @@ class RandDesc(Optimizer):
                 oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
                 for layer, _ in enumerate(model.network):
 
-                    if "Dense" in str(model.network[layer].__class__):
-                        for neuron, _ in enumerate(model.network[layer].weights):
-                            for weight, _ in enumerate(model.network[layer].weights[neuron]):
-                                model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
+                    if "Dense" not in str(model.network[layer].__class__): raise NotImplementedError(f"Only dense layers are implemented for, not{str(model.network[layer].__class__)}")
 
-                            model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
-                    else: raise NotImplementedError(f"Only dense layers are implemented for, not{str(model.network[layer].__class__)}")
+                    for neuron, _ in enumerate(model.network[layer].weights):
+                        for weight, _ in enumerate(model.network[layer].weights[neuron]):
+                            model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
 
+                        model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
                 losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
+
             newLoss = statistics.fmean(losses)
             if newLoss <= oldLoss:
                 _Utils._dispRand(epoch, newLoss, disp_level, True)
                 oldLoss = newLoss
-                self._history.loss.append(float(newLoss))
+                self._history.loss.append(float(oldLoss))
+
             else:
                 _Utils._dispRand(epoch, oldLoss, disp_level, False)
                 self._history.loss.append(float(oldLoss))
-                count = 0
-                for layer, weightSet in zip(model.network, oldWeights):
+                for count, (layer, weightSet) in enumerate(zip(model.network, oldWeights)):
                     model.network[count].weights = weightSet
-                    count += 1
-
         if disp_level != 0: print()
 
         return self._history
@@ -969,6 +958,8 @@ valid_costs = ['MSE', 'MSE_prime', 'MAE', 'MAE_prime']
 valid_layers = ['Dense']
 valid_models = ['FeedForward']
 valid_optimizers = ['GradDesc', 'RandDesc']
+
+_list_mult_reducer = lambda x, y: x*y
 
 optimizer_strings = {
     'GradDesc': GradDesc(),
