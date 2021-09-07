@@ -1,1 +1,27 @@
-<svg width="722" height="722" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="clip0"><rect x="279" y="-1" width="722" height="722"/></clipPath><clipPath id="clip1"><rect x="280" y="0" width="720" height="720"/></clipPath><clipPath id="clip2"><rect x="280" y="0" width="720" height="720"/></clipPath><clipPath id="clip3"><rect x="280" y="0" width="720" height="720"/></clipPath><clipPath id="clip4"><rect x="280" y="0" width="720" height="720"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-279 1)"><g clip-path="url(#clip1)"><g clip-path="url(#clip2)"><g clip-path="url(#clip3)"><g clip-path="url(#clip4)"><path d="M292.789 359.84C292.789 168.169 448.169 12.7887 639.84 12.7887 831.513 12.7887 986.892 168.169 986.892 359.84 986.892 551.511 831.513 706.892 639.84 706.892 448.169 706.892 292.789 551.511 292.789 359.84Z" stroke="#767171" stroke-width="25.5773" stroke-miterlimit="8" fill-rule="evenodd"/></g></g></g></g><text fill="#FFC000" font-family="Century Gothic,Century Gothic_MSFontService,sans-serif" font-weight="700" font-size="117" transform="translate(410.374 333)">e<tspan font-size="117" x="75.1667" y="0">asy</tspan><tspan fill="#FFFFFF" font-size="117" x="0" y="141">Neuro</tspan><tspan fill="#FFFFFF" font-size="117" x="345" y="141">n</tspan></text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="422px"
+    height="422px" viewBox="-0.5 -0.5 422 422" <defs>
+    <linearGradient id="Gradient">
+        <stop class="stop1" offset="0%" stop-color="#0074f8" />
+        <stop class="stop2" offset="100%" stop-color="#8c00ff" />
+    </linearGradient>
+    </defs>
+    <ellipse cx="210" cy="210" rx="210" ry="210" fill="url(#Gradient)" stroke="none" />
+    <path d="M 205 75 L 275.51 101.12" fill="none" stroke="#fff" />
+    <ellipse cx="190" cy="75" rx="15" ry="15" fill="none" stroke="#fff" />
+    <path d="M 297.5 117.99 L 327.4 170.23" fill="none" stroke="#fff" />
+    <ellipse cx="290" cy="105" rx="15" ry="15" fill="none" stroke="#fff" transform="rotate(15,290,105)" />
+    <path d="M 315.23 187.6 L 95 225" fill="none" stroke="#fff" />
+    <ellipse cx="330" cy="185" rx="15" ry="15" fill="none" stroke="#fff" transform="rotate(-10,330,185)" />
+    <path d="M 80 210 L 100 140" fill="none" stroke="#fff" />
+    <path d="M 90.61 235.61 L 129.39 294.39" fill="none" stroke="#fff" />
+    <ellipse cx="80" cy="225" rx="15" ry="15" fill="none" stroke="#fff" />
+    <path d="M 150.61 315.61 L 215 335" fill="none" stroke="#fff" />
+    <ellipse cx="140" cy="305" rx="15" ry="15" fill="none" stroke="#fff" />
+    <path d="M 110.61 114.39 L 175 75" fill="none" stroke="#fff" />
+    <ellipse cx="100" cy="125" rx="15" ry="15" fill="none" stroke="#fff" />
+    <ellipse cx="320" cy="275" rx="15" ry="15" fill="none" stroke="#fff" />
+    <path d="M 245 335 L 309.39 285.61" fill="none" stroke="#fff" />
+    <ellipse cx="230" cy="335" rx="15" ry="15" fill="none" stroke="#fff" />
+    <ellipse cx="210" cy="210" rx="185" ry="185" fill="none" stroke="#fff" />
+
+</svg>

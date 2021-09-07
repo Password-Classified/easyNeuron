@@ -1,13 +1,13 @@
-<img src="Images/logo.svg" width="300rem"></img>
-
-<p float="left">
-  <img src="Images/build%20badge.svg"/>
+<p align="center">
+<img src="./Images/logo-400x400.png" />
+<br/>
+<br/>
+<img src="https://img.shields.io/badge/PyPI_Package-0.0.1-blue.svg"/>
   <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/e9e0485034e84412aa21b93e26f915be"/>
-  <!-- <img src="Images/dependency%20badge.svg"/> -->
-  <img src="https://badges.pufler.dev/created/Password-Classified/easyNeuron"/>
-  <img src="https://badges.pufler.dev/updated/Password-Classified/easyNeuron"/>
-  <img src="https://badges.pufler.dev/visits/Password-Classified/easyNeuron"/>
-
+  <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
+  <img src="https://img.shields.io/badge/PRs-Welcome-yellow.svg"/>
+  <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
+  <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
 <br/>
 
 # easyNeuron
@@ -25,14 +25,15 @@
 **Note:** this is an unfinished project, so should not be used yet.
 <br/>
 
-***easyNeuron*** is the new Python module for creating deep learning algorithms and artificial
+**_easyNeuron_** is the new Python module for creating deep learning algorithms and artificial
 neural networks started by [Password-Classified](https://github.com/Password-Classified) in 2021. Equipped with datasets to get you started, functions for the calculus and
-maths so you don't have to and with infinite model configurations for you to use, ***easyNeuron*** is ready for all your data science projects. Find ***easyNeuron*** at it's [Github Repository](https://github.com/Password-Classified/easyNeuron), with a GitHub.io website coming soon!
+maths so you don't have to and with infinite model configurations for you to use, **_easyNeuron_** is ready for all your data science projects. Find **_easyNeuron_** at it's [Github Repository](https://github.com/Password-Classified/easyNeuron), with a GitHub.io website coming soon!
 
 <br/>
 <br/>
 
 ## Thank you! 🎉
+
 I'd link to thank those who have helped make this happen...
 
 - [Naturalis Biodiversity Center](https://github.com/naturalis) and [their DNA database](https://github.com/naturalis/Custom-databases-DNA-sequences). Find their website [here](https://www.naturalis.nl/). They kindly let me include their database in the module [here](https://github.com/naturalis/Custom-databases-DNA-sequences/issues/10).
@@ -59,7 +60,7 @@ Still under heavy initial development, this has some unfinished issues.
 
 <br/>
 
------------
+---
 
 This is a very community driven project, so please report any bugs that we can iron out;
 we want to make this the best we can. It is also under constant heavy development, so

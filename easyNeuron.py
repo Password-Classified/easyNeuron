@@ -47,7 +47,7 @@ time_start = timer()
 
 # Types
 _Data = Union[list, tuple, int, float]
-_Number = Union[float, int]
+_Number = Union[float, int, Decimal]
 _OptimizerType = Union[str, object]
 _ListLike = Union[list, tuple]
 
@@ -57,7 +57,7 @@ _OptimizerType_Tuple = (str, object)
 _ListLike_Tuple = (list, tuple)
 
 # Developer Classmethods
-class _Utils(classmethod):
+class _DevUtils(classmethod):
 
     """_Util classmethods.
 
@@ -113,8 +113,9 @@ class Matrix(classmethod):
 
 
         '''
+        print(list_1, list_2)
         if isinstance(list_1, _Number_Tuple) and isinstance(list_2, _Number_Tuple):
-            return Decimal(list_1 * list_2)
+            return Decimal(float(list_1) * float(list_2))
         else:
             return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
@@ -500,7 +501,7 @@ class Optimizer(object):
         self.learningRate = 0.001
         self._weightGradientVector = []
         self._biasGradientVector = []
-        self._history = History()
+        self._history = _History()
         self._type = 'Undefined'
 
     def __repr__(self):
@@ -615,7 +616,7 @@ class Model(object):
     def network(self):
         return self._net
 
-class History(object):
+class _History(object):
     __slots__ = 'loss', 'accuracy'
     def __init__(self, loss: _ListLike = [], accuracy: _ListLike = []):
         """Create a model object of unspecified type."""
@@ -815,6 +816,7 @@ class GradDesc(Optimizer):
         self._weightGradientVector = []
         self._biasGradientVector = []
         self._type = 'GradDesc'
+        self._history = _History()
 
     def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
         '''
@@ -837,41 +839,53 @@ class GradDesc(Optimizer):
                           so it can be plotted.
         '''
 
-        # TODO: epochs, param adjustment
+        # TODO: param adjustment
 
         # ? This section is very commented due to original issues with the algorithm so I wrote it out in plain english first
-
+        print("""\n\nGRADIENT DESCENDING\n\n""")
         self._weightGradientVector = [] # create gradient vector
         loss_prime =  f"{model.loss}_prime"
 
-        for layerIndex, layer in enumerate(model.network.__reversed__()): # Iterate over layers BACKwards
-            act_prime = f"{layer.activation}_prime"
+        for _ in range(epochs):
+            _loss_samples = []
+            for sampleIndex, sample in enumerate(X):
+                for layerIndex, layer in enumerate(model.network.__reversed__()): # Iterate over layers BACKwards
+                    act_prime = f"{layer.activation}_prime"
 
-            self._weightGradientVector.append([]) # append list to gradient vector for weights
-            self._biasGradientVector.append([]) # append list to gradient vector for biases
+                    self._weightGradientVector.append([]) # append list to gradient vector for weights
+                    self._biasGradientVector.append([]) # append list to gradient vector for biases
 
-            for neuronIndex, neuron in enumerate(layer.weights): # Iterate over neurons
-                biasPrime = getattr(
-                        Activation, act_prime
-                    )(0) # calculate act prime of bias - act prime (0)
-                self._weightGradientVector[layerIndex].append([]) # add list to weight gradient vect [layer]
-                self._biasGradientVector[layerIndex].append([]) # add list to bias gradient vect [layer]
+                    for neuronIndex, neuron in enumerate(layer.weights): # Iterate over neurons
+                        biasPrime = getattr(
+                                Activation, act_prime
+                            )(0) # calculate act prime of bias - act prime (0)
+                        self._weightGradientVector[layerIndex].append([]) # add list to weight gradient vect [layer]
+                        self._biasGradientVector[layerIndex].append([]) # add list to bias gradient vect [layer]
 
-                for weightIndex, weight in enumerate(layer.weights[neuronIndex]): # Iterate over weight with each neuron
-                    # Calculating Loss Derivative With Respect to weight
-                    # all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
-                    oldWeightPrimeList = [getattr(Activation, act_prime)(weight)]
-                    newWeightPrimeList = []
+                        for weightIndex, weight in enumerate(layer.weights[neuronIndex]): # Iterate over weight with each neuron
+                            # Calculating Loss Derivative With Respect to weight
+                            # all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
+                            oldParamPrimeList = [getattr(Activation, act_prime)(weight)]
+                            newParamPrimeList = []
 
-                    for gradientLayerIndex, gradientLayer in enumerate(self._weightGradientVector.__reversed__()):
-                        for gradientNeuronIndex, gradientNeuron in enumerate(gradientLayer):
-                            for newWeightPrimeItem in gradientNeuron:
-                                newWeightPrimeList.append(newWeightPrimeItem * reduce(lambda x, y: x*y, oldWeightPrimeList)) # add on the next layer shape
-                                oldWeightPrimeList = newWeightPrimeList
+                            if layerIndex > 0:
+                                for gradientLayerIndex, gradientLayer in enumerate(self._weightGradientVector.__reversed__()):
+                                    for gradientNeuronIndex, gradientNeuron in enumerate(gradientLayer):
 
-                    self._weightGradientVector[layerIndex][neuronIndex].append(getattr(Loss, loss_prime)(newWeightPrimeList))
-                
-        # append loss prime bias grad to gradient vector of biases [layer][neuron]
+                                        print(newParamPrimeList)
+                                        for newParamPrimeItem in gradientNeuron:
+                                            newParamPrimeList.append(newParamPrimeItem * reduce(lambda x, y: x*y, oldParamPrimeList)) # add on the next layer shape
+                                            oldParamPrimeList = newParamPrimeList
+                            else:
+                                newParamPrimeList = oldParamPrimeList
+                            
+                            gradient = getattr(Loss, loss_prime)(newParamPrimeList, y[sampleIndex])
+                            self._weightGradientVector[layerIndex][neuronIndex].append(gradient)
+                            model.network[layerIndex].weights[neuronIndex][weightIndex] += gradient * self.learningRate
+
+                _loss_samples.append(getattr(Loss, model.loss)(model.forward(sampleIndex), y[sampleIndex]))
+
+            self._history.loss.append(statistics.fmean(_loss_samples))
 
         return self._history
 
@@ -903,7 +917,7 @@ class RandDesc(Optimizer):
         self.output = []
         self.learningRate = learning_rate
         self._type = 'RandomDesc'
-        self._history = History()
+        self._history = _History()
 
     def train(self, model: Model, X: _ListLike, y: _ListLike,  epochs: int, disp_level: int = 0):
         """
@@ -939,12 +953,12 @@ class RandDesc(Optimizer):
 
             newLoss = statistics.fmean(losses)
             if newLoss <= oldLoss:
-                _Utils._dispRand(epoch, newLoss, disp_level, True)
+                _DevUtils._dispRand(epoch, newLoss, disp_level, True)
                 oldLoss = newLoss
                 self._history.loss.append(float(oldLoss))
 
             else:
-                _Utils._dispRand(epoch, oldLoss, disp_level, False)
+                _DevUtils._dispRand(epoch, oldLoss, disp_level, False)
                 self._history.loss.append(float(oldLoss))
                 for count, (layer, weightSet) in enumerate(zip(model.network, oldWeights)):
                     model.network[count].weights = weightSet
