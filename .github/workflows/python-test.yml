@@ -1,0 +1,12 @@
+name: Test Python
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test_python:
+    runs-on: ubuntu-latest
+    steps:
+      - run: python -m unittest  Tests/test_easyNeuron.py
+    
