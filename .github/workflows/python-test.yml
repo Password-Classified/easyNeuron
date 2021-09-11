@@ -8,5 +8,6 @@ jobs:
   test_python:
     runs-on: ubuntu-latest
     steps:
+      - name: Test Python
       - run: python -m unittest  Tests/test_easyNeuron.py
     
