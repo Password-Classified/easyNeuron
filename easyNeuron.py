@@ -734,7 +734,6 @@ class Dense(Layer):
         '''
         self.output = []
         self.inputs = [inputs]
-        print(inputs)
 
         # Dot product
         for neuron, _ in enumerate(self.biases):
@@ -787,7 +786,6 @@ class FeedForward(Model):
 
     def forward(self, inputs: _ListLike) -> list:
         self.inputs = inputs
-        print(inputs)
         for layer in self.network:
             inputs = layer.forward(inputs)
         self.output = inputs
@@ -839,52 +837,11 @@ class GradDesc(Optimizer):
          - self._history: the loss history of the model
                           so it can be plotted.
         '''
-
-        # TODO: param adjustment
-
-        # ? This section is very commented due to original issues with the algorithm so I wrote it out in plain english first
-        print("""\n\nGRADIENT DESCENDING\n\n""")
-        self._weightGradientVector = [] # create gradient vector
-        loss_prime =  f"{model.loss}_prime"
-
-        for _ in range(epochs):
-            _loss_samples = []
-            for sampleIndex, sample in enumerate(X):
-                for layerIndex, layer in enumerate(model.network.__reversed__()): # Iterate over layers BACKwards
-                    act_prime = f"{layer.activation}_prime"
-
-                    self._weightGradientVector.append([]) # append list to gradient vector for weights
-                    self._biasGradientVector.append([]) # append list to gradient vector for biases
-
-                    for neuronIndex, neuron in enumerate(layer.weights): # Iterate over neurons
-                        biasPrime = getattr(
-                                Activation, act_prime
-                            )(0) # calculate act prime of bias - act prime (0)
-                        self._weightGradientVector[layerIndex].append([]) # add list to weight gradient vect [layer]
-                        self._biasGradientVector[layerIndex].append([]) # add list to bias gradient vect [layer]
-
-                        for weightIndex, weight in enumerate(layer.weights[neuronIndex]): # Iterate over weight with each neuron
-                            # Calculating Loss Derivative With Respect to weight
-                            # all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
-                            oldParamPrimeList = [getattr(Activation, act_prime)(layer.inputs[weight])]
-                            newParamPrimeList = []
-                            if layerIndex != 0:
-                                for gradientLayerIndex, gradientLayer in enumerate(self._weightGradientVector.__reversed__()):
-                                    for gradientNeuronIndex, gradientNeuron in enumerate(gradientLayer):
-
-                                        for newParamPrimeItem in gradientNeuron:
-                                            newParamPrimeList.append(newParamPrimeItem * reduce(lambda x, y: x*y, oldParamPrimeList)) # add on the next layer shape
-                                            oldParamPrimeList = newParamPrimeList
-                            else:
-                                newParamPrimeList = oldParamPrimeList
-                            
-                            gradient = getattr(Loss, loss_prime)(newParamPrimeList, y[sampleIndex])
-                            self._weightGradientVector[layerIndex][neuronIndex].append(gradient)
-                            model.network[layerIndex].weights[neuronIndex][weightIndex] += gradient * self.learningRate
-                sampledata = [y[sampleIndex]]
-                _loss_samples.append(getattr(Loss, model.loss)(model.forward(sampleIndex), [y[sampleIndex]]))
-
-            self._history.loss.append(statistics.fmean(_loss_samples))
+        # Iterate over epochs
+        # Iterate over layer
+        # Iterate over neurons
+        # Iterate over weights
+        # Calculate deriv dot product (input of equal index)
 
         return self._history
 
