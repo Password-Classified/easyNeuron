@@ -113,7 +113,6 @@ class Matrix(classmethod):
 
 
         '''
-        print(list_1, list_2)
         if isinstance(list_1, _Number_Tuple) and isinstance(list_2, _Number_Tuple):
             return Decimal(float(list_1) * float(list_2))
         else:
@@ -735,6 +734,7 @@ class Dense(Layer):
         '''
         self.output = []
         self.inputs = [inputs]
+        print(inputs)
 
         # Dot product
         for neuron, _ in enumerate(self.biases):
@@ -787,6 +787,7 @@ class FeedForward(Model):
 
     def forward(self, inputs: _ListLike) -> list:
         self.inputs = inputs
+        print(inputs)
         for layer in self.network:
             inputs = layer.forward(inputs)
         self.output = inputs
@@ -865,14 +866,12 @@ class GradDesc(Optimizer):
                         for weightIndex, weight in enumerate(layer.weights[neuronIndex]): # Iterate over weight with each neuron
                             # Calculating Loss Derivative With Respect to weight
                             # all values in next layer * all next layer (calculate act prime of weight) * all next... so output is correct shape for loss prime
-                            oldParamPrimeList = [getattr(Activation, act_prime)(weight)]
+                            oldParamPrimeList = [getattr(Activation, act_prime)(layer.inputs[weight])]
                             newParamPrimeList = []
-
-                            if layerIndex > 0:
+                            if layerIndex != 0:
                                 for gradientLayerIndex, gradientLayer in enumerate(self._weightGradientVector.__reversed__()):
                                     for gradientNeuronIndex, gradientNeuron in enumerate(gradientLayer):
 
-                                        print(newParamPrimeList)
                                         for newParamPrimeItem in gradientNeuron:
                                             newParamPrimeList.append(newParamPrimeItem * reduce(lambda x, y: x*y, oldParamPrimeList)) # add on the next layer shape
                                             oldParamPrimeList = newParamPrimeList
@@ -882,8 +881,8 @@ class GradDesc(Optimizer):
                             gradient = getattr(Loss, loss_prime)(newParamPrimeList, y[sampleIndex])
                             self._weightGradientVector[layerIndex][neuronIndex].append(gradient)
                             model.network[layerIndex].weights[neuronIndex][weightIndex] += gradient * self.learningRate
-
-                _loss_samples.append(getattr(Loss, model.loss)(model.forward(sampleIndex), y[sampleIndex]))
+                sampledata = [y[sampleIndex]]
+                _loss_samples.append(getattr(Loss, model.loss)(model.forward(sampleIndex), [y[sampleIndex]]))
 
             self._history.loss.append(statistics.fmean(_loss_samples))
 
