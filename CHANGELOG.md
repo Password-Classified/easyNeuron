@@ -6,4 +6,4 @@
 | 0.0.1                 | Initial Release      | Woohoo! First release!   |
 
 
-See more individual changes between releases at the [Github Repository Commits](https://github.com/Password-Classified/easyNeuron/commits).
+See more individual changes between releases at the [Github Repository Commits](https://github.com/Neuron-AI/easyNeuron/commits).
