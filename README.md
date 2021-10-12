@@ -2,8 +2,6 @@
 
 <p float="left">
   <img src="Images/build%20badge.svg"/>
-  <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/e9e0485034e84412aa21b93e26f915be"/>
-  <!-- <img src="Images/dependency%20badge.svg"/> -->
   <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
   <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
   <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
