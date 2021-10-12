@@ -5,7 +5,7 @@
   <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
   <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
   <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
-
+  <img src="https://app.codacy.com/project/badge/Grade/15be61b0f1fc4921867584cd2762ff6d"/>
 <br/>
 
 # easyNeuron
