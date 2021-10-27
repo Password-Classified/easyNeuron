@@ -1,12 +1,17 @@
-<img src="https://repository-images.githubusercontent.com/372004660/e43eedfe-5f66-4d3a-bd08-3af2f8c47aab" width="300rem"></img>
+<div align="center">
+  <img src="https://repository-images.githubusercontent.com/372004660/e43eedfe-5f66-4d3a-bd08-3af2f8c47aab" width="300rem"></img>
+  <br/><br/><br/>
+  <p>
+    <img src="Images/build%20badge.svg"/>
+    <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
+    <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
+    <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
+    <img src="https://app.codacy.com/project/badge/Grade/15be61b0f1fc4921867584cd2762ff6d"/>
+  <p/>
+</div>
 
-<p float="left">
-  <img src="Images/build%20badge.svg"/>
-  <img src="https://badges.pufler.dev/created/Neuron-AI/easyNeuron"/>
-  <img src="https://badges.pufler.dev/updated/Neuron-AI/easyNeuron"/>
-  <img src="https://badges.pufler.dev/visits/Neuron-AI/easyNeuron"/>
-  <img src="https://app.codacy.com/project/badge/Grade/15be61b0f1fc4921867584cd2762ff6d"/>
 <br/>
+ 
 
 # easyNeuron
 
