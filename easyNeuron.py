@@ -38,6 +38,7 @@ import math
 import random
 import secrets
 import statistics
+from abc import ABC, abstractmethod, abstractproperty
 from decimal import Decimal
 from functools import reduce
 from timeit import default_timer as timer
@@ -59,868 +60,945 @@ _ListLike_Tuple = (list, tuple)
 # Developer Classmethods
 class _DevUtils(classmethod):
 
-    """_Util classmethods.
+	"""_Util classmethods.
 
-    Developer methods for the module, not necessary for users.
-    """
-    def _dispGrad(epoch: int, loss: float, disp_level: int = 0) -> None:
-        """
-        Display information on the current training state for GradDesc. Not needed by the user.
+	Developer methods for the module, not necessary for users.
+	"""
+	def _dispGrad(epoch: int, loss: float, verbose: int = 0) -> None:
+		"""
+		Display information on the current training state for GradDesc. Not needed by the user.
 
-        ### Params
+		### Params
 
-         - epoch = current epoch
-         - loss = current cost function output
-         - disp_level = amount to display
-        """
-        if disp_level >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
+		 - epoch = current epoch
+		 - loss = current cost function output
+		 - verbose = amount to display
+		"""
+		if verbose >= 1: print(f"Epoch: {epoch+1}\tLOSS: {loss}")
 
-    def _dispRand(epoch: int, loss: float, disp_level: int,  found: bool) -> None:
-        """
-        Display information of the epoch for RandDesc. Not needed used by user.
+	def _dispRand(epoch: int, loss: float, verbose: int,  found: bool) -> None:
+		"""
+		Display information of the epoch for RandDesc. Not needed used by user.
 
-        ### Params
+		### Params
 
-         - epoch = current epoch
-         - loss = current cost function output
-         - disp_level = amount to display
-         - found = whether a new weight configuration has been found
-        """
-        if disp_level != 0:
-            print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {str(found)}')
+		 - epoch = current epoch
+		 - loss = current cost function output
+		 - verbose = amount to display
+		 - found = whether a new weight configuration has been found
+		"""
+		if verbose != 0:
+			print(f'Epoch: {epoch + 1}\tLOSS: {round(loss, 5)} \tNew Weights: {found}')
 
 # General Classmethods
 class Matrix(classmethod):
-    '''
+	'''
 
-    A classmethod for matrix operations,
-    since numpy isn't used here, I had
-    to write my own matrix operations.
-    '''
-    def dot(list_1: _Data, list_2: _Data) -> list:
-        '''
-        Return the dot product between 2
-        matrices (which are both 2 or 1
-        dimensional) or return both the
-        elements multiplie (for numbers).
+	A classmethod for matrix operations,
+	since numpy isn't used here, I had
+	to write my own matrix operations.
+	'''
+	def dot(list_1: _Data, list_2: _Data) -> list:
+		'''
+		Return the dot product between 2
+		matrices (which are both 2 or 1
+		dimensional) or return both the
+		elements multiplie (for numbers).
 
-        ### Params
+		### Params
 
-         - list_1 = a list, tuple, float or integer
-         - list_2 = a list, tuple. float or integer
+		 - list_1 = a list, tuple, float or integer
+		 - list_2 = a list, tuple. float or integer
 
-        ### Returns
+		### Returns
 
 
-        '''
-        if isinstance(list_1, _Number_Tuple) and isinstance(list_2, _Number_Tuple):
-            return Decimal(float(list_1) * float(list_2))
-        else:
-            return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
+		'''
+		if isinstance(list_1, _Number_Tuple) and isinstance(list_2, _Number_Tuple):
+			return Decimal(float(list_1) * float(list_2))
+		else:
+			return Decimal(sum(float(x)*float(y) for x, y in zip(list_1, list_2)))
 
-    def transpose(matrix: _ListLike) -> list:
-        '''
-        Returns a **transposed** matrix from the
-        matrix you inputed to start with.
-        '''
-        new = list(zip(*matrix))
+	def transpose(matrix: _ListLike) -> list:
+		'''
+		Returns a **transposed** matrix from the
+		matrix you inputed to start with.
+		'''
+		new = list(zip(*matrix))
 
-        for i, _ in enumerate(new):
-            new[i] = list(new[i])
+		for i, _ in enumerate(new):
+			new[i] = list(new[i])
 
-        return new
+		return new
 
-    def depth(inputs: _ListLike) -> int:
-        if isinstance(inputs, list):
-            return 1 + max(Matrix.depth(item) for item in inputs)
-        else:
-            return 0
+	def depth(inputs: _ListLike) -> int:
+		if isinstance(inputs, list):
+			return 1 + max(Matrix.depth(item) for item in inputs)
+		else:
+			return 0
 
 class Timing(classmethod):
 
-    def get_time(disp: bool=False) -> float:
-        current_time = timer() - time_start
-        if disp: print(f'Time Elapsed: {current_time}')
-        return current_time
+	def get_time(disp: bool=False) -> float:
+		current_time = timer() - time_start
+		if disp: print(f'Time Elapsed: {current_time}')
+		return current_time
 
 class Data(classmethod):
-    '''
-    A classmethod for data manipulation,
-    acquirement, loading and saving.
-    '''
+	'''
+	A classmethod for data manipulation,
+	acquirement, loading and saving.
+	'''
 
-    # ! These below methods are commented out due to security concerns with the pickle module.
-    # def load_object(file_to_open: str) -> list:
-    #     '''
-    #     Load a list or any other object from a
-    #     text file that will be created/opened.
-    #     '''
-    #     with open(file_to_open, "rb") as file:
-    #         data = pickle.load(file)
+	# ! These below methods are commented out due to security concerns with the pickle module.
+	# def load_object(file_to_open: str) -> list:
+	#     '''
+	#     Load a list or any other object from a
+	#     text file that will be created/opened.
+	#     '''
+	#     with open(file_to_open, "rb") as file:
+	#         data = pickle.load(file)
 
-    #     return data
+	#     return data
 
-    # def save_object(data: Any, file_to_open: str) -> str:
-    #     with open(file_to_open, "wb") as file:
-    #         pickle.dump(data, file)
+	# def save_object(data: Any, file_to_open: str) -> str:
+	#     with open(file_to_open, "wb") as file:
+	#         pickle.dump(data, file)
 
-    #     return data
+	#     return data
 
-    def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
-        if len(feature_range) != 2:
-            raise ValueError(
-                f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
+	def scale(data: _ListLike, feature_range: tuple = (0, 1)) -> _Data:
+		if len(feature_range) != 2:
+			raise ValueError(
+				f'"feature_range" tuple has to be length 2, not length {len(feature_range)}.')
 
-        depth = Matrix.depth(data)
-        largest = 0
-        smallest = 0
-        curr_data = data
+		depth = Matrix.depth(data)
+		largest = 0
+		smallest = 0
+		curr_data = data
 
 
-        for item in curr_data:
-            if depth >1:
-                for deep in depth:
-                    if item[deep] > largest:
-                        largest = item[deep]
-                    elif item[deep] < smallest:
-                        smallest = item[deep]
-            elif item > largest:
-                largest = item
-            elif item < smallest:
-                smallest = item
-        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
+		for item in curr_data:
+			if depth >1:
+				for deep in depth:
+					if item[deep] > largest:
+						largest = item[deep]
+					elif item[deep] < smallest:
+						smallest = item[deep]
+			elif item > largest:
+				largest = item
+			elif item < smallest:
+				smallest = item
+		raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def shuffle(data: _Data):
-        return random.shuffle(data)
+	def shuffle(data: _Data):
+		return random.shuffle(data)
 
-    def gen_cluster(size: int, difficulty: float) -> _Data:
-        raw = []
-        for _ in range(size):
-            raw.append([Random.random_int(2500, 3500)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(100, 800)/100 + Random.random_int(2000, 3500)/difficulty, 1])
-            raw.append([Random.random_int(100, 800)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(2500, 3500)/100 + Random.random_int(2000, 3500)/difficulty, 0])
+	def gen_cluster(size: int, difficulty: float) -> _Data:
+		raw = []
+		for _ in range(size):
+			raw.append([Random.random_int(2500, 3500)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(100, 800)/100 + Random.random_int(2000, 3500)/difficulty, 1])
+			raw.append([Random.random_int(100, 800)/100 + Random.random_int(2500, 3500)/difficulty, Random.random_int(2500, 3500)/100 + Random.random_int(2000, 3500)/difficulty, 0])
 
-        X = [[round(i[0], 5), round(i[1], 5)] for i in raw]
-        y = [[round(i[2], 5)] for i in raw]
+		X = [[round(i[0], 5), round(i[1], 5)] for i in raw]
+		y = [[round(i[2], 5)] for i in raw]
 
-        return X, y
+		return X, y
 
-    def load_mnist() -> _Data:
-        raise NotImplementedError("This is a new feature coming soon.")
+	def load_mnist() -> _Data:
+		raise NotImplementedError("This is a new feature coming soon.")
 
-    def load_dna() -> _Data:
-        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
+	def load_dna() -> _Data:
+		raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_words() -> _Data:
-        raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
+	def load_words() -> _Data:
+		raise NotImplementedError("This feature is coming soon and is presently not implemented fully.")
 
-    def load_cities() -> _Data:
-        with open('Data/Cities.txt') as file:
-            output = file.readlines()
+	def load_cities() -> _Data:
+		with open('Data/Cities.txt') as file:
+			output = file.readlines()
 
-        return [i.strip('\n') for i in output]
+		return [i.strip('\n') for i in output]
 
 class Random(classmethod):
-    def seed(seed: int) -> None:
-        random.seed(seed)
+	def seed(seed: int) -> None:
+		random.seed(seed)
 
-    def random_int(x: _Number, y: _Number):
-        """
-        A version of random.randrange() using
-        the `secrets` module.
+	def random_int(x: _Number, y: _Number):
+		"""
+		A version of random.randrange() using
+		the `secrets` module.
 
-        ### Params
+		### Params
 
-         - x = a number, start of range
-         - y = a number, end of range
-        """
+		 - x = a number, start of range
+		 - y = a number, end of range
+		"""
 
-        return secrets.randbelow(abs(y - x)) + x
+		return secrets.randbelow(abs(y - x)) + x
 
 # Network Classmethods
 class Activation(classmethod):
 
-    def sigmoid(inputs: _Data):
-        '''
-        Run the Sigmoid activation forwards.
-        (for forwardpropagation)
-        '''
-        if isinstance(inputs, _ListLike_Tuple):
-            return [Decimal(1/(1+math.e**-float(i))) for i in inputs]
+	def sigmoid(inputs: _Data):
+		'''
+		Run the Sigmoid activation forwards.
+		(for forwardpropagation)
+		'''
+		if isinstance(inputs, _ListLike_Tuple):
+			return [Decimal(1/(1+math.e**-float(i))) for i in inputs]
 
-        else:
-            return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
+		else:
+			return Decimal(1/(1+Decimal(math.e)**-Decimal(inputs)))
 
-    def sigmoid_prime(inputs: _Data):
-        if isinstance(inputs, _ListLike_Tuple):
-            return [
-                (1 / (1 + math.e ** -float(i))) * (1 - (1 / (1 + math.e ** -float(i))))
-                for i in inputs
-            ]
+	def sigmoid_prime(inputs: _Data):
+		if isinstance(inputs, _ListLike_Tuple):
+			return [
+				(1 / (1 + math.e ** -float(i))) * (1 - (1 / (1 + math.e ** -float(i))))
+				for i in inputs
+			]
 
 
-        else:
-            return (1/(1+math.e**-float(inputs))) * (1-(1/(1+math.e**-float(inputs))))
+		else:
+			return (1/(1+math.e**-float(inputs))) * (1-(1/(1+math.e**-float(inputs))))
 
-    def relu(inputs: _Data):
-        '''
-        Run the ReLU activation forwards.
-        (for forwardpropagation)
-        '''
-        if isinstance(inputs, _ListLike_Tuple):
-            return [Decimal(max(0, i)) for i in inputs]
-        else:
-            return Decimal(max(0, inputs))
+	def relu(inputs: _Data):
+		'''
+		Run the ReLU activation forwards.
+		(for forwardpropagation)
+		'''
+		if isinstance(inputs, _ListLike_Tuple):
+			return [Decimal(max(0, i)) for i in inputs]
+		else:
+			return Decimal(max(0, inputs))
 
-    def relu_prime(inputs: _Data):
-        if isinstance(inputs, _ListLike_Tuple):
-            output = []
-            for i in inputs:
-                if i < 0:
-                    output.append(0)
-                else:
-                    output.append(1)
-            return output
-        else:
-            if inputs < 0:
-                return 0
-            else:
-                return 1
+	def relu_prime(inputs: _Data):
+		if isinstance(inputs, _ListLike_Tuple):
+			output = []
+			for i in inputs:
+				if i < 0:
+					output.append(0)
+				else:
+					output.append(1)
+			return output
+		else:
+			if inputs < 0:
+				return 0
+			else:
+				return 1
 
-    def argmax(inputs: _Data):
-        """
-        # Argmax
+	def argmax(inputs: _Data):
+		"""
+		# Argmax
 
-        ## Parameters
-         - inputs = input to the function (dot product during forwardprop)
-        """
-        index = 0
-        val = 0
-        for i, currIndex in enumerate(inputs):
-            if i > val:
-                index = currIndex
-                val = i
-        return index
+		## Parameters
+		 - inputs = input to the function (dot product during forwardprop)
+		"""
+		index = 0
+		val = 0
+		for i, currIndex in enumerate(inputs):
+			if i > val:
+				index = currIndex
+				val = i
+		return index
 
 
 class Loss(classmethod):
 
-    def MSE(inputs: _Data, targets: _Data) -> float:
-        inp = [inputs, targets]
-        for inpt in inp:
-            tp = type(inpt)
-            if tp != list:
-                if tp == tuple:
-                    inpt = list(inpt)
-                elif tp in [int, float]:
-                    inpt = [inpt]
-                elif isinstance(inputs, type(targets)):
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {tp}.')
-                else:
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+	def MSE(inputs: _Data, targets: _Data) -> float:
+		inp = [inputs, targets]
+		for inpt in inp:
+			tp = type(inpt)
+			if tp != list:
+				if tp == tuple:
+					inpt = list(inpt)
+				elif tp in [int, float]:
+					inpt = [inpt]
+				elif isinstance(inputs, type(targets)):
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {tp}.')
+				else:
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if not isinstance(inputs, _ListLike_Tuple):
-            return Decimal(((targets-inputs)**2)/2)
+		if not isinstance(inputs, _ListLike_Tuple):
+			return Decimal(((targets-inputs)**2)/2)
 
-        length = len(inputs)
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+		length = len(inputs)
+		if length != len(targets):
+			raise IndexError(
+				f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = sum(((inputs[i] - targets[i])**2)/2 for i in range(length))
-        output /= length
+		output = sum(((inputs[i] - targets[i])**2)/2 for i in range(length))
+		output /= length
 
-        return output
+		return output
 
-    def MSE_prime(inputs: _Data, targets: _Data) -> float:
-        inp = [inputs, targets]
-        for inpt in inp:
-            tp = type(inpt)
-            if tp != list:
-                if tp == tuple:
-                    inpt = list(inpt)
-                elif tp in [int, float]:
-                    inpt = [inpt]
-                elif isinstance(input, type(targets)):
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {tp}.')
-                else:
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+	def MSE_prime(inputs: _Data, targets: _Data) -> float:
+		inp = [inputs, targets]
+		for inpt in inp:
+			tp = type(inpt)
+			if tp != list:
+				if tp == tuple:
+					inpt = list(inpt)
+				elif tp in [int, float]:
+					inpt = [inpt]
+				elif isinstance(input, type(targets)):
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {tp}.')
+				else:
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        length = len(inputs)
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+		length = len(inputs)
+		if length != len(targets):
+			raise IndexError(
+				f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = sum((inputs[i] - targets[i]) for i in range(length))
-        output /= length
+		output = sum((inputs[i] - targets[i]) for i in range(length))
+		output /= length
 
-        return output
+		return output
 
-    def MAE(inputs: _Data, targets: _Data) -> float:
-        inp = [inputs, targets]
-        for inpt in inp:
-            tp = type(inpt)
-            if tp != list:
-                if tp == tuple:
-                    inpt = list(inpt)
-                elif tp in [int, float]:
-                    inpt = [inpt]
-                elif isinstance(inputs, type(targets)):
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {tp}.')
-                else:
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+	def MAE(inputs: _Data, targets: _Data) -> float:
+		inp = [inputs, targets]
+		for inpt in inp:
+			tp = type(inpt)
+			if tp != list:
+				if tp == tuple:
+					inpt = list(inpt)
+				elif tp in [int, float]:
+					inpt = [inpt]
+				elif isinstance(inputs, type(targets)):
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {tp}.')
+				else:
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        if not isinstance(inputs, _ListLike_Tuple):
-            return Decimal(abs(targets-inputs))
+		if not isinstance(inputs, _ListLike_Tuple):
+			return Decimal(abs(targets-inputs))
 
-        length = len(inputs)
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+		length = len(inputs)
+		if length != len(targets):
+			raise IndexError(
+				f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = sum(abs(inputs[i] - targets[i]) for i in range(length))
-        output /= length
+		output = sum(abs(inputs[i] - targets[i]) for i in range(length))
+		output /= length
 
-        return output
+		return output
 
-    def MAE_prime(inputs: _Data, targets: _Data) -> float:
-        inp = [inputs, targets]
-        for inpt in inp:
-            tp = type(inpt)
-            if tp != list:
-                if tp == tuple:
-                    inpt = list(inpt)
-                elif tp in [int, float]:
-                    inpt = [inpt]
-                elif isinstance(inputs, type(targets)):
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {tp}.')
-                else:
-                    raise TypeError(
-                        f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
+	def MAE_prime(inputs: _Data, targets: _Data) -> float:
+		inp = [inputs, targets]
+		for inpt in inp:
+			tp = type(inpt)
+			if tp != list:
+				if tp == tuple:
+					inpt = list(inpt)
+				elif tp in [int, float]:
+					inpt = [inpt]
+				elif isinstance(inputs, type(targets)):
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {tp}.')
+				else:
+					raise TypeError(
+						f'Both parameters should be list, tuple, int or float, not {type(inputs)} and {type(targets)}.')
 
-        length = len(inputs) if isinstance(inputs, _ListLike_Tuple) else 1
-        if length != len(targets):
-            raise IndexError(
-                f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
+		length = len(inputs) if isinstance(inputs, _ListLike_Tuple) else 1
+		if length != len(targets):
+			raise IndexError(
+				f'Inputs ({length}) has not the same size as targets ({len(targets)}).\nInputs = {inputs},\nTargets = {targets}')
 
-        output = []
-        for i in range(length):
-            if isinstance(inputs, _ListLike_Tuple):
-                if inputs[i] < targets[i]: output.append(-1)
-                else: output.append(1)
-            elif inputs < targets[i]: output.append(-1)
-            else: output.append(1)
-
-        return statistics.fmean(output)
+		output = []
+		for i in range(length):
+			if (
+				isinstance(inputs, _ListLike_Tuple)
+				and inputs[i] < targets[i]
+				or not isinstance(inputs, _ListLike_Tuple)
+				and inputs < targets[i]
+			): output.append(-1)
+			else: output.append(1)
+		return statistics.fmean(output)
 
 # Parent Classes
-class Layer(object):
-    '''
-    Parent class to all layers, containing
-    the `__special__` methods needed.
-    '''
-    __slots__ = 'biases', 'weights', 'output', '_act', '_type'
-    def __init__(self):
-        """Sets default values for properties."""
-        self.biases = []
-        self.weights = []
-        self.output = []
-        self._act = 'Undefined'
-        self._type = 'Undefined'
+class Layer(ABC):
+	'''
+	Parent class to all layers, containing
+	the `__special__` methods needed.
+	'''
+	__slots__ = 'biases', 'weights', 'output', '_act', '_type'
+	def __init__(self):
+		"""Sets default values for properties."""
+		self.biases = []
+		self.weights = []
+		self.output = []
+		self._act = 'Undefined'
+		self._type = 'Undefined'
 
-    def __repr__(self):
-        """Display info as a string."""
-        return f'{self.category}(activation={self._act})'
+	def __repr__(self):
+		"""Display info as a string."""
+		return f'{self.category}(activation={self._act})'
 
-    def __str__(self):
-        """Return as str."""
-        return f'{self.category}(activation={self._act})'
+	def __str__(self):
+		"""Return as str."""
+		return f'{self.category}(activation={self._act})'
 
-    def __call__(self, inputs):
-        return self.forward(inputs)
+	def __call__(self, inputs):
+		return self.forward(inputs)
 
-    def __len__(self):
-        """Return number of neurons."""
-        return len(self.biases)
+	def __len__(self):
+		"""Return number of neurons."""
+		return len(self.biases)
 
-    def __eq__(self, o: object):
-        """Check if equivalent to object."""
-        try:
-            return self is o
-        except Exception:
-            raise TypeError(
-                f'Layer_{self.category} object is not comparable to given {type(o)} object.')
+	def __eq__(self, o: object):
+		"""Check if equivalent to object."""
+		try:
+			return self is o
+		except Exception:
+			raise TypeError(
+				f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
-    def __hash__(self):
-        """Create a hash for a dictionary."""
-        return hash(self)
+	def __hash__(self):
+		"""Create a hash for a dictionary."""
+		return hash(self)
 
-    def __bytes__(self):
-        """Turn to bytes."""
-        return bytes(self)
+	def __bytes__(self):
+		"""Turn to bytes."""
+		return bytes(self)
 
-    def __enter__(self):
-        """Use within a with statement."""
-        return self
+	def __enter__(self):
+		"""Use within a with statement."""
+		return self
 
-    def __exit__(self, category, value, traceback):
-        """Placeholder to avoid errors."""
-        pass
+	def __exit__(self, category, value, traceback):
+		"""Placeholder to avoid errors."""
+		pass
 
-    def forward(self, inputs):
-        """Run layer forwards."""
-        self.inputs = inputs
-        return inputs
+	def forward(self, inputs):
+		"""Run layer forwards."""
+		self.inputs = inputs
+		return inputs
 
-    @property
-    def category(self) -> str:
-        """The category, e.g. Dense."""
-        return self._type
+	@abstractproperty
+	def category(self) -> str:
+		"""The category, e.g. Dense."""
+		return self._type
 
-    @property
-    def activation(self) -> str:
-        """The activation for the layer. e.g. ReLU."""
-        return self._act
+	@abstractproperty
+	def activation(self) -> str:
+		"""The activation for the layer. e.g. ReLU."""
+		return self._act
+
+	@abstractmethod
+	def forward(self, inputs: _ListLike) -> list:
+		pass
+
 
 class Optimizer(object):
-    '''
-    Parent class to all optimizers  , containing
-    the `__special__` methods needed.
-    '''
-    __slots__ = 'output', 'learningRate', '_weightGradientVector', '_biasGradientVector', '_history' '_type'
-    def __init__(self):
-        """Set property values."""
-        self.output = []
-        self.learningRate = 0.001
-        self._weightGradientVector = []
-        self._biasGradientVector = []
-        self._history = _History()
-        self._type = 'Undefined'
+	'''
+	Parent class to all optimizers  , containing
+	the `__special__` methods needed.
+	'''
+	__slots__ = 'output', 'learningRate', '_weightGradientVector', '_biasGradientVector', '_history' '_type'
+	def __init__(self):
+		"""Set property values."""
+		self.output = []
+		self.learningRate = 0.001
+		self._weightGradientVector = []
+		self._biasGradientVector = []
+		self._history = _History()
+		self._type = 'Undefined'
 
-    def __repr__(self):
-        """Return self as a string."""
-        return f'{self.category}(output={self.output})'
+	def __repr__(self):
+		"""Return self as a string."""
+		return f'{self.category}(output={self.output})'
 
-    def __str__(self):
-        """Return self as a string."""
-        return f'{self.category}(output={self.output})'
+	def __str__(self):
+		"""Return self as a string."""
+		return f'{self.category}(output={self.output})'
 
-    def __len__(self):
-        """Return the length of the output."""
-        return len(self.output)
+	def __len__(self):
+		"""Return the length of the output."""
+		return len(self.output)
 
-    def __eq__(self, o: object):
-        """Check if is equal to object."""
-        try:
-            return self is o
-        except Exception:
-            raise TypeError(
-                f'Optimizer_{self.category} object is not comparable to given {type(o)} object.')
+	def __eq__(self, o: object):
+		"""Check if is equal to object."""
+		try:
+			return self is o
+		except Exception:
+			raise TypeError(
+				f'Optimizer_{self.category} object is not comparable to given {type(o)} object.')
 
-    def __hash__(self):
-        """Hash the object."""
-        return hash(self)
+	def __hash__(self):
+		"""Hash the object."""
+		return hash(self)
 
-    def __bytes__(self):
-        """Convert to bytes."""
-        return bytes(self)
+	def __bytes__(self):
+		"""Convert to bytes."""
+		return bytes(self)
 
-    def __enter__(self):
-        """For use within a with statement."""
-        return self
+	def __enter__(self):
+		"""For use within a with statement."""
+		return self
 
-    def __exit__(self, category, value, traceback):
-        """Placeholder to prevent exceptions."""
-        pass
+	def __exit__(self, category, value, traceback):
+		"""Placeholder to prevent exceptions."""
+		pass
 
-    @property
-    def category(self) -> str:
-        """The category, e.g. GradDesc."""
-        return self._type
+	@property
+	def category(self) -> str:
+		"""The category, e.g. GradDesc."""
+		return self._type
 
 class Model(object):
-    '''
-    Parent class to all layers, containing
-    the `__special__` methods needed.
-    '''
-    __slots__ = 'biases', 'weights', 'output', 'inputs', 'optimizer', '_loss', '_net', '_type'
-    def __init__(self, network: list, optimizer: str = 'GradDesc',
-                 loss: str = 'MSE'):
-        """Create a model object of unspecified type."""
-        self.biases = []
-        self.weights = []
-        self.output = []
-        self.inputs = []
-        self.optimizer = optimizer
-        self.loss = loss
-        self._net = network
-        self._type = 'Undefined'
+	'''
+	Parent class to all layers, containing
+	the `__special__` methods needed.
+	'''
+	__slots__ = 'biases', 'weights', 'output', 'inputs', 'optimizer', '_loss', '_net', '_type'
+	def __init__(self, network: list, optimizer: str = 'GradDesc',
+				 loss: str = 'MSE'):
+		"""Create a model object of unspecified type."""
+		self.biases = []
+		self.weights = []
+		self.output = []
+		self.inputs = []
+		self.optimizer = optimizer
+		self.loss = loss
+		self._net = network
+		self._type = 'Undefined'
 
-    def __repr__(self):
-        """Return self as a string."""
-        return f'{self.category}(activation={self._net})'
+	def __repr__(self):
+		"""Return self as a string."""
+		return f'{self.category}(activation={self._net})'
 
-    def __str__(self):
-        """Return self as a string."""
-        return f'Layer_{self.category}(output={self.output})'
+	def __str__(self):
+		"""Return self as a string."""
+		return f'Layer_{self.category}(output={self.output})'
 
-    def __len__(self):
-        """Return length of layers."""
-        return len(self.network)
+	def __len__(self):
+		"""Return length of layers."""
+		return len(self.network)
 
-    def __eq__(self, o: object):
-        """Check if equal to other object."""
-        try:
-            return self is o
-        except Exception:
-            raise TypeError(
-                f'Layer_{self.category} object is not comparable to given {type(o)} object.')
+	def __eq__(self, o: object):
+		"""Check if equal to other object."""
+		try:
+			return self is o
+		except Exception:
+			raise TypeError(
+				f'Layer_{self.category} object is not comparable to given {type(o)} object.')
 
-    def __hash__(self):
-        """Hash object for dictionary."""
-        return hash((self))
+	def __hash__(self):
+		"""Hash object for dictionary."""
+		return hash((self))
 
-    def __bytes__(self):
-        """Convert to bytes."""
-        return bytes(self)
+	def __bytes__(self):
+		"""Convert to bytes."""
+		return bytes(self)
 
-    def __enter__(self):
-        """For use in a with statement."""
-        return self
+	def __enter__(self):
+		"""For use in a with statement."""
+		return self
 
-    def __exit__(self, category, value, traceback):
-        """Placeholder to prevent exceptions."""
-        pass
+	def __exit__(self, category, value, traceback):
+		"""Placeholder to prevent exceptions."""
+		pass
 
-    def forward(self, inputs) -> list:
-        """Run the whole network forward."""
-        self.inputs = inputs
-        return inputs
+	def forward(self, inputs) -> list:
+		"""Run the whole network forward."""
+		self.inputs = inputs
+		return inputs
 
-    # def save(self) -> None:
-    #     """Save object to binary file."""
-    #     Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
+	# def save(self) -> None:
+	#     """Save object to binary file."""
+	#     Data.save_object(self, f"{[ k for k,v in locals().items() if v == self][0]}.bin")
 
-    @property
-    def category(self) -> str:
-        return self._type
+	@property
+	def category(self) -> str:
+		return self._type
 
-    @property
-    def network(self):
-        return self._net
+	@property
+	def network(self):
+		return self._net
 
 class _History(object):
-    __slots__ = 'loss', 'accuracy'
-    def __init__(self, loss: _ListLike = [], accuracy: _ListLike = []):
-        """Create a model object of unspecified type."""
-        self.loss = []
-        self.accuracy = []
+	__slots__ = 'loss', 'accuracy'
+	def __init__(self, loss: _ListLike = [], accuracy: _ListLike = []):
+		"""Create a model object of unspecified type."""
+		self.loss = []
+		self.accuracy = []
 
-    def __len__(self):
-        """Return length of layers."""
-        return len(self.loss)
+	def __len__(self):
+		"""Return length of layers."""
+		return len(self.loss)
 
-    def __eq__(self, o: object):
-        """Check if equal to other object."""
-        try:
-            return self is o
-        except Exception:
-            raise TypeError(
-                f'History object is not comparable to given {type(o)} object.')
+	def __eq__(self, o: object):
+		"""Check if equal to other object."""
+		try:
+			return self is o
+		except Exception:
+			raise TypeError(
+				f'History object is not comparable to given {type(o)} object.')
 
-    def __hash__(self):
-        """Hash object for dictionary."""
-        return hash((self))
+	def __hash__(self):
+		"""Hash object for dictionary."""
+		return hash((self))
 
-    def __bytes__(self):
-        """Convert to bytes."""
-        return bytes(self)
+	def __bytes__(self):
+		"""Convert to bytes."""
+		return bytes(self)
 
-    def __enter__(self):
-        """For use in a with statement."""
-        return self
+	def __enter__(self):
+		"""For use in a with statement."""
+		return self
 
-    def __exit__(self, category, value, traceback):
-        """Placeholder to prevent exceptions."""
-        pass
+	def __exit__(self, category, value, traceback):
+		"""Placeholder to prevent exceptions."""
+		pass
 
 # Subclasses: Layers
 class Dense(Layer):
-    '''
-    Create a layer with all neurons
-    attached to next layer. Used a
-    lot in classifiers. The best/
-    default turn-to for developers.
-    '''
+	'''
+	Create a layer with all neurons
+	attached to next layer. Used a
+	lot in classifiers. The best/
+	default turn-to for developers.
+	'''
 
-    def __init__(self, n_inputs: int, n_neurons: int,
-                 activation: str, weight_accuracy: float = 2,
-                 weight_init: str='xavier', bias_init: float = 0) -> None:
-        """
-        Create a fully connected layer.
+	def __init__(self, n_inputs: int, n_neurons: int,
+				 activation: str, weight_accuracy: float = 2,
+				 weight_init: str='xavier', bias_init: float = 0) -> None:
+		"""
+		Create a fully connected layer.
 
-        ### Params
+		### Params
 
-         - n_inputs = number of outputs from the previous layer or length of one line of data
-         - n_neurons = number of neurons
-         - activation = string name of activation
-         - weight_accuracy = max decimal places in weights
-         - weight_init = style of initialization
-         - bias_init = value of initialization
-        """
-        if n_inputs <= 0:
-            raise ValueError('"n_inputs" parameter should be > 0.')
-        elif n_neurons <= 0:
-            raise ValueError('"n_neurons" parameter should be > 0.')
-        if activation not in valid_activations:
-            raise ValueError(
-                f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n{valid_activations}')
+		 - n_inputs = number of outputs from the previous layer or length of one line of data
+		 - n_neurons = number of neurons
+		 - activation = string name of activation
+		 - weight_accuracy = max decimal places in weights
+		 - weight_init = style of initialization
+		 - bias_init = value of initialization
+		"""
+		if n_inputs <= 0:
+			raise ValueError('"n_inputs" parameter should be > 0.')
+		elif n_neurons <= 0:
+			raise ValueError('"n_neurons" parameter should be > 0.')
+		if activation not in valid_activations:
+			raise ValueError(
+				f'"activations" parameter must be in the list valid_activations, not {activation}.\nThe valid activations are:\n{valid_activations}')
 
-        self.biases = []
-        for _ in range(n_neurons):
-            self.biases.append(bias_init)
+		self.biases = []
+		for _ in range(n_neurons):
+			self.biases.append(bias_init)
 
-        self.weights = []
-        if weight_init == 'xavier':
-            xav1_sqrt = math.sqrt(1/n_inputs)
-            xav2_sqrt = math.sqrt(2/n_inputs)
+		self.weights = []
+		if weight_init == 'xavier':
+			xav1_sqrt = math.sqrt(1/n_inputs)
+			xav2_sqrt = math.sqrt(2/n_inputs)
 
-        for i in range(n_neurons):
-            self.weights.append([])
-            for _ in range(n_inputs):
-                if weight_init in {'xavier', 'glorot'} and activation != 'relu':
-                    self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
-                elif weight_init in ['xavier', 'glorot']:
-                    self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
-                elif weight_init in {'integer', 'range'}:
-                    self.weights[i].append(Random.random_int(-4, 4))
+		for i in range(n_neurons):
+			self.weights.append([])
+			for _ in range(n_inputs):
+				if weight_init in {'xavier', 'glorot'} and activation != 'relu':
+					self.weights[i].append(round(random.normalvariate(0, 1)*xav1_sqrt, weight_accuracy))
+				elif weight_init in ['xavier', 'glorot']:
+					self.weights[i].append(round(random.normalvariate(0, 1)*xav2_sqrt, weight_accuracy))
+				elif weight_init in {'integer', 'range'}:
+					self.weights[i].append(Random.random_int(-4, 4))
 
-        self._type = 'Dense'
-        self._act = activation
-        self.output = []
-        self.inputs = []
+		self._type = 'Dense'
+		self._act = activation
+		self.output = []
+		self.inputs = []
 
-    def randomize(self, bias_init: int = 0) -> None:
-        '''
-        Randomize the weights and biases.
-        Weights are randomized at the
-        start, but biases are initialized
-        to a default of 0.
-        '''
-        self.biases = []
-        for _, _ in enumerate(self.biases):
-            self.biases.append(bias_init)
+	def randomize(self, bias_init: int = 0) -> None:
+		'''
+		Randomize the weights and biases.
+		Weights are randomized at the
+		start, but biases are initialized
+		to a default of 0.
+		'''
+		self.biases = []
+		for _, _ in enumerate(self.biases):
+			self.biases.append(bias_init)
 
-        self.weights = []
-        for i, _ in enumerate(self.biases):
-            self.weights.append([])
-            for _, _ in enumerate(self.weights):
-                self.weights[i].append(random.normalvariate(0, 1))
+		self.weights = []
+		for i, _ in enumerate(self.biases):
+			self.weights.append([])
+			for _, _ in enumerate(self.weights):
+				self.weights[i].append(random.normalvariate(0, 1))
 
-    def forward(self, inputs: _ListLike) -> list:
-        '''
-        Run the Dense Layer forwards.
-        (forward-propagate). It takes the
-        dot product (matrices multiplied
-        together) plus the bias of each
-        neuron to give an output to be
-        run through the activation.
-        '''
-        self.output = []
-        self.inputs = [inputs]
+	def forward(self, inputs: _ListLike) -> list:
+		'''
+		Run the Dense Layer forwards.
+		(forward-propagate). It takes the
+		dot product (matrices multiplied
+		together) plus the bias of each
+		neuron to give an output to be
+		run through the activation.
+		'''
+		self.output = []
+		self.inputs = [inputs]
 
-        # Dot product
-        for neuron, _ in enumerate(self.biases):
-            self.output.append(Decimal(float(Matrix.dot(self.weights[neuron], inputs)) + float(self.biases[neuron])))
+		# Dot product
+		for neuron, _ in enumerate(self.biases):
+			self.output.append(Decimal(float(Matrix.dot(self.weights[neuron], inputs)) + float(self.biases[neuron])))
 
-        # Activation
-        for i, _ in enumerate(self.output):
-            self.output[i] = getattr(Activation, self.activation)(self.output[i]) # run activation on it
+		# Activation
+		for i, _ in enumerate(self.output):
+			self.output[i] = getattr(Activation, self.activation)(self.output[i]) # run activation on it
 
-        return self.output
+		return self.output
 
 # Subclasses: Models
 class FeedForward(Model):
-    def __init__(self, network: list, optimizer: _OptimizerType = 'GradDesc',
-                 loss: str = 'MSE') -> None:
-        """
-        Sequential model that can contain any
-        layer type.
+	def __init__(self, network: list, optimizer: _OptimizerType = 'GradDesc',
+				 loss: str = 'MSE') -> None:
+		"""
+		Sequential model that can contain any
+		layer type.
 
-        ### Params
+		### Params
 
-         - network = list of layer objects
-         - optimizer = an optimizer object or string name, defaulted to 'GradDesc'
-         - loss = string name for a loss
+		 - network = list of layer objects
+		 - optimizer = an optimizer object or string name, defaulted to 'GradDesc'
+		 - loss = string name for a loss
 
-        ### Returns
+		### Returns
 
-         - Nothing"""
-        if isinstance(optimizer, str):
-            self.optimizer = globals()[optimizer]()
-            if optimizer.replace(' ', '_') not in valid_optimizers:
-                raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
-        else:
-            self.optimizer = optimizer
+		 - Nothing"""
+		if isinstance(optimizer, str):
+			self.optimizer = globals()[optimizer]()
+			if optimizer.replace(' ', '_') not in valid_optimizers:
+				raise ValueError(f'{optimizer} is not a valid optimizer class.\nThe valid optimizer string names are {valid_optimizers}.')
+		else:
+			self.optimizer = optimizer
 
-        for layer in network:
-            for form in valid_layers:
-                if (
-                    form not in str(layer.__class__)
-                    and network.index(layer) == len(network) - 1
-                ):
-                    raise ValueError(f'{layer.__class__} is not a valid layer class. The valid layer classes are {valid_layers}')
+		for layer in network:
+			for form in valid_layers:
+				if (
+					form not in str(layer.__class__)
+					and network.index(layer) == len(network) - 1
+				):
+					raise ValueError(f'{layer.__class__} is not a valid layer class. The valid layer classes are {valid_layers}')
 
-        self.output = []
-        self.inputs = []
-        self.loss = loss
+		self.output = []
+		self.inputs = []
+		self.loss = loss
 
-        self._net = network
-        self._type = 'FeedForward'
+		self._net = network
+		self._type = 'FeedForward'
 
-    def forward(self, inputs: _ListLike) -> list:
-        self.inputs = inputs
-        for layer in self.network:
-            inputs = layer.forward(inputs)
-        self.output = inputs
-        return self.output
+	def forward(self, inputs: _ListLike) -> list:
+		self.inputs = inputs
+		for layer in self.network:
+			inputs = layer.forward(inputs)
+		self.output = inputs
+		return self.output
 
-    def fit(self, X, y, epochs: int, disp_level: int = 1):
-        return self.optimizer.train(self, X, y, epochs, disp_level)
+	def fit(self, X, y, epochs: int, verbose: int = 1):
+		return self.optimizer.train(self, X, y, epochs, verbose)
 
 # Subclasses: Optimizers
 class GradDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.0001):
-        """
-        Gradient descent optimizer for models, using
-        regular backpropagation and simple gradient descent
-        to train weights.
+	def __init__(self, learning_rate: float = 0.0001):
+		"""
+		Gradient descent optimizer for models, using
+		regular backpropagation and simple gradient descent
+		to train weights.
 
-        ### Params
+		### Params
 
-         - learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
+		 - learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
-        ### Returns
+		### Returns
 
-         - Nothing
-        """
-        self.output = []
-        self.learningRate = learning_rate
-        self._weightGradientVector = []
-        self._biasGradientVector = []
-        self._type = 'GradDesc'
-        self._history = _History()
+		 - Nothing
+		"""
+		self.output = []
+		self.learningRate = learning_rate
+		self._weightGradientVector = []
+		self._biasGradientVector = []
+		self._type = 'GradDesc'
+		self._history = _History()
 
-    def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, disp_level:int = 1) -> list:
-        '''
-        Calculate the gradients and adjust the weights and
-        biases for the specified model for the specified
-        number of epochs.
+	def train(self, model: Model, X: _ListLike, y: _ListLike, epochs: int, verbose:int = 1) -> list:
+		'''
+		Calculate the gradients and adjust the weights and
+		biases for the specified model for the specified
+		number of epochs.
 
-        ### Params
+		### Params
 
-         - model: a Model object with at least one layer
-         - epochs: the number of epochs to train for
-         - disp_level: how much to output in console
-            +   -1 = display all data
-            +    0 = display nothing
-            +    1 = display epoch and loss
+		 - model: a Model object with at least one layer
+		 - epochs: the number of epochs to train for
+		 - verbose: how much to output in console
+			+   -1 = display all data
+			+    0 = display nothing
+			+    1 = display epoch and loss
 
-        ### Returns
+		### Returns
 
-         - self._history: the loss history of the model
-                          so it can be plotted.
-        '''
-        # Iterate over epochs
-        # Iterate over layer
-        # Iterate over neurons
-        # Iterate over weights
-        # Calculate deriv dot product (input of equal index)
+		 - self._history: the loss history of the model
+						  so it can be plotted.
+		'''
+		# ? I did it line by lines with comments so I could FINALLY GET IT RIGHT...
 
-        return self._history
+		loss_prime = getattr(Loss, model.loss)
+		final_act_prime = getattr(Activation, model.network[-1].activation)
+
+		for _ in range(epochs):# Iterate over epochs
+
+			for sampleIndex, sample in enumerate(X):# Iterate over samples
+
+				self._weightGradientVector = [] # Create a gradient vector for the weights
+				self._biasGradientVector = [] # Create a gradient vector for the biases
+
+				for layerIndex, layer in enumerate(model.network.__reversed__()): # Iterate over layers backwards
+
+					self._weightGradientVector.append([]) # Append layer list to weight gradients
+					self._biasGradientVector.append([])   # Append layer list to bias gradients
+
+					act_prime = getattr(Activation, layer.activation) # Save activation prime function to a variable for readability
+
+					for neuronIndex, neuron in enumerate(layer): # Iterate over neurons
+						self._weightGradientVector[layerIndex].append([]) # Append neuron list to weight gradients
+
+						for weightIndex, weight in enumerate(neuron): # Iterate over weights
+
+							# * Bias Backprop
+							biasActPrime = act_prime(1) # Calculate deriv activation with respect to 1
+
+							# Multiply forward gradients from reversed gradient vector (since layers are reversed in appending)
+							multipliedWeights = []
+
+							for layerWeightIndex, layerWeight in enumerate(self._biasGradientVector.__reversed__()[1:]):
+								multipliedWeights.append([])
+
+								for neuronWeightIndex, neuronWeight in enumerate(layerWeight):
+									multipliedWeights[layerWeightIndex].append([i * biasActPrime for i in neuronWeight])
+
+								if layerWeightIndex == len(self._biasGradientVector) - 1:
+									# TODO: add summary (collection together into one scalar value) of output neuron weights so it is compatible with the cost function
+									...
+
+							# Calcualte deriv cost with respect to deriv activation
+
+		# * Bias Updating
+		# Decrement bias by gradient * learning rate
+
+		# * Append to Bias Gradient Vector for Forward Multiplication
+		# Append to bias gradients [layer] - don't need neuron lists since there's only one per neuron
+
+		# * Weight Backprop
+		# Calculate deriv dot product (input of equal index)
+		# Calculate deriv activation with respect to the deriv dot product
+		# Multiply forward gradients from reversed gradient vector (since layers are reversed in appending)
+		# Calculate deriv cost with respect to the deriv activation
+
+		# * Append to Weight Gradient Vector for Forward Multiplication
+		# Append to weight gradients [layer][neuron]
+
+		# * Weight Updating
+		# Decrement weight by gradient * learning rate
+
+
+		# * Loss Logging
+		# Run the network forwards and record the loss in the History object
+		# Display loss with verbosity
+
+		return self._history
 
 class RandDesc(Optimizer):
-    def __init__(self, learning_rate: float = 0.01) -> None:
-        """
-        Random optimizer that uses random changes to
-        try to "brute force" it's way to an optimum.
+	def __init__(self, learning_rate: float = 0.01) -> None:
+		"""
+		Random optimizer that uses random changes to
+		try to "brute force" it's way to an optimum.
 
-        ### Params
+		### Params
 
-        learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
+		learning_rate = the learning rate, defaulted to 0.001: OPTIONAL
 
-        ### Returns
+		### Returns
 
-         - Nothing
+		 - Nothing
 
 
-        ### Advantages
+		### Advantages
 
-         - Easy to understand and implement for beginners
+		 - Easy to understand and implement for beginners
 
-        ### Disadvangtages
+		### Disadvangtages
 
-         - Doesn't usually find global minimum loss
-         - Slow
-         - Inconsistent
-        """
-        self.output = []
-        self.learningRate = learning_rate
-        self._type = 'RandomDesc'
-        self._history = _History()
+		 - Doesn't usually find global minimum loss
+		 - Slow
+		 - Inconsistent
+		"""
+		self.output = []
+		self.learningRate = learning_rate
+		self._type = 'RandomDesc'
+		self._history = _History()
 
-    def train(self, model: Model, X: _ListLike, y: _ListLike,  epochs: int, disp_level: int = 0):
-        """
-        Optimize the specified model object for the
-        specified number of epochs.
+	def select_random_changes(self, model, layer, neuron):
+		for weight, _ in enumerate(model.network[layer].weights[neuron]):
+			model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
 
-        ### Params
+		model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
 
-        model = Model object which needs to be optimized.
-        X = Training samples (X data)
-        y = Training targets (labels)
-        epochs = epoch iterations to train for.
-        disp_level = level of information to be displayed (0 → 2)
-        """
-        if disp_level != 0: print()
+	def check_layer_type(self, model, layer):
+		if "Dense" not in str(model.network[layer].__class__):
+			raise NotImplementedError(
+							f'Only dense layers are implemented for, not{model.network[layer].__class__}'
+						)
 
-        oldLoss = float('inf')
+	def train(self, model: Model, X: _ListLike, y: _ListLike,  epochs: int, verbose: int = 0):
+		"""
+		Optimize the specified model object for the
+		specified number of epochs.
 
-        for epoch in range(epochs):
-            losses = []
-            for sample, _ in enumerate(X):
-                oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
-                for layer, _ in enumerate(model.network):
+		### Params
 
-                    if "Dense" not in str(model.network[layer].__class__): raise NotImplementedError(f"Only dense layers are implemented for, not{str(model.network[layer].__class__)}")
+		model = Model object which needs to be optimized.
+		X = Training samples (X data)
+		y = Training targets (labels)
+		epochs = epoch iterations to train for.
+		verbose = level of information to be displayed (0 → 2)
+		"""
+		if verbose != 0: print()
 
-                    for neuron, _ in enumerate(model.network[layer].weights):
-                        for weight, _ in enumerate(model.network[layer].weights[neuron]):
-                            model.network[layer].weights[neuron][weight] += random.gauss(0, 1) * self.learningRate
+		oldLoss = float('inf')
 
-                        model.network[layer].biases[neuron] += random.gauss(0, 1) * self.learningRate
-                losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
+		for epoch in range(epochs):
+			losses = []
+			for sample, _ in enumerate(X):
+				oldWeights = [copy.copy(currLay.weights) for currLay in model.network]
+				for layer, _ in enumerate(model.network):
 
-            newLoss = statistics.fmean(losses)
-            if newLoss <= oldLoss:
-                _DevUtils._dispRand(epoch, newLoss, disp_level, True)
-                oldLoss = newLoss
-                self._history.loss.append(float(oldLoss))
+					self.check_layer_type(model, layer)
 
-            else:
-                _DevUtils._dispRand(epoch, oldLoss, disp_level, False)
-                self._history.loss.append(float(oldLoss))
-                for count, (layer, weightSet) in enumerate(zip(model.network, oldWeights)):
-                    model.network[count].weights = weightSet
-        if disp_level != 0: print()
 
-        return self._history
+					for neuron, _ in enumerate(model.network[layer].weights):
+						self.select_random_changes(model, layer, neuron)
+
+				losses.append(getattr(Loss, model.loss)(model.forward(X[sample]), y[sample]))
+
+			newLoss = statistics.fmean(losses)
+			if newLoss <= oldLoss:
+				_DevUtils._dispRand(epoch, newLoss, verbose, True)
+				oldLoss = newLoss
+				self._history.loss.append(float(oldLoss))
+
+			else:
+				_DevUtils._dispRand(epoch, oldLoss, verbose, False)
+				self._history.loss.append(float(oldLoss))
+				for count, (layer, weightSet) in enumerate(zip(model.network, oldWeights)):
+					model.network[count].weights = weightSet
+
+		if verbose != 0: print()
+
+		return self._history
 
 
 valid_activations = ['sigmoid', 'sigmoid_prime', 'relu', 'relu_prime']
@@ -932,6 +1010,6 @@ valid_optimizers = ['GradDesc', 'RandDesc']
 _list_mult_reducer = lambda x, y: x*y
 
 optimizer_strings = {
-    'GradDesc': GradDesc(),
-    'RandDesc': RandDesc()
+	'GradDesc': GradDesc(),
+	'RandDesc': RandDesc()
 }
