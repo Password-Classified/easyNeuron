@@ -1,3 +1,7 @@
+<h1>THIS HAS MOVED TO <a href="https://github.com/neuron-ai/easyneuron">Neuron AI.</a></h1>
+
+<br>
+<strike>
 <div align="center">
   <img src="https://repository-images.githubusercontent.com/372004660/e43eedfe-5f66-4d3a-bd08-3af2f8c47aab" width="300rem"></img>
   <br/><br/><br/>
@@ -69,3 +73,5 @@ Still under heavy initial development, this has some unfinished issues.
 This is a very community driven project, so please report any bugs that we can iron out;
 we want to make this the best we can. It is also under constant heavy development, so
 please provide feedback for any issues you come across so they can be fixed as soon as possible.
+
+</strike>
